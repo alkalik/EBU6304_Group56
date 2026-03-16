@@ -1,1 +1,1 @@
-# SE
+# Software Engineer Coursework
