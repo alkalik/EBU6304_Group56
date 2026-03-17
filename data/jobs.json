@@ -1,0 +1,55 @@
+[
+  {
+    "id": "JOB-sample01",
+    "title": "TA for Software Engineering (EBU6304)",
+    "description": "Assist in lab sessions, help students with Agile project development, grade assignments.",
+    "moduleName": "EBU6304",
+    "postedBy": "USR-mo001",
+    "jobType": "MODULE_TA",
+    "status": "OPEN",
+    "requiredSkills": [
+      "Java",
+      "Agile",
+      "Software Testing"
+    ],
+    "maxPositions": 3,
+    "filledPositions": 0,
+    "semester": "2025-2026 Spring",
+    "postDate": "2026-03-06",
+    "deadline": "2026-04-15"
+  },
+  {
+    "id": "JOB-sample02",
+    "title": "TA for Data Structures (EBU5302)",
+    "description": "Support lectures and lab sessions on data structures and algorithms.",
+    "moduleName": "EBU5302",
+    "postedBy": "USR-mo002",
+    "jobType": "MODULE_TA",
+    "status": "OPEN",
+    "requiredSkills": [
+      "C++",
+      "Data Structures",
+      "Algorithms"
+    ],
+    "maxPositions": 2,
+    "filledPositions": 0,
+    "semester": "2025-2026 Spring",
+    "postDate": "2026-03-06",
+    "deadline": "2026-04-20"
+  },
+  {
+    "id": "JOB-sample03",
+    "title": "Invigilation - Midterm Exams",
+    "description": "Invigilate midterm examinations for multiple modules in April 2026.",
+    "moduleName": "",
+    "postedBy": "USR-mo001",
+    "jobType": "INVIGILATION",
+    "status": "OPEN",
+    "requiredSkills": [],
+    "maxPositions": 5,
+    "filledPositions": 0,
+    "semester": "2025-2026 Spring",
+    "postDate": "2026-03-10",
+    "deadline": "2026-04-01"
+  }
+]

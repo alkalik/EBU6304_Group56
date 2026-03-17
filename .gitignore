@@ -1,0 +1,31 @@
+# Build output
+target/
+*.class
+*.jar
+*.war
+
+# Maven
+dependency-reduced-pom.xml
+
+# IDE files
+.idea/
+*.iml
+.vscode/
+.settings/
+.project
+.classpath
+*.swp
+*.swo
+*~
+
+# OS files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Runtime generated CV uploads (keep directory structure)
+data/cv/
+
+# Temporary files
+*.tmp
+*.log
