@@ -1,0 +1,65 @@
+[
+  {
+    "id": "USR-admin001",
+    "username": "admin",
+    "password": "admin123",
+    "role": "ADMIN",
+    "name": "System Admin",
+    "email": "admin@bupt.edu.cn",
+    "phone": "010-12345678",
+    "skills": [],
+    "department": "International School"
+  },
+  {
+    "id": "USR-mo001",
+    "username": "mo1",
+    "password": "mo123",
+    "role": "MO",
+    "name": "Dr. Zhang Wei",
+    "email": "zhangwei@bupt.edu.cn",
+    "phone": "010-87654321",
+    "skills": [],
+    "department": "Computer Science"
+  },
+  {
+    "id": "USR-mo002",
+    "username": "mo2",
+    "password": "mo123",
+    "role": "MO",
+    "name": "Dr. Li Ming",
+    "email": "liming@bupt.edu.cn",
+    "phone": "010-11223344",
+    "skills": [],
+    "department": "Electronic Engineering"
+  },
+  {
+    "id": "USR-ta001",
+    "username": "ta1",
+    "password": "ta123",
+    "role": "TA",
+    "name": "Wang Xiaoming",
+    "email": "wxm@bupt.edu.cn",
+    "phone": "13800138001",
+    "skills": [
+      "Java",
+      "Python",
+      "Agile"
+    ],
+    "department": "Computer Science"
+  },
+  {
+    "id": "USR-ta002",
+    "username": "ta2",
+    "password": "ta123",
+    "role": "TA",
+    "name": "Chen Lei",
+    "email": "chenlei@bupt.edu.cn",
+    "phone": "13800138002",
+    "skills": [
+      "C++",
+      "Data Structures",
+      "Algorithms"
+    ],
+    "department": "Computer Science"
+  }
+]
