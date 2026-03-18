@@ -1,10 +1,11 @@
 # TA Recruitment System
 
+github username ：zhangzeyue
+QMID：231225166
 > **BUPT International School Teaching Assistant Recruitment System**
 >
 > EBU6304 – Software Engineering Group Project
 
----
 
 ## 1. Project Overview
 
