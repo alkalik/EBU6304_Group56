@@ -26,6 +26,10 @@ desktop.ini
 # Runtime generated CV uploads (keep directory structure)
 data/cv/
 
+# Runtime JSON data (avoid committing real user data)
+data/*.json
+!data/*.example.json
+
 # Temporary files
 *.tmp
 *.log
