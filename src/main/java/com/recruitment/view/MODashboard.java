@@ -4,6 +4,7 @@ import com.recruitment.model.Application;
 import com.recruitment.model.Job;
 import com.recruitment.model.User;
 import com.recruitment.service.ApplicationService;
+import com.recruitment.service.BackupService;
 import com.recruitment.service.JobService;
 import com.recruitment.service.UserService;
 
@@ -45,6 +46,31 @@ public class MODashboard extends JFrame {
         logoutItem.addActionListener(e -> logout());
         accountMenu.add(logoutItem);
         menuBar.add(accountMenu);
+
+        JMenu dataMenu = new JMenu("Data");
+        JMenuItem backupItem = new JMenuItem("Backup Data");
+        backupItem.addActionListener(e -> BackupService.backupAllData(currentUser, true));
+        dataMenu.add(backupItem);
+
+        JMenuItem restoreItem = new JMenuItem("Restore Data...");
+        restoreItem.addActionListener(e -> {
+            java.util.List<String> backups = BackupService.listBackups();
+            if (backups.isEmpty()) {
+                JOptionPane.showMessageDialog(this, "No backups available.", "Restore", JOptionPane.INFORMATION_MESSAGE);
+                return;
+            }
+            String sel = (String) JOptionPane.showInputDialog(this,
+                    "Select backup to restore:", "Restore Backup",
+                    JOptionPane.PLAIN_MESSAGE, null,
+                    backups.toArray(new String[0]), backups.get(0));
+            if (sel != null) {
+                BackupService.restoreBackup(currentUser, sel);
+            }
+        });
+        dataMenu.add(restoreItem);
+        boolean can = BackupService.canBackup(currentUser.getRole());
+        dataMenu.setEnabled(can);
+        menuBar.add(dataMenu);
         setJMenuBar(menuBar);
 
         tabbedPane = new JTabbedPane();
