@@ -61,5 +61,18 @@
       "Algorithms"
     ],
     "department": "Computer Science"
+  },
+  {
+    "id": "USR-68c2f159",
+    "username": "zzy",
+    "password": "pbkdf2$120000$4t5ehokGmNfjtlIoPYMBnw\u003d\u003d$XRy6Tmty7aAU2RxVBVl0DmY8o21Uv76Ncsj9/zCloq0\u003d",
+    "role": "TA",
+    "name": "Zzy",
+    "email": "2023213329@bupt.cn",
+    "phone": "123",
+    "skills": [
+      "123"
+    ],
+    "department": "123"
   }
 ]
