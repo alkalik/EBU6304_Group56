@@ -8,7 +8,7 @@ import javax.swing.*;
 
 public class Main {
     public static void main(String[] args) {
-        // Set modern look and feel
+        // Apply FlatLaf modern UI theme and rounded corner style
         try {
             FlatLightLaf.setup();
             UIManager.put("Button.arc", 8);
