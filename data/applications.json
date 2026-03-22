@@ -1,1 +1,10 @@
-[]
+[
+  {
+    "id": "APP-eb6296fb",
+    "jobId": "JOB-sample02",
+    "applicantId": "USR-ta001",
+    "status": "WITHDRAWN",
+    "applyDate": "2026-03-19",
+    "coverLetter": ""
+  }
+]

@@ -2,7 +2,7 @@
   {
     "id": "USR-admin001",
     "username": "admin",
-    "password": "admin123",
+    "password": "pbkdf2$120000$G2NQpqv29b5dajCRAPgP2g\u003d\u003d$RZz1GycTLXxaK3ido30/iJHVrlGSfzxv2MbwgbQoEWQ\u003d",
     "role": "ADMIN",
     "name": "System Admin",
     "email": "admin@bupt.edu.cn",
@@ -13,7 +13,7 @@
   {
     "id": "USR-mo001",
     "username": "mo1",
-    "password": "mo123",
+    "password": "pbkdf2$120000$FNfkou4yX7knJuyucjSSrQ\u003d\u003d$P8tUWUKEP7mEaitNmBwqX+sgqaPKIP2dxcxiwxH95lU\u003d",
     "role": "MO",
     "name": "Dr. Zhang Wei",
     "email": "zhangwei@bupt.edu.cn",
@@ -24,7 +24,7 @@
   {
     "id": "USR-mo002",
     "username": "mo2",
-    "password": "mo123",
+    "password": "pbkdf2$120000$PpEH2Y1Am7iGCU5W50BQsw\u003d\u003d$341ikh6jXS8+4zRZ30k0BxewVn4sX6gfgnMz3l3N7XM\u003d",
     "role": "MO",
     "name": "Dr. Li Ming",
     "email": "liming@bupt.edu.cn",
@@ -35,7 +35,7 @@
   {
     "id": "USR-ta001",
     "username": "ta1",
-    "password": "ta123",
+    "password": "pbkdf2$120000$qBw7Dec8DEoHQMt3x9bc/Q\u003d\u003d$UPrz5UV0Wt/AfW8Z5KsrJvypWduHrbVC/H8Ms3guqaw\u003d",
     "role": "TA",
     "name": "Wang Xiaoming",
     "email": "wxm@bupt.edu.cn",
@@ -50,7 +50,7 @@
   {
     "id": "USR-ta002",
     "username": "ta2",
-    "password": "ta123",
+    "password": "pbkdf2$120000$LoJQm5KeofWM+GRVUUQmRA\u003d\u003d$dj19HT33tpDh2cDjE8Is4Y1ZFGe2TYRgAH0mtsxq64E\u003d",
     "role": "TA",
     "name": "Chen Lei",
     "email": "chenlei@bupt.edu.cn",
