@@ -1,1 +1,18 @@
-[]
+[
+  {
+    "id": "APP-5288e786",
+    "jobId": "JOB-sample01",
+    "applicantId": "USR-68c2f159",
+    "status": "PENDING",
+    "applyDate": "2026-03-18",
+    "coverLetter": "1"
+  },
+  {
+    "id": "APP-3e26ef77",
+    "jobId": "JOB-sample02",
+    "applicantId": "USR-68c2f159",
+    "status": "PENDING",
+    "applyDate": "2026-03-18",
+    "coverLetter": ""
+  }
+]
