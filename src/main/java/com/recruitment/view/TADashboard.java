@@ -6,6 +6,7 @@ import com.recruitment.model.User;
 import com.recruitment.service.ApplicationService;
 import com.recruitment.service.BackupService;
 import com.recruitment.service.JobService;
+import com.recruitment.service.NotificationService;
 import com.recruitment.service.UserService;
 
 import javax.swing.*;
@@ -23,6 +24,7 @@ public class TADashboard extends JFrame {
     private final UserService userService;
     private final JobService jobService;
     private final ApplicationService applicationService;
+    private final NotificationService notificationService;
 
     private JTabbedPane tabbedPane;
 
@@ -32,6 +34,7 @@ public class TADashboard extends JFrame {
         this.userService = new UserService();
         this.jobService = new JobService();
         this.applicationService = new ApplicationService();
+        this.notificationService = new NotificationService();
         initUI();
     }
 
@@ -73,6 +76,20 @@ public class TADashboard extends JFrame {
         boolean can = BackupService.canBackup(currentUser.getRole());
         dataMenu.setEnabled(can);
         menuBar.add(dataMenu);
+
+        // Notification bell button
+        JButton notificationButton = new JButton("🔔");
+        notificationButton.setToolTipText("Notifications");
+        notificationButton.setBorderPainted(false);
+        notificationButton.setContentAreaFilled(false);
+        notificationButton.setFocusPainted(false);
+        notificationButton.addActionListener(e -> showNotifications());
+        updateNotificationButton(notificationButton);
+        menuBar.add(Box.createHorizontalGlue()); // Push to right
+        menuBar.add(notificationButton);
+
+        setJMenuBar(menuBar);
+
         setJMenuBar(menuBar);
 
         tabbedPane = new JTabbedPane();
@@ -354,6 +371,76 @@ public class TADashboard extends JFrame {
         panel.add(new JLabel(label), gbc);
         gbc.gridx = 1; gbc.weightx = 1.0;
         panel.add(field, gbc);
+    }
+
+    private void updateNotificationButton(JButton button) {
+        int unreadCount = notificationService.getUnreadCount(currentUser.getId());
+        if (unreadCount > 0) {
+            button.setText("🔔 (" + unreadCount + ")");
+            button.setForeground(Color.RED);
+        } else {
+            button.setText("🔔");
+            button.setForeground(Color.BLACK);
+        }
+    }
+
+    private void showNotifications() {
+        JDialog dialog = new JDialog(this, "Notifications", true);
+        dialog.setSize(500, 400);
+        dialog.setLocationRelativeTo(this);
+
+        JPanel panel = new JPanel(new BorderLayout());
+
+        DefaultListModel<String> listModel = new DefaultListModel<>();
+        JList<String> notificationList = new JList<>(listModel);
+        notificationList.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+
+        refreshNotificationList(listModel);
+
+        JScrollPane scrollPane = new JScrollPane(notificationList);
+        panel.add(scrollPane, BorderLayout.CENTER);
+
+        JPanel buttonPanel = new JPanel(new FlowLayout());
+        JButton markReadBtn = new JButton("Mark Selected as Read");
+        markReadBtn.addActionListener(e -> {
+            int[] selectedIndices = notificationList.getSelectedIndices();
+            List<com.recruitment.model.Notification> currentNotifications = notificationService.getNotificationsByUser(currentUser.getId());
+            for (int index : selectedIndices) {
+                if (index < currentNotifications.size()) {
+                    com.recruitment.model.Notification n = currentNotifications.get(index);
+                    notificationService.markAsRead(n.getId());
+                }
+            }
+            refreshNotificationList(listModel);
+            updateNotificationButton((JButton) getJMenuBar().getComponent(getJMenuBar().getComponentCount() - 1));
+        });
+
+        JButton clearReadBtn = new JButton("Clear All Read");
+        clearReadBtn.addActionListener(e -> {
+            notificationService.clearReadNotifications(currentUser.getId());
+            refreshNotificationList(listModel);
+            updateNotificationButton((JButton) getJMenuBar().getComponent(getJMenuBar().getComponentCount() - 1));
+        });
+
+        JButton closeBtn = new JButton("Close");
+        closeBtn.addActionListener(e -> dialog.dispose());
+
+        buttonPanel.add(markReadBtn);
+        buttonPanel.add(clearReadBtn);
+        buttonPanel.add(closeBtn);
+        panel.add(buttonPanel, BorderLayout.SOUTH);
+
+        dialog.add(panel);
+        dialog.setVisible(true);
+    }
+
+    private void refreshNotificationList(DefaultListModel<String> listModel) {
+        listModel.clear();
+        List<com.recruitment.model.Notification> notifications = notificationService.getNotificationsByUser(currentUser.getId());
+        for (com.recruitment.model.Notification n : notifications) {
+            String status = n.isRead() ? "[Read]" : "[Unread]";
+            listModel.addElement(status + " " + n.getTimestamp().toString() + ": " + n.getMessage());
+        }
     }
 
     private void logout() {
