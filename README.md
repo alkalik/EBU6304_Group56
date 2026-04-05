@@ -1,10 +1,16 @@
 # TA Recruitment System
 
-github username ：zhangzeyue
-QMID：231225166
-> **BUPT International School Teaching Assistant Recruitment System**
->
-> EBU6304 – Software Engineering Group Project
+ | Github Username | QMUL ID |
+ |-----------------|---------|
+ | alkalic | 231225247 |
+ | flyintr | 231225225 |
+ | Xiuying Wang | 231225317 |
+ | xiaolu473 | 231225292 |
+ | zmknbb | 231225133 |
+ | zzy4561 | 231225166 |
+ > **BUPT International School Teaching Assistant Recruitment System**
+ >
+ > EBU6304 – Software Engineering Group Project
 
 
 ## 1. Project Overview
@@ -312,6 +318,18 @@ mvn test
 
 ---
 
-## 12. License
+## 12. Contributors
+|Name|QMID|
+|---|------|
+|xxx|xxxxxx|
+|xxx|xxxxxx|
+|xxx|xxxxxx|
+|xxx|xxxxxx|
+|xxx|xxxxxx|
+|Xiuying Wang|231225317|
+
+---
+
+## 13. License
 
 This project is developed as coursework for **EBU6304 Software Engineering** at BUPT International School. For academic use only.

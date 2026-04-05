@@ -194,6 +194,7 @@ public class JobService {
         return counts;
     }
 
+    // 职位过期检查 + 通知功能（你的核心代码，完整保留）
     public void checkExpiredJobs() {
         LocalDate today = LocalDate.now();
         for (Job job : jobs) {
