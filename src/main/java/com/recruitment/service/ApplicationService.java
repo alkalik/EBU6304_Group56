@@ -2,6 +2,8 @@ package com.recruitment.service;
 
 import com.google.gson.reflect.TypeToken;
 import com.recruitment.model.Application;
+import com.recruitment.model.Job;
+import com.recruitment.model.Notification;
 import com.recruitment.util.IDGenerator;
 import com.recruitment.util.JsonUtil;
 
@@ -16,9 +18,13 @@ public class ApplicationService {
     private static final Type LIST_TYPE = new TypeToken<List<Application>>() {}.getType();
 
     private List<Application> applications;
+    private NotificationService notificationService;
+    private JobService jobService;
 
     public ApplicationService() {
         this.applications = JsonUtil.loadList(FILE_NAME, LIST_TYPE);
+        this.notificationService = new NotificationService();
+        this.jobService = new JobService();
     }
 
     public void reload() {
@@ -48,6 +54,17 @@ public class ApplicationService {
         app.setCoverLetter(coverLetter);
         applications.add(app);
         save();
+
+        // Notify MO about new application
+        Optional<Job> job = jobService.findById(jobId);
+        if (job.isPresent()) {
+            notificationService.createNotification(
+                job.get().getPostedBy(),
+                "New application received for '" + job.get().getTitle() + "'.",
+                Notification.Type.NEW_APPLICATION
+            );
+        }
+
         return app;
     }
 
@@ -68,6 +85,14 @@ public class ApplicationService {
             app.get().setStatus(Application.Status.ACCEPTED);
             app.get().setReviewedBy(reviewerId);
             save();
+            // Notify TA about status update
+            Optional<Job> job = jobService.findById(app.get().getJobId());
+            String jobTitle = job.isPresent() ? job.get().getTitle() : "Unknown Job";
+            notificationService.createNotification(
+                app.get().getApplicantId(),
+                "Your application for '" + jobTitle + "' has been accepted.",
+                Notification.Type.APPLICATION_STATUS_UPDATE
+            );
             return true;
         }
         return false;
@@ -80,6 +105,14 @@ public class ApplicationService {
             app.get().setReviewedBy(reviewerId);
             app.get().setReviewNote(note);
             save();
+            // Notify TA about status update
+            Optional<Job> job = jobService.findById(app.get().getJobId());
+            String jobTitle = job.isPresent() ? job.get().getTitle() : "Unknown Job";
+            notificationService.createNotification(
+                app.get().getApplicantId(),
+                "Your application for '" + jobTitle + "' has been rejected.",
+                Notification.Type.APPLICATION_STATUS_UPDATE
+            );
             return true;
         }
         return false;
@@ -90,6 +123,14 @@ public class ApplicationService {
         if (app.isPresent()) {
             app.get().setStatus(Application.Status.WITHDRAWN);
             save();
+            // Notify TA about withdrawal success
+            Optional<Job> job = jobService.findById(app.get().getJobId());
+            String jobTitle = job.isPresent() ? job.get().getTitle() : "Unknown Job";
+            notificationService.createNotification(
+                app.get().getApplicantId(),
+                "Your application for '" + jobTitle + "' has been successfully withdrawn.",
+                Notification.Type.WITHDRAWAL_SUCCESS
+            );
             return true;
         }
         return false;
