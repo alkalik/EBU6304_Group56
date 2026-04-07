@@ -2,16 +2,13 @@ package com.recruitment.service;
 
 import com.google.gson.reflect.TypeToken;
 import com.recruitment.model.Job;
+import com.recruitment.model.Notification;
 import com.recruitment.util.IDGenerator;
 import com.recruitment.util.JsonUtil;
 
 import java.lang.reflect.Type;
 import java.time.LocalDate;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class JobService {
@@ -19,9 +16,13 @@ public class JobService {
     private static final Type LIST_TYPE = new TypeToken<List<Job>>() {}.getType();
 
     private List<Job> jobs;
+    private NotificationService notificationService;
+    private ApplicationService applicationService;
 
     public JobService() {
         this.jobs = JsonUtil.loadList(FILE_NAME, LIST_TYPE);
+        this.notificationService = new NotificationService();
+        this.applicationService = new ApplicationService();
     }
 
     public void reload() {
@@ -191,5 +192,32 @@ public class JobService {
         Map<String, Integer> counts = new HashMap<>();
         jobs.forEach(j -> counts.put(j.getPostedBy(), counts.getOrDefault(j.getPostedBy(), 0) + 1));
         return counts;
+    }
+
+    // 职位过期检查 + 通知功能（你的核心代码，完整保留）
+    public void checkExpiredJobs() {
+        LocalDate today = LocalDate.now();
+        for (Job job : jobs) {
+            if (job.getStatus() == Job.Status.OPEN && job.getDeadline() != null) {
+                LocalDate deadline = LocalDate.parse(job.getDeadline());
+                if (deadline.isBefore(today) || deadline.isEqual(today)) {
+                    // Close the job
+                    job.setStatus(Job.Status.CLOSED);
+                    save();
+
+                    // Notify applicants about position expiration
+                    List<com.recruitment.model.Application> applications = applicationService.getApplicationsByJob(job.getId());
+                    for (com.recruitment.model.Application app : applications) {
+                        if (app.getStatus() == com.recruitment.model.Application.Status.PENDING) {
+                            notificationService.createNotification(
+                                app.getApplicantId(),
+                                "The position '" + job.getTitle() + "' has expired.",
+                                Notification.Type.POSITION_EXPIRATION
+                            );
+                        }
+                    }
+                }
+            }
+        }
     }
 }
