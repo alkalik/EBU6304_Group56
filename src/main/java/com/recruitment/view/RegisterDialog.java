@@ -73,7 +73,7 @@ public class RegisterDialog extends JDialog {
         gbc.gridx = 0; gbc.gridy = row; gbc.weightx = 0;
         mainPanel.add(new JLabel("Role:"), gbc);
         gbc.gridx = 1; gbc.weightx = 1.0;
-        roleCombo = new JComboBox<>(User.Role.values());
+        roleCombo = new JComboBox<>(new User.Role[]{User.Role.TA});
         mainPanel.add(roleCombo, gbc);
 
         row++;

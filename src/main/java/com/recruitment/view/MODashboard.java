@@ -1,5 +1,6 @@
 package com.recruitment.view;
 
+import com.recruitment.AppContext;
 import com.recruitment.model.Application;
 import com.recruitment.model.Job;
 import com.recruitment.model.User;
@@ -25,12 +26,12 @@ public class MODashboard extends JFrame {
 
     private JTabbedPane tabbedPane;
 
-    public MODashboard(User currentUser, LoginFrame loginFrame) {
+    public MODashboard(User currentUser, LoginFrame loginFrame, AppContext appContext) {
         this.currentUser = currentUser;
         this.loginFrame = loginFrame;
-        this.userService = new UserService();
-        this.jobService = new JobService();
-        this.applicationService = new ApplicationService();
+        this.userService = appContext.getUserService();
+        this.jobService = appContext.getJobService();
+        this.applicationService = appContext.getApplicationService();
         initUI();
     }
 
@@ -188,6 +189,10 @@ public class MODashboard extends JFrame {
 
         btnPanel.add(postBtn);
         btnPanel.add(clearBtn);
+        JButton logoutBtn = new JButton("Logout");
+        logoutBtn.setPreferredSize(new Dimension(100, 35));
+        logoutBtn.addActionListener(e -> logout());
+        btnPanel.add(logoutBtn);
         panel.add(btnPanel, BorderLayout.SOUTH);
 
         return panel;
@@ -251,6 +256,9 @@ public class MODashboard extends JFrame {
         btnPanel.add(refreshBtn);
         btnPanel.add(closeBtn);
         btnPanel.add(deleteBtn);
+        JButton logoutBtn = new JButton("Logout");
+        logoutBtn.addActionListener(e -> logout());
+        btnPanel.add(logoutBtn);
         panel.add(btnPanel, BorderLayout.SOUTH);
 
         loadMyJobs(model);
@@ -319,18 +327,18 @@ public class MODashboard extends JFrame {
                 return;
             }
             String appId = (String) model.getValueAt(selectedRow, 0);
-            applicationService.acceptApplication(appId, currentUser.getId());
+            boolean accepted = applicationService.acceptApplication(appId, currentUser.getId());
+            if (!accepted) {
+                JOptionPane.showMessageDialog(this,
+                        "Unable to accept this application. It may already be processed or the job is full.",
+                        "Accept Failed", JOptionPane.WARNING_MESSAGE);
+                return;
+            }
 
-            // Update filled positions
             String selected = (String) jobCombo.getSelectedItem();
             if (selected != null) {
                 String jobId = selected.split(" - ")[0];
-                Optional<Job> jobOpt = jobService.findById(jobId);
-                if (jobOpt.isPresent()) {
-                    Job job = jobOpt.get();
-                    job.setFilledPositions(job.getFilledPositions() + 1);
-                    jobService.updateJob(job);
-                }
+                jobService.reload();
                 loadApplicationsForJob(model, jobId);
             }
             JOptionPane.showMessageDialog(this, "Applicant accepted!");
@@ -368,6 +376,9 @@ public class MODashboard extends JFrame {
         btnPanel.add(refreshBtn);
         btnPanel.add(acceptBtn);
         btnPanel.add(rejectBtn);
+        JButton logoutBtn = new JButton("Logout");
+        logoutBtn.addActionListener(e -> logout());
+        btnPanel.add(logoutBtn);
         panel.add(btnPanel, BorderLayout.SOUTH);
 
         return panel;

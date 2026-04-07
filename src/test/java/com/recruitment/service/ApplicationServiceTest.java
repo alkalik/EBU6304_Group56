@@ -1,6 +1,7 @@
 package com.recruitment.service;
 
 import com.recruitment.model.Application;
+import com.recruitment.model.Job;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -11,16 +12,27 @@ import static org.junit.Assert.*;
 
 public class ApplicationServiceTest {
     private ApplicationService applicationService;
+    private JobService jobService;
 
     @Before
     public void setUp() {
         new File("data").mkdirs();
-        applicationService = new ApplicationService();
+        jobService = new JobService();
+        applicationService = new ApplicationService(jobService);
+    }
+
+    private Job createOpenJob(int maxPositions) {
+        Job job = new Job();
+        job.setTitle("Job-" + System.currentTimeMillis());
+        job.setPostedBy("MO-" + System.currentTimeMillis());
+        job.setJobType(Job.JobType.MODULE_TA);
+        job.setMaxPositions(maxPositions);
+        return jobService.createJob(job);
     }
 
     @Test
     public void testApply() {
-        String jobId = "JOB-" + System.currentTimeMillis();
+        String jobId = createOpenJob(2).getId();
         String applicantId = "USR-" + System.currentTimeMillis();
 
         Application app = applicationService.apply(jobId, applicantId, "I am interested.");
@@ -33,7 +45,7 @@ public class ApplicationServiceTest {
 
     @Test
     public void testDuplicateApplication() {
-        String jobId = "JOB-dup-" + System.currentTimeMillis();
+        String jobId = createOpenJob(2).getId();
         String applicantId = "USR-dup-" + System.currentTimeMillis();
 
         Application first = applicationService.apply(jobId, applicantId, "First");
@@ -45,7 +57,7 @@ public class ApplicationServiceTest {
 
     @Test
     public void testAcceptApplication() {
-        String jobId = "JOB-acc-" + System.currentTimeMillis();
+        String jobId = createOpenJob(2).getId();
         String applicantId = "USR-acc-" + System.currentTimeMillis();
 
         Application app = applicationService.apply(jobId, applicantId, "");
@@ -59,7 +71,7 @@ public class ApplicationServiceTest {
 
     @Test
     public void testRejectApplication() {
-        String jobId = "JOB-rej-" + System.currentTimeMillis();
+        String jobId = createOpenJob(2).getId();
         String applicantId = "USR-rej-" + System.currentTimeMillis();
 
         Application app = applicationService.apply(jobId, applicantId, "");
@@ -73,7 +85,7 @@ public class ApplicationServiceTest {
 
     @Test
     public void testWithdrawApplication() {
-        String jobId = "JOB-wd-" + System.currentTimeMillis();
+        String jobId = createOpenJob(2).getId();
         String applicantId = "USR-wd-" + System.currentTimeMillis();
 
         Application app = applicationService.apply(jobId, applicantId, "");
@@ -98,11 +110,57 @@ public class ApplicationServiceTest {
     @Test
     public void testGetAcceptedCount() {
         String applicantId = "USR-cnt-" + System.currentTimeMillis();
-        Application a1 = applicationService.apply("JOB-C1", applicantId, "");
-        Application a2 = applicationService.apply("JOB-C2", applicantId, "");
+        Application a1 = applicationService.apply(createOpenJob(1).getId(), applicantId, "");
+        Application a2 = applicationService.apply(createOpenJob(1).getId(), applicantId, "");
+        assertNotNull(a2);
 
         applicationService.acceptApplication(a1.getId(), "R1");
 
         assertEquals(1, applicationService.getAcceptedCountByApplicant(applicantId));
+    }
+
+    @Test
+    public void testAcceptApplicationFillsPositionAndMarksJobFilled() {
+        Job job = createOpenJob(1);
+        String applicantId = "USR-fill-" + System.currentTimeMillis();
+        Application app = applicationService.apply(job.getId(), applicantId, "");
+        assertNotNull(app);
+
+        assertTrue(applicationService.acceptApplication(app.getId(), "REVIEWER-001"));
+
+        Job updatedJob = jobService.findById(job.getId()).orElse(null);
+        assertNotNull(updatedJob);
+        assertEquals(1, updatedJob.getFilledPositions());
+        assertEquals(Job.Status.FILLED, updatedJob.getStatus());
+    }
+
+    @Test
+    public void testAcceptApplicationFailsWhenJobIsFull() {
+        Job job = createOpenJob(1);
+        Application first = applicationService.apply(job.getId(), "USR-full-1-" + System.currentTimeMillis(), "");
+        Application second = applicationService.apply(job.getId(), "USR-full-2-" + System.currentTimeMillis(), "");
+        assertNotNull(first);
+        assertNotNull(second);
+
+        assertTrue(applicationService.acceptApplication(first.getId(), "R1"));
+        assertFalse(applicationService.acceptApplication(second.getId(), "R2"));
+
+        Application secondUpdated = applicationService.findById(second.getId()).orElse(null);
+        assertNotNull(secondUpdated);
+        assertEquals(Application.Status.PENDING, secondUpdated.getStatus());
+    }
+
+    @Test
+    public void testRejectFailsAfterAccepted() {
+        Job job = createOpenJob(2);
+        Application app = applicationService.apply(job.getId(), "USR-status-" + System.currentTimeMillis(), "");
+        assertNotNull(app);
+        assertTrue(applicationService.acceptApplication(app.getId(), "R1"));
+
+        assertFalse(applicationService.rejectApplication(app.getId(), "R2", "late change"));
+
+        Application updated = applicationService.findById(app.getId()).orElse(null);
+        assertNotNull(updated);
+        assertEquals(Application.Status.ACCEPTED, updated.getStatus());
     }
 }

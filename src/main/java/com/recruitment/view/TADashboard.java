@@ -1,5 +1,6 @@
 package com.recruitment.view;
 
+import com.recruitment.AppContext;
 import com.recruitment.model.Application;
 import com.recruitment.model.Job;
 import com.recruitment.model.User;
@@ -26,12 +27,12 @@ public class TADashboard extends JFrame {
 
     private JTabbedPane tabbedPane;
 
-    public TADashboard(User currentUser, LoginFrame loginFrame) {
+    public TADashboard(User currentUser, LoginFrame loginFrame, AppContext appContext) {
         this.currentUser = currentUser;
         this.loginFrame = loginFrame;
-        this.userService = new UserService();
-        this.jobService = new JobService();
-        this.applicationService = new ApplicationService();
+        this.userService = appContext.getUserService();
+        this.jobService = appContext.getJobService();
+        this.applicationService = appContext.getApplicationService();
         initUI();
     }
 
@@ -159,6 +160,10 @@ public class TADashboard extends JFrame {
             setTitle("TA Dashboard - " + currentUser.getName());
         });
         btnPanel.add(saveBtn);
+        JButton logoutBtn = new JButton("Logout");
+        logoutBtn.setPreferredSize(new Dimension(120, 35));
+        logoutBtn.addActionListener(e -> logout());
+        btnPanel.add(logoutBtn);
         panel.add(btnPanel, BorderLayout.SOUTH);
 
         return panel;
@@ -211,6 +216,9 @@ public class TADashboard extends JFrame {
         btnPanel.add(refreshBtn);
         btnPanel.add(detailBtn);
         btnPanel.add(applyBtn);
+        JButton logoutBtn = new JButton("Logout");
+        logoutBtn.addActionListener(e -> logout());
+        btnPanel.add(logoutBtn);
         panel.add(btnPanel, BorderLayout.SOUTH);
 
         loadJobsTable(model);
@@ -330,6 +338,9 @@ public class TADashboard extends JFrame {
 
         btnPanel.add(refreshBtn);
         btnPanel.add(withdrawBtn);
+        JButton logoutBtn = new JButton("Logout");
+        logoutBtn.addActionListener(e -> logout());
+        btnPanel.add(logoutBtn);
         panel.add(btnPanel, BorderLayout.SOUTH);
 
         loadApplicationsTable(model);
