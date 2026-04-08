@@ -151,7 +151,7 @@ public class BackupService {
     }
 
     private static void unzipTo(Path zipFile, Path targetDir) throws IOException {
-        try (FileSystem fs = FileSystems.newFileSystem(zipFile, null)) {
+        try (FileSystem fs = FileSystems.newFileSystem(zipFile, java.util.Collections.emptyMap())) {
             for (Path root : fs.getRootDirectories()) {
                 Files.walkFileTree(root, new SimpleFileVisitor<Path>() {
                     @Override
