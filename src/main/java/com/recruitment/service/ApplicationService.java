@@ -26,6 +26,8 @@ public class ApplicationService {
     public ApplicationService(JobService jobService) {
         this.jobService = jobService;
         this.applications = JsonUtil.loadList(FILE_NAME, LIST_TYPE);
+        this.notificationService = new NotificationService();
+        this.jobService = new JobService();
     }
 
     public void reload() {
@@ -55,6 +57,17 @@ public class ApplicationService {
         app.setCoverLetter(coverLetter);
         applications.add(app);
         save();
+
+        // Notify MO about new application
+        Optional<Job> job = jobService.findById(jobId);
+        if (job.isPresent()) {
+            notificationService.createNotification(
+                job.get().getPostedBy(),
+                "New application received for '" + job.get().getTitle() + "'.",
+                Notification.Type.NEW_APPLICATION
+            );
+        }
+
         return app;
     }
 

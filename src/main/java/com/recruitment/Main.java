@@ -4,6 +4,8 @@ import com.formdev.flatlaf.FlatLightLaf;
 import com.recruitment.view.LoginFrame;
 
 import javax.swing.*;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class Main {
     public static void main(String[] args) {
@@ -25,6 +27,16 @@ public class Main {
             AppContext appContext = new AppContext();
             LoginFrame loginFrame = new LoginFrame(appContext);
             loginFrame.setVisible(true);
+
+            // Check for expired jobs daily
+            JobService jobService = new JobService();
+            Timer timer = new Timer();
+            timer.scheduleAtFixedRate(new TimerTask() {
+                @Override
+                public void run() {
+                    jobService.checkExpiredJobs();
+                }
+            }, 0, 24 * 60 * 60 * 1000); // Check every 24 hours
         });
     }
 }
