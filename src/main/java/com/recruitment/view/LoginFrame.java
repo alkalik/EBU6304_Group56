@@ -1,5 +1,6 @@
 package com.recruitment.view;
 
+import com.recruitment.AppContext;
 import com.recruitment.model.User;
 import com.recruitment.service.UserService;
 
@@ -7,12 +8,14 @@ import javax.swing.*;
 import java.awt.*;
 
 public class LoginFrame extends JFrame {
+    private final AppContext appContext;
     private final UserService userService;
     private JTextField usernameField;
     private JPasswordField passwordField;
 
-    public LoginFrame(UserService userService) {
-        this.userService = userService;
+    public LoginFrame(AppContext appContext) {
+        this.appContext = appContext;
+        this.userService = appContext.getUserService();
         initUI();
     }
 
@@ -98,13 +101,13 @@ public class LoginFrame extends JFrame {
         this.setVisible(false);
         switch (user.getRole()) {
             case TA:
-                new TADashboard(user, this).setVisible(true);
+                new TADashboard(user, this, appContext).setVisible(true);
                 break;
             case MO:
-                new MODashboard(user, this).setVisible(true);
+                new MODashboard(user, this, appContext).setVisible(true);
                 break;
             case ADMIN:
-                new AdminDashboard(user, this).setVisible(true);
+                new AdminDashboard(user, this, appContext).setVisible(true);
                 break;
         }
     }

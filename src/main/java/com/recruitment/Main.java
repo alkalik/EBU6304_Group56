@@ -1,8 +1,6 @@
 package com.recruitment;
 
 import com.formdev.flatlaf.FlatLightLaf;
-import com.recruitment.service.JobService;
-import com.recruitment.service.UserService;
 import com.recruitment.view.LoginFrame;
 
 import javax.swing.*;
@@ -32,8 +30,8 @@ public class Main {
         }
 
         SwingUtilities.invokeLater(() -> {
-            UserService userService = new UserService();
-            LoginFrame loginFrame = new LoginFrame(userService);
+            AppContext appContext = new AppContext();
+            LoginFrame loginFrame = new LoginFrame(appContext);
             loginFrame.setVisible(true);
 
             // Check for expired jobs daily
