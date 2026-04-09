@@ -19,47 +19,49 @@ public class LoginFrame extends JFrame {
     private void initUI() {
         setTitle("TA Recruitment System - Login");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setSize(450, 350);
+        setSize(520, 420);
         setLocationRelativeTo(null);
         setResizable(false);
 
-        JPanel mainPanel = new JPanel(new BorderLayout(10, 10));
-        mainPanel.setBorder(BorderFactory.createEmptyBorder(20, 30, 20, 30));
+        JPanel mainPanel = UIHelper.createPagePanel();
+        mainPanel.add(UIHelper.createHeaderPanel(
+                "TA Recruitment System",
+                "Sign in to manage recruitment tasks, applications, and job postings."
+        ), BorderLayout.NORTH);
 
-        // Title
-        JLabel titleLabel = new JLabel("TA Recruitment System", SwingConstants.CENTER);
-        titleLabel.setFont(new Font("SansSerif", Font.BOLD, 22));
-        titleLabel.setBorder(BorderFactory.createEmptyBorder(10, 0, 20, 0));
-        mainPanel.add(titleLabel, BorderLayout.NORTH);
-
-        // Form panel
         JPanel formPanel = new JPanel(new GridBagLayout());
+        formPanel.setOpaque(false);
         GridBagConstraints gbc = new GridBagConstraints();
-        gbc.insets = new Insets(8, 5, 8, 5);
+        gbc.insets = new Insets(10, 8, 10, 8);
         gbc.fill = GridBagConstraints.HORIZONTAL;
 
         gbc.gridx = 0; gbc.gridy = 0;
         formPanel.add(new JLabel("Username:"), gbc);
         gbc.gridx = 1; gbc.weightx = 1.0;
         usernameField = new JTextField(20);
+        UIHelper.styleTextComponent(usernameField);
         formPanel.add(usernameField, gbc);
 
         gbc.gridx = 0; gbc.gridy = 1; gbc.weightx = 0;
         formPanel.add(new JLabel("Password:"), gbc);
         gbc.gridx = 1; gbc.weightx = 1.0;
         passwordField = new JPasswordField(20);
+        UIHelper.styleTextComponent(passwordField);
         formPanel.add(passwordField, gbc);
 
-        mainPanel.add(formPanel, BorderLayout.CENTER);
+        JPanel formCard = UIHelper.wrapInCard(formPanel);
+        mainPanel.add(formCard, BorderLayout.CENTER);
 
-        // Button panel
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 15, 10));
+        buttonPanel.setOpaque(false);
         JButton loginBtn = new JButton("Login");
-        loginBtn.setPreferredSize(new Dimension(100, 35));
+        loginBtn.setPreferredSize(new Dimension(120, 38));
+        UIHelper.stylePrimaryButton(loginBtn);
         loginBtn.addActionListener(e -> handleLogin());
 
         JButton registerBtn = new JButton("Register");
-        registerBtn.setPreferredSize(new Dimension(100, 35));
+        registerBtn.setPreferredSize(new Dimension(120, 38));
+        UIHelper.styleSecondaryButton(registerBtn);
         registerBtn.addActionListener(e -> openRegister());
 
         buttonPanel.add(loginBtn);

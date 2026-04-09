@@ -34,6 +34,7 @@ public class AdminDashboard extends JFrame {
         setTitle("Admin Dashboard - " + currentUser.getName());
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setSize(1000, 700);
+        setMinimumSize(new Dimension(980, 660));
         setLocationRelativeTo(null);
 
         JMenuBar menuBar = new JMenuBar();
@@ -68,22 +69,26 @@ public class AdminDashboard extends JFrame {
         setJMenuBar(menuBar);
 
         JTabbedPane tabbedPane = new JTabbedPane();
+        tabbedPane.setFont(tabbedPane.getFont().deriveFont(Font.BOLD, 13f));
         tabbedPane.addTab("TA Workload Overview", createWorkloadPanel());
         tabbedPane.addTab("All Users", createUsersPanel());
         tabbedPane.addTab("All Jobs", createAllJobsPanel());
         tabbedPane.addTab("All Applications", createAllApplicationsPanel());
 
-        setContentPane(tabbedPane);
+        JPanel rootPanel = UIHelper.createPagePanel();
+        rootPanel.add(UIHelper.createHeaderPanel(
+                "Administrator Workspace",
+                "Monitor workload, manage users, and review all recruitment activity in one place."
+        ), BorderLayout.NORTH);
+        rootPanel.add(tabbedPane, BorderLayout.CENTER);
+        setContentPane(rootPanel);
     }
 
     private JPanel createWorkloadPanel() {
         JPanel panel = new JPanel(new BorderLayout(10, 10));
         panel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
-        JLabel header = new JLabel("TA Workload Overview", SwingConstants.CENTER);
-        header.setFont(new Font("SansSerif", Font.BOLD, 16));
-        header.setBorder(BorderFactory.createEmptyBorder(5, 0, 10, 0));
-        panel.add(header, BorderLayout.NORTH);
+        panel.add(UIHelper.createSectionHeader("TA Workload Overview", "View workload distribution across teaching assistants."), BorderLayout.NORTH);
 
         String[] columns = {"TA ID", "Name", "Email", "Department", "Skills", "Accepted Jobs", "Pending Apps"};
         DefaultTableModel model = new DefaultTableModel(columns, 0) {
@@ -92,10 +97,13 @@ public class AdminDashboard extends JFrame {
         };
         JTable table = new JTable(model);
         table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        panel.add(new JScrollPane(table), BorderLayout.CENTER);
+        UIHelper.styleTable(table);
+        panel.add(UIHelper.createTableScrollPane(table), BorderLayout.CENTER);
 
         JPanel btnPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 5));
+        btnPanel.setOpaque(false);
         JButton refreshBtn = new JButton("Refresh");
+        UIHelper.styleSecondaryButton(refreshBtn);
         refreshBtn.addActionListener(e -> {
             userService.reload();
             applicationService.reload();
@@ -104,6 +112,7 @@ public class AdminDashboard extends JFrame {
         btnPanel.add(refreshBtn);
 
         JButton detailBtn = new JButton("View TA Details");
+        UIHelper.stylePrimaryButton(detailBtn);
         detailBtn.addActionListener(e -> {
             int selectedRow = table.getSelectedRow();
             if (selectedRow < 0) {
@@ -172,6 +181,7 @@ public class AdminDashboard extends JFrame {
     private JPanel createUsersPanel() {
         JPanel panel = new JPanel(new BorderLayout(10, 10));
         panel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        panel.add(UIHelper.createSectionHeader("All Users", "Manage registered accounts and inspect role assignments."), BorderLayout.NORTH);
 
         String[] columns = {"ID", "Username", "Name", "Role", "Email", "Department"};
         DefaultTableModel model = new DefaultTableModel(columns, 0) {
@@ -180,16 +190,20 @@ public class AdminDashboard extends JFrame {
         };
         JTable table = new JTable(model);
         table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        panel.add(new JScrollPane(table), BorderLayout.CENTER);
+        UIHelper.styleTable(table);
+        panel.add(UIHelper.createTableScrollPane(table), BorderLayout.CENTER);
 
         JPanel btnPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 5));
+        btnPanel.setOpaque(false);
         JButton refreshBtn = new JButton("Refresh");
+        UIHelper.styleSecondaryButton(refreshBtn);
         refreshBtn.addActionListener(e -> {
             userService.reload();
             loadUsers(model);
         });
 
         JButton deleteBtn = new JButton("Delete User");
+        UIHelper.stylePrimaryButton(deleteBtn);
         deleteBtn.addActionListener(e -> {
             int selectedRow = table.getSelectedRow();
             if (selectedRow < 0) {
@@ -232,6 +246,7 @@ public class AdminDashboard extends JFrame {
     private JPanel createAllJobsPanel() {
         JPanel panel = new JPanel(new BorderLayout(10, 10));
         panel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        panel.add(UIHelper.createSectionHeader("All Jobs", "Review every posted vacancy across the system."), BorderLayout.NORTH);
 
         String[] columns = {"ID", "Title", "Module", "Type", "Posted By", "Positions", "Filled", "Status"};
         DefaultTableModel model = new DefaultTableModel(columns, 0) {
@@ -240,10 +255,13 @@ public class AdminDashboard extends JFrame {
         };
         JTable table = new JTable(model);
         table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        panel.add(new JScrollPane(table), BorderLayout.CENTER);
+        UIHelper.styleTable(table);
+        panel.add(UIHelper.createTableScrollPane(table), BorderLayout.CENTER);
 
         JPanel btnPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 5));
+        btnPanel.setOpaque(false);
         JButton refreshBtn = new JButton("Refresh");
+        UIHelper.styleSecondaryButton(refreshBtn);
         refreshBtn.addActionListener(e -> {
             jobService.reload();
             userService.reload();
@@ -272,6 +290,7 @@ public class AdminDashboard extends JFrame {
     private JPanel createAllApplicationsPanel() {
         JPanel panel = new JPanel(new BorderLayout(10, 10));
         panel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        panel.add(UIHelper.createSectionHeader("All Applications", "Track system-wide application activity and review status."), BorderLayout.NORTH);
 
         String[] columns = {"App ID", "Job Title", "Applicant", "Apply Date", "Status", "Reviewed By"};
         DefaultTableModel model = new DefaultTableModel(columns, 0) {
@@ -280,10 +299,13 @@ public class AdminDashboard extends JFrame {
         };
         JTable table = new JTable(model);
         table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        panel.add(new JScrollPane(table), BorderLayout.CENTER);
+        UIHelper.styleTable(table);
+        panel.add(UIHelper.createTableScrollPane(table), BorderLayout.CENTER);
 
         JPanel btnPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 5));
+        btnPanel.setOpaque(false);
         JButton refreshBtn = new JButton("Refresh");
+        UIHelper.styleSecondaryButton(refreshBtn);
         refreshBtn.addActionListener(e -> {
             applicationService.reload();
             jobService.reload();

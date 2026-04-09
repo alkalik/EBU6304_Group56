@@ -41,7 +41,8 @@ public class TADashboard extends JFrame {
     private void initUI() {
         setTitle("TA Dashboard - " + currentUser.getName());
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setSize(900, 600);
+        setSize(1020, 680);
+        setMinimumSize(new Dimension(960, 640));
         setLocationRelativeTo(null);
 
         // Menu bar
@@ -90,21 +91,28 @@ public class TADashboard extends JFrame {
 
         setJMenuBar(menuBar);
 
-        setJMenuBar(menuBar);
-
         tabbedPane = new JTabbedPane();
+        tabbedPane.setFont(tabbedPane.getFont().deriveFont(Font.BOLD, 13f));
         tabbedPane.addTab("My Profile", createProfilePanel());
         tabbedPane.addTab("Browse Jobs", createBrowseJobsPanel());
         tabbedPane.addTab("My Applications", createMyApplicationsPanel());
 
-        setContentPane(tabbedPane);
+        JPanel rootPanel = UIHelper.createPagePanel();
+        rootPanel.add(UIHelper.createHeaderPanel(
+                "Teaching Assistant Workspace",
+                "Manage your profile, explore open jobs, and track applications in one place."
+        ), BorderLayout.NORTH);
+        rootPanel.add(tabbedPane, BorderLayout.CENTER);
+        setContentPane(rootPanel);
     }
 
     private JPanel createProfilePanel() {
         JPanel panel = new JPanel(new BorderLayout(10, 10));
         panel.setBorder(BorderFactory.createEmptyBorder(15, 20, 15, 20));
+        panel.add(UIHelper.createSectionHeader("My Profile", "Keep your contact details, skills, and CV up to date."), BorderLayout.NORTH);
 
         JPanel formPanel = new JPanel(new GridBagLayout());
+        formPanel.setOpaque(false);
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(6, 5, 6, 5);
         gbc.fill = GridBagConstraints.HORIZONTAL;
@@ -118,6 +126,11 @@ public class TADashboard extends JFrame {
         JTextField deptField = new JTextField(
                 currentUser.getDepartment() != null ? currentUser.getDepartment() : "", 25);
         JLabel cvLabel = new JLabel(currentUser.getCvPath() != null ? currentUser.getCvPath() : "No CV uploaded");
+        UIHelper.styleTextComponent(nameField);
+        UIHelper.styleTextComponent(emailField);
+        UIHelper.styleTextComponent(phoneField);
+        UIHelper.styleTextComponent(skillsField);
+        UIHelper.styleTextComponent(deptField);
 
         int row = 0;
         addFormRow(formPanel, gbc, row++, "Name:", nameField);
@@ -130,8 +143,10 @@ public class TADashboard extends JFrame {
         formPanel.add(new JLabel("CV:"), gbc);
         gbc.gridx = 1; gbc.weightx = 1.0;
         JPanel cvPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 5, 0));
+        cvPanel.setOpaque(false);
         cvPanel.add(cvLabel);
         JButton uploadBtn = new JButton("Upload CV");
+        UIHelper.styleSecondaryButton(uploadBtn);
         uploadBtn.addActionListener(e -> {
             JFileChooser fc = new JFileChooser();
             if (fc.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
@@ -155,11 +170,13 @@ public class TADashboard extends JFrame {
         cvPanel.add(uploadBtn);
         formPanel.add(cvPanel, gbc);
 
-        panel.add(formPanel, BorderLayout.CENTER);
+        panel.add(UIHelper.wrapInCard(formPanel), BorderLayout.CENTER);
 
         JPanel btnPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        btnPanel.setOpaque(false);
         JButton saveBtn = new JButton("Save Profile");
         saveBtn.setPreferredSize(new Dimension(120, 35));
+        UIHelper.stylePrimaryButton(saveBtn);
         saveBtn.addActionListener(e -> {
             currentUser.setName(nameField.getText().trim());
             currentUser.setEmail(emailField.getText().trim());
@@ -192,14 +209,19 @@ public class TADashboard extends JFrame {
         };
         JTable table = new JTable(model);
         table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        UIHelper.styleTable(table);
 
         JPanel searchPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 8, 0));
+        searchPanel.setOpaque(false);
         JTextField keywordField = new JTextField(22);
+        UIHelper.styleTextComponent(keywordField);
         keywordField.setToolTipText("Search by title, module, description, or required skill");
         JLabel resultLabel = new JLabel();
         JButton searchBtn = new JButton("Search");
+        UIHelper.stylePrimaryButton(searchBtn);
         searchBtn.addActionListener(e -> loadJobsTable(model, keywordField.getText(), resultLabel));
         JButton clearBtn = new JButton("Clear");
+        UIHelper.styleSecondaryButton(clearBtn);
         clearBtn.addActionListener(e -> {
             keywordField.setText("");
             loadJobsTable(model, "", resultLabel);
@@ -210,19 +232,26 @@ public class TADashboard extends JFrame {
         searchPanel.add(searchBtn);
         searchPanel.add(clearBtn);
         searchPanel.add(resultLabel);
-        panel.add(searchPanel, BorderLayout.NORTH);
+        JPanel northPanel = new JPanel(new BorderLayout(8, 8));
+        northPanel.setOpaque(false);
+        northPanel.add(UIHelper.createSectionHeader("Browse Jobs", "Search current openings and review the details before applying."), BorderLayout.NORTH);
+        northPanel.add(searchPanel, BorderLayout.CENTER);
+        panel.add(northPanel, BorderLayout.NORTH);
 
-        JScrollPane scrollPane = new JScrollPane(table);
+        JScrollPane scrollPane = UIHelper.createTableScrollPane(table);
         panel.add(scrollPane, BorderLayout.CENTER);
 
         JPanel btnPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 5));
+        btnPanel.setOpaque(false);
         JButton refreshBtn = new JButton("Refresh");
+        UIHelper.styleSecondaryButton(refreshBtn);
         refreshBtn.addActionListener(e -> {
             jobService.reload();
             loadJobsTable(model, keywordField.getText(), resultLabel);
         });
 
         JButton applyBtn = new JButton("Apply for Selected Job");
+        UIHelper.stylePrimaryButton(applyBtn);
         applyBtn.addActionListener(e -> {
             int selectedRow = table.getSelectedRow();
             if (selectedRow < 0) {
@@ -234,6 +263,7 @@ public class TADashboard extends JFrame {
         });
 
         JButton detailBtn = new JButton("View Details");
+        UIHelper.styleSecondaryButton(detailBtn);
         detailBtn.addActionListener(e -> {
             int selectedRow = table.getSelectedRow();
             if (selectedRow < 0) {
@@ -339,6 +369,7 @@ public class TADashboard extends JFrame {
     private JPanel createMyApplicationsPanel() {
         JPanel panel = new JPanel(new BorderLayout(10, 10));
         panel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        panel.add(UIHelper.createSectionHeader("My Applications", "Track the progress of every application you have submitted."), BorderLayout.NORTH);
 
         String[] columns = {"App ID", "Job Title", "Apply Date", "Status", "Review Note"};
         DefaultTableModel model = new DefaultTableModel(columns, 0) {
@@ -347,12 +378,15 @@ public class TADashboard extends JFrame {
         };
         JTable table = new JTable(model);
         table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        UIHelper.styleTable(table);
 
-        JScrollPane scrollPane = new JScrollPane(table);
+        JScrollPane scrollPane = UIHelper.createTableScrollPane(table);
         panel.add(scrollPane, BorderLayout.CENTER);
 
         JPanel btnPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 5));
+        btnPanel.setOpaque(false);
         JButton refreshBtn = new JButton("Refresh");
+        UIHelper.styleSecondaryButton(refreshBtn);
         refreshBtn.addActionListener(e -> {
             applicationService.reload();
             jobService.reload();
@@ -360,6 +394,7 @@ public class TADashboard extends JFrame {
         });
 
         JButton withdrawBtn = new JButton("Withdraw Application");
+        UIHelper.stylePrimaryButton(withdrawBtn);
         withdrawBtn.addActionListener(e -> {
             int selectedRow = table.getSelectedRow();
             if (selectedRow < 0) {
