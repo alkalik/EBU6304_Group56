@@ -61,6 +61,18 @@ public class JobService {
         return jobs.stream().filter(j -> j.getStatus() == Job.Status.OPEN).collect(Collectors.toList());
     }
 
+    public List<Job> searchOpenJobs(String keyword) {
+        String lowerKeyword = keyword == null ? "" : keyword.trim().toLowerCase();
+        return getOpenJobs().stream()
+                .filter(j -> lowerKeyword.isEmpty()
+                        || (j.getTitle() != null && j.getTitle().toLowerCase().contains(lowerKeyword))
+                        || (j.getDescription() != null && j.getDescription().toLowerCase().contains(lowerKeyword))
+                        || (j.getModuleName() != null && j.getModuleName().toLowerCase().contains(lowerKeyword))
+                        || (j.getRequiredSkills() != null && j.getRequiredSkills().stream()
+                        .anyMatch(s -> s != null && s.toLowerCase().contains(lowerKeyword))))
+                .collect(Collectors.toList());
+    }
+
     public List<Job> getJobsByMO(String moId) {
         return jobs.stream().filter(j -> j.getPostedBy().equals(moId)).collect(Collectors.toList());
     }
