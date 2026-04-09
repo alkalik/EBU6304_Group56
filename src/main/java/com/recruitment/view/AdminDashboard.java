@@ -1,5 +1,30 @@
 package com.recruitment.view;
 
+import java.awt.BorderLayout;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.Font;
+import java.util.List;
+import java.util.Optional;
+
+import javax.swing.BorderFactory;
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTabbedPane;
+import javax.swing.JTable;
+import javax.swing.JTextArea;
+import javax.swing.ListSelectionModel;
+import javax.swing.SwingConstants;
+import javax.swing.table.DefaultTableModel;
+
+import com.recruitment.AppContext;
 import com.recruitment.model.Application;
 import com.recruitment.model.Job;
 import com.recruitment.model.User;
@@ -8,12 +33,6 @@ import com.recruitment.service.BackupService;
 import com.recruitment.service.JobService;
 import com.recruitment.service.UserService;
 
-import javax.swing.*;
-import javax.swing.table.DefaultTableModel;
-import java.awt.*;
-import java.util.List;
-import java.util.Optional;
-
 public class AdminDashboard extends JFrame {
     private final User currentUser;
     private final LoginFrame loginFrame;
@@ -21,12 +40,12 @@ public class AdminDashboard extends JFrame {
     private final JobService jobService;
     private final ApplicationService applicationService;
 
-    public AdminDashboard(User currentUser, LoginFrame loginFrame) {
+    public AdminDashboard(User currentUser, LoginFrame loginFrame, AppContext appContext) {
         this.currentUser = currentUser;
         this.loginFrame = loginFrame;
-        this.userService = new UserService();
-        this.jobService = new JobService();
-        this.applicationService = new ApplicationService();
+        this.userService = appContext.getUserService();
+        this.jobService = appContext.getJobService();
+        this.applicationService = appContext.getApplicationService();
         initUI();
     }
 
@@ -114,6 +133,9 @@ public class AdminDashboard extends JFrame {
             showTADetails(taId);
         });
         btnPanel.add(detailBtn);
+        JButton logoutBtn = new JButton("Logout");
+        logoutBtn.addActionListener(e -> logout());
+        btnPanel.add(logoutBtn);
         panel.add(btnPanel, BorderLayout.SOUTH);
 
         loadWorkload(model);
@@ -212,6 +234,9 @@ public class AdminDashboard extends JFrame {
 
         btnPanel.add(refreshBtn);
         btnPanel.add(deleteBtn);
+        JButton logoutBtn = new JButton("Logout");
+        logoutBtn.addActionListener(e -> logout());
+        btnPanel.add(logoutBtn);
         panel.add(btnPanel, BorderLayout.SOUTH);
 
         loadUsers(model);
@@ -250,6 +275,9 @@ public class AdminDashboard extends JFrame {
             loadAllJobs(model);
         });
         btnPanel.add(refreshBtn);
+        JButton logoutBtn = new JButton("Logout");
+        logoutBtn.addActionListener(e -> logout());
+        btnPanel.add(logoutBtn);
         panel.add(btnPanel, BorderLayout.SOUTH);
 
         loadAllJobs(model);
@@ -291,6 +319,9 @@ public class AdminDashboard extends JFrame {
             loadAllApplications(model);
         });
         btnPanel.add(refreshBtn);
+        JButton logoutBtn = new JButton("Logout");
+        logoutBtn.addActionListener(e -> logout());
+        btnPanel.add(logoutBtn);
         panel.add(btnPanel, BorderLayout.SOUTH);
 
         loadAllApplications(model);
