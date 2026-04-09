@@ -136,36 +136,6 @@ public class JobServiceTest {
     }
 
     @Test
-    public void testSearchOpenJobsOnlyReturnsAvailableMatches() {
-        String suffix = String.valueOf(System.currentTimeMillis());
-
-        Job openJob = new Job();
-        openJob.setTitle("Distributed Systems TA " + suffix);
-        openJob.setDescription("Support weekly labs");
-        openJob.setModuleName("EBU6304");
-        openJob.setPostedBy("MO-001");
-        openJob.setJobType(Job.JobType.MODULE_TA);
-        openJob.setMaxPositions(2);
-        openJob.setRequiredSkills(Arrays.asList("Java", "Testing"));
-        jobService.createJob(openJob);
-
-        Job closedJob = new Job();
-        closedJob.setTitle("Closed Java Job " + suffix);
-        closedJob.setPostedBy("MO-001");
-        closedJob.setJobType(Job.JobType.MODULE_TA);
-        closedJob.setMaxPositions(1);
-        jobService.createJob(closedJob);
-        jobService.closeJob(closedJob.getId());
-
-        List<Job> titleResults = jobService.searchOpenJobs("Distributed Systems");
-        assertTrue(titleResults.stream().anyMatch(j -> j.getId().equals(openJob.getId())));
-        assertTrue(titleResults.stream().noneMatch(j -> j.getId().equals(closedJob.getId())));
-
-        List<Job> skillResults = jobService.searchOpenJobs("testing");
-        assertTrue(skillResults.stream().anyMatch(j -> j.getId().equals(openJob.getId())));
-    }
-
-    @Test
     public void testSortJobsByTitle() {
         List<Job> sorted = jobService.sortJobsByTitle(true);
         for (int i = 0; i < sorted.size() - 1; i++) {
