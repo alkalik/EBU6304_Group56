@@ -12,9 +12,15 @@ public class Main {
         // Apply FlatLaf modern UI theme and rounded corner style
         try {
             FlatLightLaf.setup();
-            UIManager.put("Button.arc", 8);
-            UIManager.put("Component.arc", 8);
-            UIManager.put("TextComponent.arc", 5);
+            UIManager.put("Button.arc", 12);
+            UIManager.put("Component.arc", 12);
+            UIManager.put("TextComponent.arc", 10);
+            UIManager.put("TabbedPane.tabHeight", 36);
+            UIManager.put("TabbedPane.selectedBackground", UIManager.getColor("Panel.background"));
+            UIManager.put("Table.showHorizontalLines", false);
+            UIManager.put("Table.showVerticalLines", false);
+            UIManager.put("ScrollBar.width", 12);
+            UIManager.put("Focus.width", 1);
         } catch (Exception e) {
             try {
                 UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
