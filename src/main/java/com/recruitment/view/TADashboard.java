@@ -193,6 +193,25 @@ public class TADashboard extends JFrame {
         JTable table = new JTable(model);
         table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 
+        JPanel searchPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 8, 0));
+        JTextField keywordField = new JTextField(22);
+        keywordField.setToolTipText("Search by title, module, description, or required skill");
+        JLabel resultLabel = new JLabel();
+        JButton searchBtn = new JButton("Search");
+        searchBtn.addActionListener(e -> loadJobsTable(model, keywordField.getText(), resultLabel));
+        JButton clearBtn = new JButton("Clear");
+        clearBtn.addActionListener(e -> {
+            keywordField.setText("");
+            loadJobsTable(model, "", resultLabel);
+        });
+        keywordField.addActionListener(e -> loadJobsTable(model, keywordField.getText(), resultLabel));
+        searchPanel.add(new JLabel("Keyword:"));
+        searchPanel.add(keywordField);
+        searchPanel.add(searchBtn);
+        searchPanel.add(clearBtn);
+        searchPanel.add(resultLabel);
+        panel.add(searchPanel, BorderLayout.NORTH);
+
         JScrollPane scrollPane = new JScrollPane(table);
         panel.add(scrollPane, BorderLayout.CENTER);
 
@@ -200,7 +219,7 @@ public class TADashboard extends JFrame {
         JButton refreshBtn = new JButton("Refresh");
         refreshBtn.addActionListener(e -> {
             jobService.reload();
-            loadJobsTable(model);
+            loadJobsTable(model, keywordField.getText(), resultLabel);
         });
 
         JButton applyBtn = new JButton("Apply for Selected Job");
@@ -230,19 +249,31 @@ public class TADashboard extends JFrame {
         btnPanel.add(applyBtn);
         panel.add(btnPanel, BorderLayout.SOUTH);
 
-        loadJobsTable(model);
+        loadJobsTable(model, "", resultLabel);
         return panel;
     }
 
     private void loadJobsTable(DefaultTableModel model) {
+        loadJobsTable(model, "", null);
+    }
+
+    private void loadJobsTable(DefaultTableModel model, String keyword, JLabel resultLabel) {
         model.setRowCount(0);
-        List<Job> jobs = jobService.getOpenJobs();
+        String searchText = keyword != null ? keyword.trim() : "";
+        List<Job> jobs = searchText.isEmpty()
+                ? jobService.getOpenJobs()
+                : jobService.searchOpenJobs(searchText);
         for (Job job : jobs) {
             model.addRow(new Object[]{
                     job.getId(), job.getTitle(), job.getModuleName(),
                     job.getJobType(), job.getMaxPositions() - job.getFilledPositions(),
                     job.getDeadline(), job.getStatus()
             });
+        }
+        if (resultLabel != null) {
+            resultLabel.setText(searchText.isEmpty()
+                    ? "Open jobs: " + jobs.size()
+                    : "Results: " + jobs.size());
         }
     }
 
