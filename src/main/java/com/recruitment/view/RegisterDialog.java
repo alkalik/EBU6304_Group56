@@ -22,90 +22,76 @@ public class RegisterDialog extends JDialog {
     }
 
     private void initUI() {
-        setSize(520, 500);
+        setSize(420, 400);
         setLocationRelativeTo(getParent());
         setResizable(false);
 
-        JPanel mainPanel = UIHelper.createPagePanel();
-        mainPanel.add(UIHelper.createHeaderPanel(
-                "Create New Account",
-                "Register as a TA, Module Organiser, or Admin to access the recruitment system."
-        ), BorderLayout.NORTH);
-
-        JPanel formPanel = new JPanel(new GridBagLayout());
-        formPanel.setOpaque(false);
+        JPanel mainPanel = new JPanel(new GridBagLayout());
+        mainPanel.setBorder(BorderFactory.createEmptyBorder(15, 20, 15, 20));
         GridBagConstraints gbc = new GridBagConstraints();
-        gbc.insets = new Insets(8, 6, 8, 6);
+        gbc.insets = new Insets(6, 5, 6, 5);
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.anchor = GridBagConstraints.WEST;
 
         int row = 0;
 
         gbc.gridx = 0; gbc.gridy = row;
-        formPanel.add(new JLabel("Username:"), gbc);
+        mainPanel.add(new JLabel("Username:"), gbc);
         gbc.gridx = 1; gbc.weightx = 1.0;
         usernameField = new JTextField(18);
-        UIHelper.styleTextComponent(usernameField);
-        formPanel.add(usernameField, gbc);
+        mainPanel.add(usernameField, gbc);
 
         row++;
         gbc.gridx = 0; gbc.gridy = row; gbc.weightx = 0;
-        formPanel.add(new JLabel("Password:"), gbc);
+        mainPanel.add(new JLabel("Password:"), gbc);
         gbc.gridx = 1; gbc.weightx = 1.0;
         passwordField = new JPasswordField(18);
-        UIHelper.styleTextComponent(passwordField);
-        formPanel.add(passwordField, gbc);
+        mainPanel.add(passwordField, gbc);
 
         row++;
         gbc.gridx = 0; gbc.gridy = row; gbc.weightx = 0;
-        formPanel.add(new JLabel("Confirm Password:"), gbc);
+        mainPanel.add(new JLabel("Confirm Password:"), gbc);
         gbc.gridx = 1; gbc.weightx = 1.0;
         confirmField = new JPasswordField(18);
-        UIHelper.styleTextComponent(confirmField);
-        formPanel.add(confirmField, gbc);
+        mainPanel.add(confirmField, gbc);
 
         row++;
         gbc.gridx = 0; gbc.gridy = row; gbc.weightx = 0;
-        formPanel.add(new JLabel("Full Name:"), gbc);
+        mainPanel.add(new JLabel("Full Name:"), gbc);
         gbc.gridx = 1; gbc.weightx = 1.0;
         nameField = new JTextField(18);
-        UIHelper.styleTextComponent(nameField);
-        formPanel.add(nameField, gbc);
+        mainPanel.add(nameField, gbc);
 
         row++;
         gbc.gridx = 0; gbc.gridy = row; gbc.weightx = 0;
-        formPanel.add(new JLabel("Email:"), gbc);
+        mainPanel.add(new JLabel("Email:"), gbc);
         gbc.gridx = 1; gbc.weightx = 1.0;
         emailField = new JTextField(18);
-        UIHelper.styleTextComponent(emailField);
-        formPanel.add(emailField, gbc);
+        mainPanel.add(emailField, gbc);
 
         row++;
         gbc.gridx = 0; gbc.gridy = row; gbc.weightx = 0;
-        formPanel.add(new JLabel("Role:"), gbc);
+        mainPanel.add(new JLabel("Role:"), gbc);
         gbc.gridx = 1; gbc.weightx = 1.0;
-        roleCombo = new JComboBox<>(User.Role.values());
-        UIHelper.styleTextComponent(roleCombo);
-        formPanel.add(roleCombo, gbc);
+        // 注册时只允许选择 TA / MO
+        roleCombo = new JComboBox<>(new User.Role[]{User.Role.TA, User.Role.MO});
+        mainPanel.add(roleCombo, gbc);
 
-        mainPanel.add(UIHelper.wrapInCard(formPanel), BorderLayout.CENTER);
-
+        row++;
+        gbc.gridx = 0; gbc.gridy = row; gbc.gridwidth = 2;
+        gbc.anchor = GridBagConstraints.CENTER;
         JPanel btnPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 5));
-        btnPanel.setOpaque(false);
         JButton registerBtn = new JButton("Register");
-        registerBtn.setPreferredSize(new Dimension(120, 36));
-        UIHelper.stylePrimaryButton(registerBtn);
+        registerBtn.setPreferredSize(new Dimension(100, 32));
         registerBtn.addActionListener(e -> handleRegister());
         JButton cancelBtn = new JButton("Cancel");
-        cancelBtn.setPreferredSize(new Dimension(120, 36));
-        UIHelper.styleSecondaryButton(cancelBtn);
+        cancelBtn.setPreferredSize(new Dimension(100, 32));
         cancelBtn.addActionListener(e -> dispose());
         btnPanel.add(registerBtn);
         btnPanel.add(cancelBtn);
-        mainPanel.add(btnPanel, BorderLayout.SOUTH);
+        mainPanel.add(btnPanel, gbc);
 
         setContentPane(mainPanel);
-        getRootPane().setDefaultButton(registerBtn);
     }
 
     private void handleRegister() {

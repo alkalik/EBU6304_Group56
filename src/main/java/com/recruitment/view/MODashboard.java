@@ -41,7 +41,6 @@ public class MODashboard extends JFrame {
         setTitle("Module Organiser Dashboard - " + currentUser.getName());
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setSize(950, 650);
-        setMinimumSize(new Dimension(960, 640));
         setLocationRelativeTo(null);
 
         JMenuBar menuBar = new JMenuBar();
@@ -90,27 +89,18 @@ public class MODashboard extends JFrame {
         setJMenuBar(menuBar);
 
         tabbedPane = new JTabbedPane();
-        tabbedPane.setFont(tabbedPane.getFont().deriveFont(Font.BOLD, 13f));
         tabbedPane.addTab("Post New Job", createPostJobPanel());
         tabbedPane.addTab("My Posted Jobs", createMyJobsPanel());
         tabbedPane.addTab("Review Applicants", createReviewPanel());
 
-        JPanel rootPanel = UIHelper.createPagePanel();
-        rootPanel.add(UIHelper.createHeaderPanel(
-                "Module Organiser Workspace",
-                "Post jobs, manage vacancies, and review applicants from one dashboard."
-        ), BorderLayout.NORTH);
-        rootPanel.add(tabbedPane, BorderLayout.CENTER);
-        setContentPane(rootPanel);
+        setContentPane(tabbedPane);
     }
 
     private JPanel createPostJobPanel() {
         JPanel panel = new JPanel(new BorderLayout(10, 10));
         panel.setBorder(BorderFactory.createEmptyBorder(15, 20, 15, 20));
-        panel.add(UIHelper.createSectionHeader("Post New Job", "Create a clear vacancy with role details, capacity, and deadline."), BorderLayout.NORTH);
 
         JPanel formPanel = new JPanel(new GridBagLayout());
-        formPanel.setOpaque(false);
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(6, 5, 6, 5);
         gbc.fill = GridBagConstraints.HORIZONTAL;
@@ -126,12 +116,6 @@ public class MODashboard extends JFrame {
         JSpinner positionsSpinner = new JSpinner(new SpinnerNumberModel(1, 1, 50, 1));
         JTextField semesterField = new JTextField("2025-2026 Spring", 25);
         JTextField deadlineField = new JTextField("2026-04-30", 25);
-        UIHelper.styleTextComponent(titleField);
-        UIHelper.styleTextComponent(moduleField);
-        UIHelper.styleTextComponent(typeCombo);
-        UIHelper.styleTextComponent(skillsField);
-        UIHelper.styleTextComponent(semesterField);
-        UIHelper.styleTextComponent(deadlineField);
 
         int row = 0;
         addFormRow(formPanel, gbc, row++, "Job Title:", titleField);
@@ -160,13 +144,11 @@ public class MODashboard extends JFrame {
         addFormRow(formPanel, gbc, row++, "Semester:", semesterField);
         addFormRow(formPanel, gbc, row++, "Deadline (YYYY-MM-DD):", deadlineField);
 
-        panel.add(UIHelper.wrapInCard(formPanel), BorderLayout.CENTER);
+        panel.add(formPanel, BorderLayout.CENTER);
 
         JPanel btnPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
-        btnPanel.setOpaque(false);
         JButton postBtn = new JButton("Post Job");
         postBtn.setPreferredSize(new Dimension(120, 35));
-        UIHelper.stylePrimaryButton(postBtn);
         postBtn.addActionListener(e -> {
             String title = titleField.getText().trim();
             String desc = descArea.getText().trim();
@@ -211,7 +193,6 @@ public class MODashboard extends JFrame {
 
         JButton clearBtn = new JButton("Clear");
         clearBtn.setPreferredSize(new Dimension(100, 35));
-        UIHelper.styleSecondaryButton(clearBtn);
         clearBtn.addActionListener(e -> {
             titleField.setText("");
             moduleField.setText("");
@@ -234,7 +215,6 @@ public class MODashboard extends JFrame {
     private JPanel createMyJobsPanel() {
         JPanel panel = new JPanel(new BorderLayout(10, 10));
         panel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-        panel.add(UIHelper.createSectionHeader("My Posted Jobs", "Review the current status of the vacancies you created."), BorderLayout.NORTH);
 
         String[] columns = {"ID", "Title", "Module", "Type", "Positions", "Filled", "Status", "Deadline"};
         DefaultTableModel model = new DefaultTableModel(columns, 0) {
@@ -243,21 +223,17 @@ public class MODashboard extends JFrame {
         };
         JTable table = new JTable(model);
         table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        UIHelper.styleTable(table);
 
-        panel.add(UIHelper.createTableScrollPane(table), BorderLayout.CENTER);
+        panel.add(new JScrollPane(table), BorderLayout.CENTER);
 
         JPanel btnPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 5));
-        btnPanel.setOpaque(false);
         JButton refreshBtn = new JButton("Refresh");
-        UIHelper.styleSecondaryButton(refreshBtn);
         refreshBtn.addActionListener(e -> {
             jobService.reload();
             loadMyJobs(model);
         });
 
         JButton closeBtn = new JButton("Close Job");
-        UIHelper.styleSecondaryButton(closeBtn);
         closeBtn.addActionListener(e -> {
             int selectedRow = table.getSelectedRow();
             if (selectedRow < 0) {
@@ -275,7 +251,6 @@ public class MODashboard extends JFrame {
         });
 
         JButton deleteBtn = new JButton("Delete Job");
-        UIHelper.stylePrimaryButton(deleteBtn);
         deleteBtn.addActionListener(e -> {
             int selectedRow = table.getSelectedRow();
             if (selectedRow < 0) {
@@ -320,23 +295,19 @@ public class MODashboard extends JFrame {
         JPanel panel = new JPanel(new BorderLayout(10, 10));
         panel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
+        // Job selector at top
         JPanel topPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 5));
-        topPanel.setOpaque(false);
         topPanel.add(new JLabel("Select Job:"));
         JComboBox<String> jobCombo = new JComboBox<>();
         jobCombo.setPreferredSize(new Dimension(300, 28));
-        UIHelper.styleTextComponent(jobCombo);
         List<Job> myJobs = jobService.getJobsByMO(currentUser.getId());
         for (Job job : myJobs) {
             jobCombo.addItem(job.getId() + " - " + job.getTitle());
         }
         topPanel.add(jobCombo);
-        JPanel northPanel = new JPanel(new BorderLayout(8, 8));
-        northPanel.setOpaque(false);
-        northPanel.add(UIHelper.createSectionHeader("Review Applicants", "Select one of your jobs to review candidates and make decisions."), BorderLayout.NORTH);
-        northPanel.add(topPanel, BorderLayout.CENTER);
-        panel.add(northPanel, BorderLayout.NORTH);
+        panel.add(topPanel, BorderLayout.NORTH);
 
+        // Applications table
         String[] columns = {"App ID", "Applicant", "Email", "Skills", "Apply Date", "Status"};
         DefaultTableModel model = new DefaultTableModel(columns, 0) {
             @Override
@@ -344,8 +315,7 @@ public class MODashboard extends JFrame {
         };
         JTable table = new JTable(model);
         table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        UIHelper.styleTable(table);
-        panel.add(UIHelper.createTableScrollPane(table), BorderLayout.CENTER);
+        panel.add(new JScrollPane(table), BorderLayout.CENTER);
 
         jobCombo.addActionListener(e -> {
             String selected = (String) jobCombo.getSelectedItem();
@@ -363,9 +333,7 @@ public class MODashboard extends JFrame {
         }
 
         JPanel btnPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 5));
-        btnPanel.setOpaque(false);
         JButton acceptBtn = new JButton("Accept");
-        UIHelper.stylePrimaryButton(acceptBtn);
         acceptBtn.addActionListener(e -> {
             int selectedRow = table.getSelectedRow();
             if (selectedRow < 0) {
@@ -391,7 +359,6 @@ public class MODashboard extends JFrame {
         });
 
         JButton rejectBtn = new JButton("Reject");
-        UIHelper.styleSecondaryButton(rejectBtn);
         rejectBtn.addActionListener(e -> {
             int selectedRow = table.getSelectedRow();
             if (selectedRow < 0) {
@@ -410,7 +377,6 @@ public class MODashboard extends JFrame {
         });
 
         JButton refreshBtn = new JButton("Refresh");
-        UIHelper.styleSecondaryButton(refreshBtn);
         refreshBtn.addActionListener(e -> {
             applicationService.reload();
             userService.reload();
