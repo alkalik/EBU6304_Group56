@@ -81,4 +81,28 @@ public class UserServiceTest {
         assertTrue(userService.deleteUser(user.getId()));
         assertFalse(userService.findById(user.getId()).isPresent());
     }
+
+    @Test
+    public void testSearchUsers() {
+        String suffix = "_" + System.currentTimeMillis();
+
+        User ta = new User(null, "search_ta" + suffix, "pass",
+                User.Role.TA, "Alice Search", "alice" + suffix + "@test.com");
+        ta.setDepartment("Computer Science");
+        assertTrue(userService.register(ta));
+
+        User mo = new User(null, "search_mo" + suffix, "pass",
+                User.Role.MO, "Bob Review", "bob" + suffix + "@test.com");
+        mo.setDepartment("Mathematics");
+        assertTrue(userService.register(mo));
+
+        List<User> byName = userService.searchUsers("alice search");
+        assertTrue(byName.stream().anyMatch(u -> u.getId().equals(ta.getId())));
+
+        List<User> byDepartment = userService.searchUsers("mathematics");
+        assertTrue(byDepartment.stream().anyMatch(u -> u.getId().equals(mo.getId())));
+
+        List<User> byRole = userService.searchUsers("mo");
+        assertTrue(byRole.stream().anyMatch(u -> u.getId().equals(mo.getId())));
+    }
 }
