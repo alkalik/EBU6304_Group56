@@ -75,6 +75,13 @@ public class Main {
             UIManager.put("TitlePane.buttonHoverBackground", new Color(100, 149, 237));
             UIManager.put("TitlePane.buttonPressedBackground", new Color(25, 25, 112));
 
+            // Force English button labels
+            UIManager.put("OptionPane.okButtonText", "OK");
+            UIManager.put("OptionPane.cancelButtonText", "Cancel");
+            UIManager.put("OptionPane.yesButtonText", "Yes");
+            UIManager.put("OptionPane.noButtonText", "No");
+            UIManager.put("OptionPane.buttonFont", new Font("SansSerif", Font.PLAIN, 14));
+
         } catch (Exception e) {
             try {
                 UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());

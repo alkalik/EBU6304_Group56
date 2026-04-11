@@ -1,0 +1,74 @@
+[
+  {
+    "id": "NOT-5487f404",
+    "userId": "USR-68c2f159",
+    "message": "The position \u0027TA for Software Engineering (EBU6304)\u0027 has expired.",
+    "timestamp": "2026-04-10T23:36:45.8158252",
+    "isRead": false,
+    "type": "POSITION_EXPIRATION"
+  },
+  {
+    "id": "NOT-1e992cae",
+    "userId": "USR-mo001",
+    "message": "New application received for \u0027TA for Software Engineering (EBU6304)\u0027.",
+    "timestamp": "2026-04-11T01:27:13.6409896",
+    "isRead": false,
+    "type": "NEW_APPLICATION"
+  },
+  {
+    "id": "NOT-27dc4583",
+    "userId": "USR-admin001",
+    "message": "啊啊啊1",
+    "timestamp": "2026-04-11T17:14:17.1467891",
+    "isRead": false,
+    "type": "ANNOUNCEMENT"
+  },
+  {
+    "id": "NOT-65f23cbe",
+    "userId": "USR-mo001",
+    "message": "啊啊啊1",
+    "timestamp": "2026-04-11T17:14:17.1507517",
+    "isRead": false,
+    "type": "ANNOUNCEMENT"
+  },
+  {
+    "id": "NOT-832240b2",
+    "userId": "USR-mo002",
+    "message": "啊啊啊1",
+    "timestamp": "2026-04-11T17:14:17.1517513",
+    "isRead": false,
+    "type": "ANNOUNCEMENT"
+  },
+  {
+    "id": "NOT-575e0ca3",
+    "userId": "USR-ta001",
+    "message": "啊啊啊1",
+    "timestamp": "2026-04-11T17:14:17.1527505",
+    "isRead": false,
+    "type": "ANNOUNCEMENT"
+  },
+  {
+    "id": "NOT-24132a6d",
+    "userId": "USR-ta002",
+    "message": "啊啊啊1",
+    "timestamp": "2026-04-11T17:14:17.1537935",
+    "isRead": false,
+    "type": "ANNOUNCEMENT"
+  },
+  {
+    "id": "NOT-91e7a740",
+    "userId": "USR-68c2f159",
+    "message": "啊啊啊1",
+    "timestamp": "2026-04-11T17:14:17.1547527",
+    "isRead": false,
+    "type": "ANNOUNCEMENT"
+  },
+  {
+    "id": "NOT-989210e5",
+    "userId": "USR-9ca64c9c",
+    "message": "啊啊啊1",
+    "timestamp": "2026-04-11T17:14:17.1567495",
+    "isRead": false,
+    "type": "ANNOUNCEMENT"
+  }
+]
