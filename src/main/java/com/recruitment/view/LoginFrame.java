@@ -5,6 +5,7 @@ import com.recruitment.service.ApplicationService;
 import com.recruitment.service.JobService;
 import com.recruitment.service.NotificationService;
 import com.recruitment.service.UserService;
+import com.recruitment.util.ShadowBorder;
 
 import javax.swing.*;
 import java.awt.*;
@@ -39,6 +40,13 @@ public class LoginFrame extends JFrame {
         }
     }
 
+    private static final Color PRIMARY      = new Color(0x6C, 0x5C, 0xE7);
+    private static final Color DARK_BG      = new Color(0x1E, 0x1E, 0x2E);
+    private static final Color CARD_BG      = Color.WHITE;
+    private static final Color TEXT_PRIMARY  = new Color(0x2D, 0x34, 0x36);
+    private static final Color TEXT_SECONDARY = new Color(0x63, 0x6E, 0x72);
+    private static final Color BORDER       = new Color(0xDF, 0xE6, 0xE9);
+
     public LoginFrame(UserService userService, JobService jobService, ApplicationService applicationService, NotificationService notificationService) {
         this.userService = userService;
         this.jobService = jobService;
@@ -48,69 +56,138 @@ public class LoginFrame extends JFrame {
     }
 
     private void initUI() {
-        setTitle("TA Recruitment System - Login");
+        setTitle("TA Recruitment System");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setSize(450, 400);
+        setSize(540, 640);
         setLocationRelativeTo(null);
         setResizable(false);
 
-        JPanel mainPanel = new JPanel(new BorderLayout(10, 10));
-        mainPanel.setBorder(BorderFactory.createEmptyBorder(20, 30, 20, 30));
+        // Gradient background panel
+        JPanel root = new JPanel(new BorderLayout()) {
+            @Override
+            protected void paintComponent(Graphics g) {
+                super.paintComponent(g);
+                Graphics2D g2 = (Graphics2D) g.create();
+                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+                GradientPaint gp = new GradientPaint(
+                        0, 0, new Color(0xF4, 0xF5, 0xF8),
+                        0, getHeight(), new Color(0xEE, 0xEC, 0xFB));
+                g2.setPaint(gp);
+                g2.fillRect(0, 0, getWidth(), getHeight());
+                g2.dispose();
+            }
+        };
+        root.setOpaque(false);
 
-        // Title
-        JLabel titleLabel = new JLabel("TA Recruitment System", SwingConstants.CENTER);
-        titleLabel.setFont(new Font("SansSerif", Font.BOLD, 24));
-        titleLabel.setForeground(new Color(70, 130, 180));
-        titleLabel.setBorder(BorderFactory.createEmptyBorder(10, 0, 20, 0));
-        mainPanel.add(titleLabel, BorderLayout.NORTH);
+        // ===== Top brand area (dark background) =====
+        JPanel brandPanel = new JPanel();
+        brandPanel.setLayout(new BoxLayout(brandPanel, BoxLayout.Y_AXIS));
+        brandPanel.setBackground(DARK_BG);
+        brandPanel.setBorder(BorderFactory.createEmptyBorder(40, 30, 30, 30));
 
-        // Form panel
-        JPanel formPanel = new JPanel(new GridBagLayout());
-        GridBagConstraints gbc = new GridBagConstraints();
-        gbc.insets = new Insets(8, 5, 8, 5);
-        gbc.fill = GridBagConstraints.HORIZONTAL;
+        JLabel titleLabel = new JLabel("TA Recruitment");
+        titleLabel.setFont(new Font("Segoe UI", Font.BOLD, 28));
+        titleLabel.setForeground(new Color(0xCB, 0xC3, 0xF7));
+        titleLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-        gbc.gridx = 0; gbc.gridy = 0;
-        formPanel.add(new JLabel("Role:"), gbc);
-        gbc.gridx = 1; gbc.weightx = 1.0;
-        roleComboBox = new JComboBox<>(new String[]{"TA", "MO", "ADMIN"});
-        roleComboBox.setSelectedIndex(0);
-        formPanel.add(roleComboBox, gbc);
+        JLabel subtitleLabel = new JLabel("Teaching Assistant Management System");
+        subtitleLabel.setFont(new Font("Segoe UI", Font.PLAIN, 13));
+        subtitleLabel.setForeground(new Color(0xA0, 0xA0, 0xC0));
+        subtitleLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-        gbc.gridx = 0; gbc.gridy = 1; gbc.weightx = 0;
-        formPanel.add(new JLabel("Username:"), gbc);
-        gbc.gridx = 1; gbc.weightx = 1.0;
-        usernameField = new JTextField(20);
-        formPanel.add(usernameField, gbc);
+        brandPanel.add(titleLabel);
+        brandPanel.add(Box.createVerticalStrut(6));
+        brandPanel.add(subtitleLabel);
+        root.add(brandPanel, BorderLayout.NORTH);
 
-        gbc.gridx = 0; gbc.gridy = 2; gbc.weightx = 0;
-        formPanel.add(new JLabel("Password:"), gbc);
-        gbc.gridx = 1; gbc.weightx = 1.0;
-        passwordField = new JPasswordField(20);
-        formPanel.add(passwordField, gbc);
+        // ===== Center: white card form with shadow elevation =====
+        JPanel centerWrapper = new JPanel(new GridBagLayout());
+        centerWrapper.setOpaque(false);
+        centerWrapper.setBorder(BorderFactory.createEmptyBorder(0, 36, 30, 36));
 
-        mainPanel.add(formPanel, BorderLayout.CENTER);
+        // Shadow card: opaque=false so ShadowBorder shows through; real background
+        // painted by ShadowBorder itself
+        JPanel card = new JPanel();
+        card.setLayout(new BoxLayout(card, BoxLayout.Y_AXIS));
+        card.setOpaque(false);
+        card.setBorder(BorderFactory.createCompoundBorder(
+                ShadowBorder.card(),
+                BorderFactory.createEmptyBorder(30, 30, 25, 30)
+        ));
 
-        // Button panel
-        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 15, 10));
+        JLabel signInLabel = new JLabel("Sign In");
+        signInLabel.setFont(new Font("Segoe UI", Font.BOLD, 20));
+        signInLabel.setForeground(TEXT_PRIMARY);
+        signInLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
+        card.add(signInLabel);
+        card.add(Box.createVerticalStrut(20));
+
+        // Username
+        JLabel userLabel = new JLabel("Username");
+        userLabel.setFont(new Font("Segoe UI", Font.PLAIN, 13));
+        userLabel.setForeground(TEXT_SECONDARY);
+        userLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
+        card.add(userLabel);
+        card.add(Box.createVerticalStrut(6));
+
+        usernameField = new JTextField();
+        usernameField.setMaximumSize(new Dimension(Integer.MAX_VALUE, 42));
+        usernameField.setAlignmentX(Component.LEFT_ALIGNMENT);
+        card.add(usernameField);
+        card.add(Box.createVerticalStrut(16));
+
+        // Password
+        JLabel passLabel = new JLabel("Password");
+        passLabel.setFont(new Font("Segoe UI", Font.PLAIN, 13));
+        passLabel.setForeground(TEXT_SECONDARY);
+        passLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
+        card.add(passLabel);
+        card.add(Box.createVerticalStrut(6));
+
+        passwordField = new JPasswordField();
+        passwordField.setMaximumSize(new Dimension(Integer.MAX_VALUE, 42));
+        passwordField.setAlignmentX(Component.LEFT_ALIGNMENT);
+        card.add(passwordField);
+        card.add(Box.createVerticalStrut(24));
+
+        // Login button
         JButton loginBtn = new JButton("Login");
-        loginBtn.setPreferredSize(new Dimension(100, 35));
+        loginBtn.setAlignmentX(Component.LEFT_ALIGNMENT);
+        loginBtn.setMaximumSize(new Dimension(Integer.MAX_VALUE, 44));
         loginBtn.setFocusPainted(false);
+        loginBtn.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         loginBtn.addActionListener(e -> handleLogin());
+        card.add(loginBtn);
+        card.add(Box.createVerticalStrut(16));
 
-        JButton registerBtn = new JButton("Register");
-        registerBtn.setPreferredSize(new Dimension(100, 35));
-        registerBtn.setFocusPainted(false);
-        registerBtn.addActionListener(e -> openRegister());
+        // Register link
+        JPanel linkPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 4, 0));
+        linkPanel.setBackground(CARD_BG);
+        linkPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
 
-        buttonPanel.add(loginBtn);
-        buttonPanel.add(registerBtn);
-        mainPanel.add(buttonPanel, BorderLayout.SOUTH);
+        JLabel noAccountLabel = new JLabel("Don't have an account?");
+        noAccountLabel.setFont(new Font("Segoe UI", Font.PLAIN, 12));
+        noAccountLabel.setForeground(TEXT_SECONDARY);
 
-        // Enter key triggers login
+        JButton registerLink = new JButton("Register");
+        registerLink.setFont(new Font("Segoe UI", Font.BOLD, 12));
+        registerLink.setForeground(PRIMARY);
+        registerLink.setBackground(CARD_BG);
+        registerLink.setBorderPainted(false);
+        registerLink.setContentAreaFilled(false);
+        registerLink.setFocusPainted(false);
+        registerLink.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        registerLink.addActionListener(e -> openRegister());
+
+        linkPanel.add(noAccountLabel);
+        linkPanel.add(registerLink);
+        card.add(linkPanel);
+
+        centerWrapper.add(card);
+        root.add(centerWrapper, BorderLayout.CENTER);
+
         getRootPane().setDefaultButton(loginBtn);
-
-        setContentPane(mainPanel);
+        setContentPane(root);
     }
 
     private void handleLogin() {
