@@ -4,8 +4,11 @@ import com.recruitment.model.Application;
 import com.recruitment.model.Job;
 import com.recruitment.model.User;
 import com.recruitment.service.ApplicationService;
+import com.recruitment.service.BackupService;
 import com.recruitment.service.JobService;
+import com.recruitment.service.NotificationService;
 import com.recruitment.service.UserService;
+import com.recruitment.util.ShadowBorder;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
@@ -22,46 +25,124 @@ public class TADashboard extends JFrame {
     private final UserService userService;
     private final JobService jobService;
     private final ApplicationService applicationService;
+    private final NotificationService notificationService;
 
     private JTabbedPane tabbedPane;
 
-    public TADashboard(User currentUser, LoginFrame loginFrame) {
+    private static final Color PRIMARY      = new Color(0x6C, 0x5C, 0xE7);
+    private static final Color DARK_BG      = new Color(0x1E, 0x1E, 0x2E);
+    private static final Color TEXT_SECONDARY = new Color(0x63, 0x6E, 0x72);
+    private static final Color DANGER       = new Color(0xE1, 0x70, 0x55);
+    private static final Color SUCCESS      = new Color(0x00, 0xB8, 0x94);
+
+    public TADashboard(User currentUser, LoginFrame loginFrame, JobService jobService, ApplicationService applicationService, NotificationService notificationService) {
         this.currentUser = currentUser;
         this.loginFrame = loginFrame;
         this.userService = new UserService();
-        this.jobService = new JobService();
-        this.applicationService = new ApplicationService();
+        this.jobService = jobService;
+        this.applicationService = applicationService;
+        this.notificationService = notificationService;
         initUI();
     }
 
     private void initUI() {
         setTitle("TA Dashboard - " + currentUser.getName());
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setSize(900, 600);
+        setSize(960, 640);
         setLocationRelativeTo(null);
 
-        // Menu bar
+        JPanel root = new JPanel(new BorderLayout());
+
+        // ===== Welcome header bar =====
+        JPanel headerPanel = new JPanel(new BorderLayout());
+        headerPanel.setBackground(DARK_BG);
+        headerPanel.setBorder(BorderFactory.createEmptyBorder(14, 24, 14, 24));
+
+        JLabel welcomeLabel = new JLabel("Welcome, " + currentUser.getName());
+        welcomeLabel.setFont(new Font("Segoe UI", Font.BOLD, 16));
+        welcomeLabel.setForeground(new Color(0xCB, 0xC3, 0xF7));
+        headerPanel.add(welcomeLabel, BorderLayout.WEST);
+
+        JPanel headerRight = new JPanel(new FlowLayout(FlowLayout.RIGHT, 8, 0));
+        headerRight.setOpaque(false);
+
+        JButton notificationButton = new JButton("\uD83D\uDD14");
+        notificationButton.setToolTipText("Notifications");
+        notificationButton.setBorderPainted(false);
+        notificationButton.setContentAreaFilled(false);
+        notificationButton.setFocusPainted(false);
+        notificationButton.setFont(new Font("Segoe UI Emoji", Font.PLAIN, 18));
+        notificationButton.setForeground(Color.WHITE);
+        notificationButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        notificationButton.addActionListener(e -> showNotifications());
+        updateNotificationButton(notificationButton);
+        headerRight.add(notificationButton);
+
+        JButton logoutHeaderBtn = new JButton("Logout");
+        logoutHeaderBtn.setBackground(DANGER);
+        logoutHeaderBtn.setForeground(Color.WHITE);
+        logoutHeaderBtn.setFocusPainted(false);
+        logoutHeaderBtn.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        logoutHeaderBtn.addActionListener(e -> logout());
+        headerRight.add(logoutHeaderBtn);
+
+        headerPanel.add(headerRight, BorderLayout.EAST);
+        root.add(headerPanel, BorderLayout.NORTH);
+
+        // ===== Menu bar =====
         JMenuBar menuBar = new JMenuBar();
         JMenu accountMenu = new JMenu("Account");
         JMenuItem logoutItem = new JMenuItem("Logout");
         logoutItem.addActionListener(e -> logout());
         accountMenu.add(logoutItem);
         menuBar.add(accountMenu);
+
+        JMenu dataMenu = new JMenu("Data");
+        JMenuItem backupItem = new JMenuItem("Backup Data");
+        backupItem.addActionListener(e -> BackupService.backupAllData(currentUser, true));
+        dataMenu.add(backupItem);
+
+        JMenuItem restoreItem = new JMenuItem("Restore Data...");
+        restoreItem.addActionListener(e -> {
+            java.util.List<String> backups = BackupService.listBackups();
+            if (backups.isEmpty()) {
+                JOptionPane.showMessageDialog(this, "No backups available.", "Restore", JOptionPane.INFORMATION_MESSAGE);
+                return;
+            }
+            String sel = (String) JOptionPane.showInputDialog(this,
+                    "Select backup to restore:", "Restore Backup",
+                    JOptionPane.PLAIN_MESSAGE, null,
+                    backups.toArray(new String[0]), backups.get(0));
+            if (sel != null) {
+                BackupService.restoreBackup(currentUser, sel);
+            }
+        });
+        dataMenu.add(restoreItem);
+        boolean can = BackupService.canBackup(currentUser.getRole());
+        dataMenu.setEnabled(can);
+        menuBar.add(dataMenu);
         setJMenuBar(menuBar);
 
+        // ===== Tabbed pane =====
         tabbedPane = new JTabbedPane();
-        tabbedPane.addTab("My Profile", createProfilePanel());
-        tabbedPane.addTab("Browse Jobs", createBrowseJobsPanel());
-        tabbedPane.addTab("My Applications", createMyApplicationsPanel());
+        tabbedPane.addTab("  My Profile  ", createProfilePanel());
+        tabbedPane.addTab("  Browse Jobs  ", createBrowseJobsPanel());
+        tabbedPane.addTab("  My Applications  ", createMyApplicationsPanel());
+        root.add(tabbedPane, BorderLayout.CENTER);
 
-        setContentPane(tabbedPane);
+        setContentPane(root);
     }
 
     private JPanel createProfilePanel() {
         JPanel panel = new JPanel(new BorderLayout(10, 10));
-        panel.setBorder(BorderFactory.createEmptyBorder(15, 20, 15, 20));
+        panel.setBorder(BorderFactory.createEmptyBorder(24, 32, 24, 32));
 
         JPanel formPanel = new JPanel(new GridBagLayout());
+        formPanel.setOpaque(false);
+        formPanel.setBorder(BorderFactory.createCompoundBorder(
+                ShadowBorder.card(),
+                BorderFactory.createEmptyBorder(22, 26, 22, 26)
+        ));
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(6, 5, 6, 5);
         gbc.fill = GridBagConstraints.HORIZONTAL;
@@ -84,16 +165,21 @@ public class TADashboard extends JFrame {
         addFormRow(formPanel, gbc, row++, "Department:", deptField);
 
         gbc.gridx = 0; gbc.gridy = row; gbc.weightx = 0;
-        formPanel.add(new JLabel("CV:"), gbc);
+        JLabel cvTitleLabel = new JLabel("CV:");
+        cvTitleLabel.setFont(new Font("Segoe UI", Font.PLAIN, 13));
+        cvTitleLabel.setForeground(TEXT_SECONDARY);
+        formPanel.add(cvTitleLabel, gbc);
         gbc.gridx = 1; gbc.weightx = 1.0;
         JPanel cvPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 5, 0));
+        cvPanel.setBackground(Color.WHITE);
         cvPanel.add(cvLabel);
         JButton uploadBtn = new JButton("Upload CV");
+        uploadBtn.setFocusPainted(false);
+        uploadBtn.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         uploadBtn.addActionListener(e -> {
             JFileChooser fc = new JFileChooser();
             if (fc.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
                 File file = fc.getSelectedFile();
-                // Copy file to data/cv directory
                 File cvDir = new File("data/cv");
                 if (!cvDir.exists()) cvDir.mkdirs();
                 File dest = new File(cvDir, currentUser.getId() + "_" + file.getName());
@@ -114,9 +200,13 @@ public class TADashboard extends JFrame {
 
         panel.add(formPanel, BorderLayout.CENTER);
 
-        JPanel btnPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        JPanel btnPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 12, 8));
         JButton saveBtn = new JButton("Save Profile");
-        saveBtn.setPreferredSize(new Dimension(120, 35));
+        saveBtn.setPreferredSize(new Dimension(140, 38));
+        saveBtn.setBackground(SUCCESS);
+        saveBtn.setForeground(Color.WHITE);
+        saveBtn.setFocusPainted(false);
+        saveBtn.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         saveBtn.addActionListener(e -> {
             currentUser.setName(nameField.getText().trim());
             currentUser.setEmail(emailField.getText().trim());
@@ -140,7 +230,7 @@ public class TADashboard extends JFrame {
 
     private JPanel createBrowseJobsPanel() {
         JPanel panel = new JPanel(new BorderLayout(10, 10));
-        panel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        panel.setBorder(BorderFactory.createEmptyBorder(18, 24, 18, 24));
 
         String[] columns = {"ID", "Title", "Module", "Type", "Positions", "Deadline", "Status"};
         DefaultTableModel model = new DefaultTableModel(columns, 0) {
@@ -149,29 +239,27 @@ public class TADashboard extends JFrame {
         };
         JTable table = new JTable(model);
         table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        table.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
+        table.getTableHeader().setReorderingAllowed(false);
 
         JScrollPane scrollPane = new JScrollPane(table);
+        scrollPane.setBorder(BorderFactory.createLineBorder(new Color(0xDF, 0xE6, 0xE9), 1));
+        scrollPane.getViewport().setBackground(Color.WHITE);
         panel.add(scrollPane, BorderLayout.CENTER);
 
-        JPanel btnPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 5));
+        JPanel btnPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 8));
+
         JButton refreshBtn = new JButton("Refresh");
+        refreshBtn.setFocusPainted(false);
+        refreshBtn.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         refreshBtn.addActionListener(e -> {
             jobService.reload();
             loadJobsTable(model);
         });
 
-        JButton applyBtn = new JButton("Apply for Selected Job");
-        applyBtn.addActionListener(e -> {
-            int selectedRow = table.getSelectedRow();
-            if (selectedRow < 0) {
-                JOptionPane.showMessageDialog(this, "Please select a job to apply.");
-                return;
-            }
-            String jobId = (String) model.getValueAt(selectedRow, 0);
-            applyForJob(jobId);
-        });
-
         JButton detailBtn = new JButton("View Details");
+        detailBtn.setFocusPainted(false);
+        detailBtn.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         detailBtn.addActionListener(e -> {
             int selectedRow = table.getSelectedRow();
             if (selectedRow < 0) {
@@ -180,6 +268,21 @@ public class TADashboard extends JFrame {
             }
             String jobId = (String) model.getValueAt(selectedRow, 0);
             showJobDetails(jobId);
+        });
+
+        JButton applyBtn = new JButton("Apply for Selected Job");
+        applyBtn.setBackground(SUCCESS);
+        applyBtn.setForeground(Color.WHITE);
+        applyBtn.setFocusPainted(false);
+        applyBtn.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        applyBtn.addActionListener(e -> {
+            int selectedRow = table.getSelectedRow();
+            if (selectedRow < 0) {
+                JOptionPane.showMessageDialog(this, "Please select a job to apply.");
+                return;
+            }
+            String jobId = (String) model.getValueAt(selectedRow, 0);
+            applyForJob(jobId);
         });
 
         btnPanel.add(refreshBtn);
@@ -253,7 +356,6 @@ public class TADashboard extends JFrame {
                     coverLetterArea.getText().trim());
             if (app != null) {
                 JOptionPane.showMessageDialog(this, "Application submitted successfully!");
-                // Refresh applications tab
                 tabbedPane.setComponentAt(2, createMyApplicationsPanel());
             } else {
                 JOptionPane.showMessageDialog(this, "You have already applied for this job.",
@@ -264,7 +366,7 @@ public class TADashboard extends JFrame {
 
     private JPanel createMyApplicationsPanel() {
         JPanel panel = new JPanel(new BorderLayout(10, 10));
-        panel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        panel.setBorder(BorderFactory.createEmptyBorder(18, 24, 18, 24));
 
         String[] columns = {"App ID", "Job Title", "Apply Date", "Status", "Review Note"};
         DefaultTableModel model = new DefaultTableModel(columns, 0) {
@@ -273,12 +375,19 @@ public class TADashboard extends JFrame {
         };
         JTable table = new JTable(model);
         table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        table.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
+        table.getTableHeader().setReorderingAllowed(false);
 
         JScrollPane scrollPane = new JScrollPane(table);
+        scrollPane.setBorder(BorderFactory.createLineBorder(new Color(0xDF, 0xE6, 0xE9), 1));
+        scrollPane.getViewport().setBackground(Color.WHITE);
         panel.add(scrollPane, BorderLayout.CENTER);
 
-        JPanel btnPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 5));
+        JPanel btnPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 8));
+
         JButton refreshBtn = new JButton("Refresh");
+        refreshBtn.setFocusPainted(false);
+        refreshBtn.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         refreshBtn.addActionListener(e -> {
             applicationService.reload();
             jobService.reload();
@@ -286,6 +395,10 @@ public class TADashboard extends JFrame {
         });
 
         JButton withdrawBtn = new JButton("Withdraw Application");
+        withdrawBtn.setBackground(DANGER);
+        withdrawBtn.setForeground(Color.WHITE);
+        withdrawBtn.setFocusPainted(false);
+        withdrawBtn.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         withdrawBtn.addActionListener(e -> {
             int selectedRow = table.getSelectedRow();
             if (selectedRow < 0) {
@@ -325,9 +438,90 @@ public class TADashboard extends JFrame {
 
     private void addFormRow(JPanel panel, GridBagConstraints gbc, int row, String label, JComponent field) {
         gbc.gridx = 0; gbc.gridy = row; gbc.weightx = 0;
-        panel.add(new JLabel(label), gbc);
+        JLabel l = new JLabel(label);
+        l.setFont(new Font("Segoe UI", Font.PLAIN, 13));
+        l.setForeground(TEXT_SECONDARY);
+        panel.add(l, gbc);
         gbc.gridx = 1; gbc.weightx = 1.0;
         panel.add(field, gbc);
+    }
+
+    private void updateNotificationButton(JButton button) {
+        int unreadCount = notificationService.getUnreadCount(currentUser.getId());
+        if (unreadCount > 0) {
+            button.setText("\uD83D\uDD14 (" + unreadCount + ")");
+            button.setForeground(new Color(0xFF, 0x63, 0x48));
+        } else {
+            button.setText("\uD83D\uDD14");
+            button.setForeground(Color.WHITE);
+        }
+    }
+
+    private void showNotifications() {
+        JDialog dialog = new JDialog(this, "Notifications", true);
+        dialog.setSize(520, 420);
+        dialog.setLocationRelativeTo(this);
+
+        JPanel panel = new JPanel(new BorderLayout(0, 8));
+        panel.setBorder(BorderFactory.createEmptyBorder(12, 12, 12, 12));
+
+        DefaultListModel<String> listModel = new DefaultListModel<>();
+        JList<String> notificationList = new JList<>(listModel);
+        notificationList.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+        notificationList.setFixedCellHeight(28);
+
+        refreshNotificationList(listModel);
+
+        JScrollPane scrollPane = new JScrollPane(notificationList);
+        panel.add(scrollPane, BorderLayout.CENTER);
+
+        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 6));
+        JButton markReadBtn = new JButton("Mark as Read");
+        markReadBtn.setFocusPainted(false);
+        markReadBtn.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        markReadBtn.addActionListener(e -> {
+            int[] selectedIndices = notificationList.getSelectedIndices();
+            List<com.recruitment.model.Notification> currentNotifications = notificationService.getNotificationsByUser(currentUser.getId());
+            for (int index : selectedIndices) {
+                if (index < currentNotifications.size()) {
+                    com.recruitment.model.Notification n = currentNotifications.get(index);
+                    notificationService.markAsRead(n.getId());
+                }
+            }
+            refreshNotificationList(listModel);
+        });
+
+        JButton clearReadBtn = new JButton("Clear All Read");
+        clearReadBtn.setBackground(DANGER);
+        clearReadBtn.setForeground(Color.WHITE);
+        clearReadBtn.setFocusPainted(false);
+        clearReadBtn.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        clearReadBtn.addActionListener(e -> {
+            notificationService.clearReadNotifications(currentUser.getId());
+            refreshNotificationList(listModel);
+        });
+
+        JButton closeBtn = new JButton("Close");
+        closeBtn.setFocusPainted(false);
+        closeBtn.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        closeBtn.addActionListener(e -> dialog.dispose());
+
+        buttonPanel.add(markReadBtn);
+        buttonPanel.add(clearReadBtn);
+        buttonPanel.add(closeBtn);
+        panel.add(buttonPanel, BorderLayout.SOUTH);
+
+        dialog.setContentPane(panel);
+        dialog.setVisible(true);
+    }
+
+    private void refreshNotificationList(DefaultListModel<String> listModel) {
+        listModel.clear();
+        List<com.recruitment.model.Notification> notifications = notificationService.getNotificationsByUser(currentUser.getId());
+        for (com.recruitment.model.Notification n : notifications) {
+            String status = n.isRead() ? "[Read]" : "[Unread]";
+            listModel.addElement(status + " " + n.getTimestamp().toString() + ": " + n.getMessage());
+        }
     }
 
     private void logout() {
