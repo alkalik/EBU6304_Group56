@@ -2,6 +2,9 @@ package com.recruitment.view;
 
 import com.recruitment.AppContext;
 import com.recruitment.model.User;
+import com.recruitment.service.ApplicationService;
+import com.recruitment.service.JobService;
+import com.recruitment.service.NotificationService;
 import com.recruitment.service.UserService;
 
 import javax.swing.*;
@@ -10,12 +13,17 @@ import java.awt.*;
 public class LoginFrame extends JFrame {
     private final AppContext appContext;
     private final UserService userService;
+    private final JobService jobService;
+    private final ApplicationService applicationService;
+    private final NotificationService notificationService;
     private JTextField usernameField;
     private JPasswordField passwordField;
 
-    public LoginFrame(AppContext appContext) {
-        this.appContext = appContext;
-        this.userService = appContext.getUserService();
+    public LoginFrame(UserService userService, JobService jobService, ApplicationService applicationService, NotificationService notificationService) {
+        this.userService = userService;
+        this.jobService = jobService;
+        this.applicationService = applicationService;
+        this.notificationService = notificationService;
         initUI();
     }
 
@@ -99,13 +107,13 @@ public class LoginFrame extends JFrame {
         this.setVisible(false);
         switch (user.getRole()) {
             case TA:
-                new TADashboard(user, this, appContext).setVisible(true);
+                new TADashboard(user, this, jobService, applicationService, notificationService).setVisible(true);
                 break;
             case MO:
-                new MODashboard(user, this, appContext).setVisible(true);
+                new MODashboard(user, this, jobService, applicationService, notificationService).setVisible(true);
                 break;
             case ADMIN:
-                new AdminDashboard(user, this, appContext).setVisible(true);
+                new AdminDashboard(user, this, jobService, applicationService, notificationService).setVisible(true);
                 break;
         }
     }

@@ -14,21 +14,5 @@
     "status": "PENDING",
     "applyDate": "2026-03-18",
     "coverLetter": ""
-  },
-  {
-    "id": "APP-0fe038f3",
-    "jobId": "JOB-sample01",
-    "applicantId": "USR-03c1d2a9",
-    "status": "PENDING",
-    "applyDate": "2026-04-11",
-    "coverLetter": ""
-  },
-  {
-    "id": "APP-cbe19190",
-    "jobId": "JOB-6bf6879e",
-    "applicantId": "USR-03c1d2a9",
-    "status": "PENDING",
-    "applyDate": "2026-04-11",
-    "coverLetter": "1"
   }
 ]

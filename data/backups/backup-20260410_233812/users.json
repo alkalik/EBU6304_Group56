@@ -83,14 +83,5 @@
     "name": "zzy",
     "email": "2023213329@bupt.cn",
     "skills": []
-  },
-  {
-    "id": "USR-9ca64c9c",
-    "username": "2023213344",
-    "password": "pbkdf2$120000$ul73dZaQ6W6Qyn/3wq+hRA\u003d\u003d$gR7gp89qTZgEJRmN9ROAnEIQ3MzBQGxgsXg0TZtO7MM\u003d",
-    "role": "MO",
-    "name": "Zeyue Zhang",
-    "email": "fff",
-    "skills": []
   }
 ]

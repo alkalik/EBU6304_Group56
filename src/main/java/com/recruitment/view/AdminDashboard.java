@@ -32,6 +32,7 @@ import com.recruitment.model.User;
 import com.recruitment.service.ApplicationService;
 import com.recruitment.service.BackupService;
 import com.recruitment.service.JobService;
+import com.recruitment.service.NotificationService;
 import com.recruitment.service.UserService;
 
 public class AdminDashboard extends JFrame {
@@ -40,13 +41,15 @@ public class AdminDashboard extends JFrame {
     private final UserService userService;
     private final JobService jobService;
     private final ApplicationService applicationService;
+    private final NotificationService notificationService;
 
-    public AdminDashboard(User currentUser, LoginFrame loginFrame, AppContext appContext) {
+    public AdminDashboard(User currentUser, LoginFrame loginFrame, JobService jobService, ApplicationService applicationService, NotificationService notificationService) {
         this.currentUser = currentUser;
         this.loginFrame = loginFrame;
-        this.userService = appContext.getUserService();
-        this.jobService = appContext.getJobService();
-        this.applicationService = appContext.getApplicationService();
+        this.userService = new UserService();
+        this.jobService = jobService;
+        this.applicationService = applicationService;
+        this.notificationService = notificationService;
         initUI();
     }
 
@@ -85,6 +88,21 @@ public class AdminDashboard extends JFrame {
         });
         dataMenu.add(restoreItem);
         menuBar.add(dataMenu);
+
+        JMenu notificationMenu = new JMenu("Notifications");
+        JMenuItem broadcastItem = new JMenuItem("Broadcast Announcement");
+        broadcastItem.addActionListener(e -> broadcastAnnouncement());
+        notificationMenu.add(broadcastItem);
+
+        JMenuItem notifyTAItem = new JMenuItem("Notify All TAs");
+        notifyTAItem.addActionListener(e -> notifyUsersByRole(User.Role.TA, "TA Notification"));
+        notificationMenu.add(notifyTAItem);
+
+        JMenuItem notifyMOItem = new JMenuItem("Notify All MOs");
+        notifyMOItem.addActionListener(e -> notifyUsersByRole(User.Role.MO, "MO Notification"));
+        notificationMenu.add(notifyMOItem);
+
+        menuBar.add(notificationMenu);
         setJMenuBar(menuBar);
 
         JTabbedPane tabbedPane = new JTabbedPane();
@@ -376,6 +394,22 @@ public class AdminDashboard extends JFrame {
                     app.getId(), jobTitle, applicantName,
                     app.getApplyDate(), app.getStatus(), reviewerName
             });
+        }
+    }
+
+    private void broadcastAnnouncement() {
+        String message = JOptionPane.showInputDialog(this, "Enter announcement message:", "Broadcast Announcement", JOptionPane.PLAIN_MESSAGE);
+        if (message != null && !message.trim().isEmpty()) {
+            notificationService.broadcastNotification(message, com.recruitment.model.Notification.Type.ANNOUNCEMENT);
+            JOptionPane.showMessageDialog(this, "Announcement broadcasted to all users!", "Success", JOptionPane.INFORMATION_MESSAGE);
+        }
+    }
+
+    private void notifyUsersByRole(User.Role role, String title) {
+        String message = JOptionPane.showInputDialog(this, "Enter notification message for " + role + "s:", title, JOptionPane.PLAIN_MESSAGE);
+        if (message != null && !message.trim().isEmpty()) {
+            notificationService.notifyUsersByRole(message, com.recruitment.model.Notification.Type.INFO, role);
+            JOptionPane.showMessageDialog(this, "Notification sent to all " + role + "s!", "Success", JOptionPane.INFORMATION_MESSAGE);
         }
     }
 

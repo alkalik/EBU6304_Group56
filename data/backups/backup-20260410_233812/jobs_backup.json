@@ -51,23 +51,5 @@
     "semester": "2025-2026 Spring",
     "postDate": "2026-03-10",
     "deadline": "2026-04-01"
-  },
-  {
-    "id": "JOB-6bf6879e",
-    "title": "RFID TA",
-    "description": "balabala",
-    "moduleName": "RFID",
-    "postedBy": "USR-9ca64c9c",
-    "jobType": "MODULE_TA",
-    "status": "OPEN",
-    "requiredSkills": [
-      "python",
-      "c++"
-    ],
-    "maxPositions": 7,
-    "filledPositions": 0,
-    "semester": "2025-2026 Spring",
-    "postDate": "2026-04-11",
-    "deadline": "2026-04-30"
   }
 ]

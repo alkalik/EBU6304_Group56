@@ -29,12 +29,13 @@ public class TADashboard extends JFrame {
 
     private JTabbedPane tabbedPane;
 
-    public TADashboard(User currentUser, LoginFrame loginFrame, AppContext appContext) {
+    public TADashboard(User currentUser, LoginFrame loginFrame, JobService jobService, ApplicationService applicationService, NotificationService notificationService) {
         this.currentUser = currentUser;
         this.loginFrame = loginFrame;
-        this.userService = appContext.getUserService();
-        this.jobService = appContext.getJobService();
-        this.applicationService = appContext.getApplicationService();
+        this.userService = new UserService(); // Still needed for user operations?
+        this.jobService = jobService;
+        this.applicationService = applicationService;
+        this.notificationService = notificationService;
         initUI();
     }
 
