@@ -3,7 +3,6 @@ package com.recruitment.service;
 import com.google.gson.reflect.TypeToken;
 import com.recruitment.model.Notification;
 import com.recruitment.model.User;
-import com.recruitment.service.UserService;
 import com.recruitment.util.IDGenerator;
 import com.recruitment.util.JsonUtil;
 

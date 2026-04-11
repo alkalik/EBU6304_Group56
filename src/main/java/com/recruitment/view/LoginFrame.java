@@ -1,6 +1,5 @@
 package com.recruitment.view;
 
-import com.recruitment.AppContext;
 import com.recruitment.model.User;
 import com.recruitment.service.ApplicationService;
 import com.recruitment.service.JobService;
@@ -11,7 +10,6 @@ import javax.swing.*;
 import java.awt.*;
 
 public class LoginFrame extends JFrame {
-    private final AppContext appContext;
     private final UserService userService;
     private final JobService jobService;
     private final ApplicationService applicationService;
@@ -39,7 +37,8 @@ public class LoginFrame extends JFrame {
 
         // Title
         JLabel titleLabel = new JLabel("TA Recruitment System", SwingConstants.CENTER);
-        titleLabel.setFont(new Font("SansSerif", Font.BOLD, 22));
+        titleLabel.setFont(new Font("SansSerif", Font.BOLD, 24));
+        titleLabel.setForeground(new Color(70, 130, 180));
         titleLabel.setBorder(BorderFactory.createEmptyBorder(10, 0, 20, 0));
         mainPanel.add(titleLabel, BorderLayout.NORTH);
 
@@ -67,10 +66,12 @@ public class LoginFrame extends JFrame {
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 15, 10));
         JButton loginBtn = new JButton("Login");
         loginBtn.setPreferredSize(new Dimension(100, 35));
+        loginBtn.setFocusPainted(false);
         loginBtn.addActionListener(e -> handleLogin());
 
         JButton registerBtn = new JButton("Register");
         registerBtn.setPreferredSize(new Dimension(100, 35));
+        registerBtn.setFocusPainted(false);
         registerBtn.addActionListener(e -> openRegister());
 
         buttonPanel.add(loginBtn);

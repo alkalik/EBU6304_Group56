@@ -1,6 +1,5 @@
 package com.recruitment.view;
 
-import com.recruitment.AppContext;
 import com.recruitment.model.Application;
 import com.recruitment.model.Job;
 import com.recruitment.model.User;
@@ -133,6 +132,7 @@ public class TADashboard extends JFrame {
         JPanel cvPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 5, 0));
         cvPanel.add(cvLabel);
         JButton uploadBtn = new JButton("Upload CV");
+        uploadBtn.setFocusPainted(false);
         uploadBtn.addActionListener(e -> {
             JFileChooser fc = new JFileChooser();
             if (fc.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
@@ -161,6 +161,7 @@ public class TADashboard extends JFrame {
         JPanel btnPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
         JButton saveBtn = new JButton("Save Profile");
         saveBtn.setPreferredSize(new Dimension(120, 35));
+        saveBtn.setFocusPainted(false);
         saveBtn.addActionListener(e -> {
             currentUser.setName(nameField.getText().trim());
             currentUser.setEmail(emailField.getText().trim());
@@ -179,6 +180,7 @@ public class TADashboard extends JFrame {
         btnPanel.add(saveBtn);
         JButton logoutBtn = new JButton("Logout");
         logoutBtn.setPreferredSize(new Dimension(120, 35));
+        logoutBtn.setFocusPainted(false);
         logoutBtn.addActionListener(e -> logout());
         btnPanel.add(logoutBtn);
         panel.add(btnPanel, BorderLayout.SOUTH);
@@ -203,12 +205,14 @@ public class TADashboard extends JFrame {
 
         JPanel btnPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 5));
         JButton refreshBtn = new JButton("Refresh");
+        refreshBtn.setFocusPainted(false);
         refreshBtn.addActionListener(e -> {
             jobService.reload();
             loadJobsTable(model);
         });
 
         JButton applyBtn = new JButton("Apply for Selected Job");
+        applyBtn.setFocusPainted(false);
         applyBtn.addActionListener(e -> {
             int selectedRow = table.getSelectedRow();
             if (selectedRow < 0) {
@@ -220,6 +224,7 @@ public class TADashboard extends JFrame {
         });
 
         JButton detailBtn = new JButton("View Details");
+        detailBtn.setFocusPainted(false);
         detailBtn.addActionListener(e -> {
             int selectedRow = table.getSelectedRow();
             if (selectedRow < 0) {
@@ -234,6 +239,7 @@ public class TADashboard extends JFrame {
         btnPanel.add(detailBtn);
         btnPanel.add(applyBtn);
         JButton logoutBtn = new JButton("Logout");
+        logoutBtn.setFocusPainted(false);
         logoutBtn.addActionListener(e -> logout());
         btnPanel.add(logoutBtn);
         panel.add(btnPanel, BorderLayout.SOUTH);
@@ -330,6 +336,7 @@ public class TADashboard extends JFrame {
 
         JPanel btnPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 5));
         JButton refreshBtn = new JButton("Refresh");
+        refreshBtn.setFocusPainted(false);
         refreshBtn.addActionListener(e -> {
             applicationService.reload();
             jobService.reload();
@@ -337,6 +344,7 @@ public class TADashboard extends JFrame {
         });
 
         JButton withdrawBtn = new JButton("Withdraw Application");
+        withdrawBtn.setFocusPainted(false);
         withdrawBtn.addActionListener(e -> {
             int selectedRow = table.getSelectedRow();
             if (selectedRow < 0) {
@@ -356,6 +364,7 @@ public class TADashboard extends JFrame {
         btnPanel.add(refreshBtn);
         btnPanel.add(withdrawBtn);
         JButton logoutBtn = new JButton("Logout");
+        logoutBtn.setFocusPainted(false);
         logoutBtn.addActionListener(e -> logout());
         btnPanel.add(logoutBtn);
         panel.add(btnPanel, BorderLayout.SOUTH);
@@ -413,6 +422,7 @@ public class TADashboard extends JFrame {
 
         JPanel buttonPanel = new JPanel(new FlowLayout());
         JButton markReadBtn = new JButton("Mark Selected as Read");
+        markReadBtn.setFocusPainted(false);
         markReadBtn.addActionListener(e -> {
             int[] selectedIndices = notificationList.getSelectedIndices();
             List<com.recruitment.model.Notification> currentNotifications = notificationService.getNotificationsByUser(currentUser.getId());
@@ -427,6 +437,7 @@ public class TADashboard extends JFrame {
         });
 
         JButton clearReadBtn = new JButton("Clear All Read");
+        clearReadBtn.setFocusPainted(false);
         clearReadBtn.addActionListener(e -> {
             notificationService.clearReadNotifications(currentUser.getId());
             refreshNotificationList(listModel);
@@ -434,6 +445,7 @@ public class TADashboard extends JFrame {
         });
 
         JButton closeBtn = new JButton("Close");
+        closeBtn.setFocusPainted(false);
         closeBtn.addActionListener(e -> dialog.dispose());
 
         buttonPanel.add(markReadBtn);

@@ -1,0 +1,2 @@
+Main-Class: com.recruitment.Main
+Class-Path: lib/flatlaf-3.2.5.jar lib/gson-2.10.1.jar
