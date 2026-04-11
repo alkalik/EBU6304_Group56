@@ -24,8 +24,6 @@ public class JobService {
 
     /** In-memory cache of all job postings, loaded from JSON on construction. */
     private List<Job> jobs;
-    private NotificationService notificationService;
-    private ApplicationService applicationService;
 
     /**
      * Injected via setter to avoid circular dependency.
