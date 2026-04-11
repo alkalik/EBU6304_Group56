@@ -52,9 +52,31 @@ public class UserService {
         return null;
     }
 
+    public boolean isUsernameTaken(String username) {
+        if (username == null) {
+            return false;
+        }
+        return users.stream().anyMatch(u -> u.getUsername().equals(username));
+    }
+
+    public boolean isEmailRegistered(String email) {
+        if (email == null || email.trim().isEmpty()) {
+            return false;
+        }
+        String norm = email.trim().toLowerCase();
+        return users.stream().anyMatch(u -> u.getEmail() != null
+                && !u.getEmail().trim().isEmpty()
+                && u.getEmail().trim().toLowerCase().equals(norm));
+    }
+
     public boolean register(User user) {
         if (users.stream().anyMatch(u -> u.getUsername().equals(user.getUsername()))) {
             return false;
+        }
+        if (user.getEmail() != null && !user.getEmail().trim().isEmpty()) {
+            if (isEmailRegistered(user.getEmail())) {
+                return false;
+            }
         }
         user.setId(IDGenerator.generate("USR"));
         user.setPassword(PasswordUtil.hashPassword(user.getPassword()));

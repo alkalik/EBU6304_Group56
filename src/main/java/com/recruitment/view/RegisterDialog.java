@@ -2,6 +2,7 @@ package com.recruitment.view;
 
 import com.recruitment.model.User;
 import com.recruitment.service.UserService;
+import com.recruitment.util.RegistrationRules;
 import com.recruitment.util.ShadowBorder;
 
 import javax.swing.*;
@@ -16,12 +17,9 @@ public class RegisterDialog extends JDialog {
     private JTextField emailField;
     private JComboBox<User.Role> roleCombo;
 
-    private static final Color PRIMARY      = new Color(0x6C, 0x5C, 0xE7);
     private static final Color DARK_BG      = new Color(0x1E, 0x1E, 0x2E);
     private static final Color CARD_BG      = Color.WHITE;
-    private static final Color TEXT_PRIMARY  = new Color(0x2D, 0x34, 0x36);
     private static final Color TEXT_SECONDARY = new Color(0x63, 0x6E, 0x72);
-    private static final Color BORDER       = new Color(0xDF, 0xE6, 0xE9);
     private static final Color DANGER       = new Color(0xE1, 0x70, 0x55);
 
     public RegisterDialog(JFrame parent, UserService userService) {
@@ -158,20 +156,44 @@ public class RegisterDialog extends JDialog {
         String email = emailField.getText().trim();
         User.Role role = (User.Role) roleCombo.getSelectedItem();
 
-        if (username.isEmpty() || password.isEmpty() || name.isEmpty() || email.isEmpty()) {
-            JOptionPane.showMessageDialog(this, "All fields are required.",
+        if (name.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Please enter your full name.",
                     "Validation Error", JOptionPane.WARNING_MESSAGE);
             return;
         }
 
-        if (!password.equals(confirm)) {
-            JOptionPane.showMessageDialog(this, "Passwords do not match.",
+        String uFmt = RegistrationRules.usernameFormatFailure(usernameField.getText());
+        if (uFmt != null) {
+            JOptionPane.showMessageDialog(this, uFmt, "Validation Error", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        String uTaken = RegistrationRules.usernameAvailabilityFailure(username, userService);
+        if (uTaken != null) {
+            JOptionPane.showMessageDialog(this, uTaken, "Validation Error", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
+        String eFmt = RegistrationRules.emailFormatFailure(emailField.getText());
+        if (eFmt != null) {
+            JOptionPane.showMessageDialog(this, eFmt, "Validation Error", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        String eUsed = RegistrationRules.emailAvailabilityFailure(email, userService);
+        if (eUsed != null) {
+            JOptionPane.showMessageDialog(this, eUsed, "Validation Error", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
+        String passwordReason = RegistrationRules.passwordPolicyFailure(password);
+        if (passwordReason != null) {
+            JOptionPane.showMessageDialog(this, passwordReason,
                     "Validation Error", JOptionPane.WARNING_MESSAGE);
             return;
         }
 
-        if (password.length() < 4) {
-            JOptionPane.showMessageDialog(this, "Password must be at least 4 characters.",
+        String confirmReason = RegistrationRules.confirmPasswordFailure(password, confirm);
+        if (confirmReason != null) {
+            JOptionPane.showMessageDialog(this, confirmReason,
                     "Validation Error", JOptionPane.WARNING_MESSAGE);
             return;
         }
@@ -181,8 +203,14 @@ public class RegisterDialog extends JDialog {
             JOptionPane.showMessageDialog(this, "Registration successful! You can now login.",
                     "Success", JOptionPane.INFORMATION_MESSAGE);
             dispose();
+        } else if (userService.isUsernameTaken(username)) {
+            JOptionPane.showMessageDialog(this, "This username is already registered.",
+                    "Registration Failed", JOptionPane.ERROR_MESSAGE);
+        } else if (userService.isEmailRegistered(email)) {
+            JOptionPane.showMessageDialog(this, "This email is already registered.",
+                    "Registration Failed", JOptionPane.ERROR_MESSAGE);
         } else {
-            JOptionPane.showMessageDialog(this, "Username already exists.",
+            JOptionPane.showMessageDialog(this, "Registration could not be completed. Please try again.",
                     "Registration Failed", JOptionPane.ERROR_MESSAGE);
         }
     }

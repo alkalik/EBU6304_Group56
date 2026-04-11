@@ -20,6 +20,8 @@ public class ApplicationServiceTest {
         jobService = new JobService();
         applicationService = new ApplicationService();
         applicationService.setJobService(jobService);
+        UserService userService = new UserService();
+        applicationService.setNotificationService(new NotificationService(userService));
     }
 
     private Job createOpenJob(int maxPositions) {
