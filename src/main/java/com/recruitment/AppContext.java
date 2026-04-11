@@ -12,7 +12,7 @@ public class AppContext {
     public AppContext() {
         this.userService = new UserService();
         this.jobService = new JobService();
-        this.applicationService = new ApplicationService(jobService);
+        this.applicationService = new ApplicationService();
     }
 
     public UserService getUserService() {

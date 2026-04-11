@@ -83,9 +83,11 @@ public class RegisterDialog extends JDialog {
         JPanel btnPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 5));
         JButton registerBtn = new JButton("Register");
         registerBtn.setPreferredSize(new Dimension(100, 32));
+        registerBtn.setFocusPainted(false);
         registerBtn.addActionListener(e -> handleRegister());
         JButton cancelBtn = new JButton("Cancel");
         cancelBtn.setPreferredSize(new Dimension(100, 32));
+        cancelBtn.setFocusPainted(false);
         cancelBtn.addActionListener(e -> dispose());
         btnPanel.add(registerBtn);
         btnPanel.add(cancelBtn);

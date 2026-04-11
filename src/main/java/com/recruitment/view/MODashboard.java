@@ -1,6 +1,5 @@
 package com.recruitment.view;
 
-import com.recruitment.AppContext;
 import com.recruitment.model.Application;
 import com.recruitment.model.Job;
 import com.recruitment.model.User;
@@ -150,6 +149,7 @@ public class MODashboard extends JFrame {
         JPanel btnPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
         JButton postBtn = new JButton("Post Job");
         postBtn.setPreferredSize(new Dimension(120, 35));
+        postBtn.setFocusPainted(false);
         postBtn.addActionListener(e -> {
             String title = titleField.getText().trim();
             String desc = descArea.getText().trim();
@@ -194,6 +194,7 @@ public class MODashboard extends JFrame {
 
         JButton clearBtn = new JButton("Clear");
         clearBtn.setPreferredSize(new Dimension(100, 35));
+        clearBtn.setFocusPainted(false);
         clearBtn.addActionListener(e -> {
             titleField.setText("");
             moduleField.setText("");
@@ -206,6 +207,7 @@ public class MODashboard extends JFrame {
         btnPanel.add(clearBtn);
         JButton logoutBtn = new JButton("Logout");
         logoutBtn.setPreferredSize(new Dimension(100, 35));
+        logoutBtn.setFocusPainted(false);
         logoutBtn.addActionListener(e -> logout());
         btnPanel.add(logoutBtn);
         panel.add(btnPanel, BorderLayout.SOUTH);
@@ -229,12 +231,14 @@ public class MODashboard extends JFrame {
 
         JPanel btnPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 5));
         JButton refreshBtn = new JButton("Refresh");
+        refreshBtn.setFocusPainted(false);
         refreshBtn.addActionListener(e -> {
             jobService.reload();
             loadMyJobs(model);
         });
 
         JButton closeBtn = new JButton("Close Job");
+        closeBtn.setFocusPainted(false);
         closeBtn.addActionListener(e -> {
             int selectedRow = table.getSelectedRow();
             if (selectedRow < 0) {

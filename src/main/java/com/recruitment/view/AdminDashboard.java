@@ -25,7 +25,6 @@ import javax.swing.ListSelectionModel;
 import javax.swing.SwingConstants;
 import javax.swing.table.DefaultTableModel;
 
-import com.recruitment.AppContext;
 import com.recruitment.model.Application;
 import com.recruitment.model.Job;
 import com.recruitment.model.User;
@@ -134,6 +133,7 @@ public class AdminDashboard extends JFrame {
 
         JPanel btnPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 5));
         JButton refreshBtn = new JButton("Refresh");
+        refreshBtn.setFocusPainted(false);
         refreshBtn.addActionListener(e -> {
             userService.reload();
             applicationService.reload();
@@ -142,6 +142,7 @@ public class AdminDashboard extends JFrame {
         btnPanel.add(refreshBtn);
 
         JButton detailBtn = new JButton("View TA Details");
+        detailBtn.setFocusPainted(false);
         detailBtn.addActionListener(e -> {
             int selectedRow = table.getSelectedRow();
             if (selectedRow < 0) {
@@ -153,6 +154,7 @@ public class AdminDashboard extends JFrame {
         });
         btnPanel.add(detailBtn);
         JButton logoutBtn = new JButton("Logout");
+        logoutBtn.setFocusPainted(false);
         logoutBtn.addActionListener(e -> logout());
         btnPanel.add(logoutBtn);
         panel.add(btnPanel, BorderLayout.SOUTH);
@@ -280,10 +282,6 @@ public class AdminDashboard extends JFrame {
 
         loadUsers(model, "", resultLabel);
         return panel;
-    }
-
-    private void loadUsers(DefaultTableModel model) {
-        loadUsers(model, "", null);
     }
 
     private void loadUsers(DefaultTableModel model, String keyword, JLabel resultLabel) {

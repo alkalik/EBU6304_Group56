@@ -18,7 +18,8 @@ public class ApplicationServiceTest {
     public void setUp() {
         new File("data").mkdirs();
         jobService = new JobService();
-        applicationService = new ApplicationService(jobService);
+        applicationService = new ApplicationService();
+        applicationService.setJobService(jobService);
     }
 
     private Job createOpenJob(int maxPositions) {

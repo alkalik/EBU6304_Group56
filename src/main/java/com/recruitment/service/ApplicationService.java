@@ -3,6 +3,7 @@ package com.recruitment.service;
 import com.google.gson.reflect.TypeToken;
 import com.recruitment.model.Application;
 import com.recruitment.model.Job;
+import com.recruitment.model.Notification;
 import com.recruitment.util.IDGenerator;
 import com.recruitment.util.JsonUtil;
 
@@ -17,14 +18,10 @@ public class ApplicationService {
     private static final Type LIST_TYPE = new TypeToken<List<Application>>() {}.getType();
 
     private List<Application> applications;
-    private final JobService jobService;
+    private JobService jobService;
+    private NotificationService notificationService;
 
     public ApplicationService() {
-        this(new JobService());
-    }
-
-    public ApplicationService(JobService jobService) {
-        this.jobService = jobService;
         this.applications = JsonUtil.loadList(FILE_NAME, LIST_TYPE);
     }
 
