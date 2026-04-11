@@ -48,23 +48,23 @@ public class NotificationService {
         return notification;
     }
 
-    // 手动发布通知给所有用户（例如管理员公告）
+    // Broadcast notification to all users (e.g. admin announcements)
     public void broadcastNotification(String message, Notification.Type type) {
-        List<String> allUserIds = getAllUserIds(); // 需要实现获取所有用户ID的方法
+        List<String> allUserIds = getAllUserIds();
         for (String userId : allUserIds) {
             createNotification(userId, message, type);
         }
     }
 
-    // 发布通知给特定角色用户
+    // Notify users by role
     public void notifyUsersByRole(String message, Notification.Type type, User.Role role) {
-        List<String> userIds = getUserIdsByRole(role); // 需要实现获取特定角色用户ID的方法
+        List<String> userIds = getUserIdsByRole(role);
         for (String userId : userIds) {
             createNotification(userId, message, type);
         }
     }
 
-    // 辅助方法
+    // Helper methods
     private List<String> getAllUserIds() {
         if (userService != null) {
             return userService.getAllUsers().stream()
@@ -103,8 +103,8 @@ public class NotificationService {
         if (notification.isPresent()) {
             notification.get().setRead(true);
             save();
-            reload(); // 重新加载以确保数据一致性
-            return true;
+            reload();
+        return true;
         }
         return false;
     }
@@ -119,7 +119,7 @@ public class NotificationService {
     public void clearReadNotifications(String userId) {
         notifications.removeIf(n -> n.getUserId().equals(userId) && n.isRead());
         save();
-        reload(); // 重新加载以确保数据一致性
+        reload();
     }
 
     public Optional<Notification> findById(String id) {

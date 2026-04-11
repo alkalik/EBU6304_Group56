@@ -66,13 +66,12 @@ public class MODashboard extends JFrame {
         JPanel headerRight = new JPanel(new FlowLayout(FlowLayout.RIGHT, 8, 0));
         headerRight.setOpaque(false);
 
-        JButton notificationButton = new JButton("\uD83D\uDD14");
+        JButton notificationButton = new JButton("Notifications");
         notificationButton.setToolTipText("Notifications");
-        notificationButton.setBorderPainted(false);
-        notificationButton.setContentAreaFilled(false);
         notificationButton.setFocusPainted(false);
-        notificationButton.setFont(new Font("Segoe UI Emoji", Font.PLAIN, 18));
+        notificationButton.setFont(new Font("Segoe UI", Font.BOLD, 12));
         notificationButton.setForeground(Color.WHITE);
+        notificationButton.setBackground(new Color(0x6C, 0x5C, 0xE7));
         notificationButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         notificationButton.addActionListener(e -> showNotifications());
         updateNotificationButton(notificationButton);
@@ -512,10 +511,10 @@ public class MODashboard extends JFrame {
     private void updateNotificationButton(JButton button) {
         int unreadCount = notificationService.getUnreadCount(currentUser.getId());
         if (unreadCount > 0) {
-            button.setText("\uD83D\uDD14 (" + unreadCount + ")");
+            button.setText("Notifications (" + unreadCount + ")");
             button.setForeground(new Color(0xFF, 0x63, 0x48));
         } else {
-            button.setText("\uD83D\uDD14");
+            button.setText("Notifications");
             button.setForeground(Color.WHITE);
         }
     }

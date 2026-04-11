@@ -9,12 +9,15 @@ import com.recruitment.view.LoginFrame;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.Locale;
 import java.util.Timer;
 import java.util.TimerTask;
 
 public class Main {
     public static void main(String[] args) {
         try {
+            Locale.setDefault(Locale.ENGLISH);
+            JComponent.setDefaultLocale(Locale.ENGLISH);
             FlatLightLaf.setup();
 
             // ================================================================
@@ -198,6 +201,14 @@ public class Main {
             UIManager.put("ToolTip.background", darkBar);
             UIManager.put("ToolTip.foreground", new Color(0xE0, 0xE0, 0xEE));
             UIManager.put("ToolTip.borderColor", primary);
+
+            // ================================================================
+            // OPTION PANE — force English button text (Times New Roman has no CJK glyphs)
+            // ================================================================
+            UIManager.put("OptionPane.yesButtonText", "Yes");
+            UIManager.put("OptionPane.noButtonText", "No");
+            UIManager.put("OptionPane.cancelButtonText", "Cancel");
+            UIManager.put("OptionPane.okButtonText", "OK");
 
         } catch (Exception e) {
             try {
