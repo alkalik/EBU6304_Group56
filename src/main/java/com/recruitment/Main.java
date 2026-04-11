@@ -1,7 +1,9 @@
 package com.recruitment;
 
 import com.formdev.flatlaf.FlatLightLaf;
+import com.recruitment.service.ApplicationService;
 import com.recruitment.service.JobService;
+import com.recruitment.service.NotificationService;
 import com.recruitment.service.UserService;
 import com.recruitment.view.LoginFrame;
 
@@ -27,11 +29,20 @@ public class Main {
 
         SwingUtilities.invokeLater(() -> {
             UserService userService = new UserService();
-            LoginFrame loginFrame = new LoginFrame(userService);
+            JobService jobService = new JobService();
+            ApplicationService applicationService = new ApplicationService();
+            NotificationService notificationService = new NotificationService(userService);
+
+            // Set up service dependencies to avoid circular dependency
+            jobService.setApplicationService(applicationService);
+            jobService.setNotificationService(notificationService);
+            applicationService.setJobService(jobService);
+            applicationService.setNotificationService(notificationService);
+
+            LoginFrame loginFrame = new LoginFrame(userService, jobService, applicationService, notificationService);
             loginFrame.setVisible(true);
 
             // Check for expired jobs daily
-            JobService jobService = new JobService();
             Timer timer = new Timer();
             timer.scheduleAtFixedRate(new TimerTask() {
                 @Override

@@ -2,10 +2,13 @@ package com.recruitment.service;
 
 import com.google.gson.reflect.TypeToken;
 import com.recruitment.model.Notification;
+import com.recruitment.model.User;
+import com.recruitment.service.UserService;
 import com.recruitment.util.IDGenerator;
 import com.recruitment.util.JsonUtil;
 
 import java.lang.reflect.Type;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -15,9 +18,15 @@ public class NotificationService {
     private static final Type LIST_TYPE = new TypeToken<List<Notification>>() {}.getType();
 
     private List<Notification> notifications;
+    private UserService userService;
 
     public NotificationService() {
         this.notifications = JsonUtil.loadList(FILE_NAME, LIST_TYPE);
+    }
+
+    public NotificationService(UserService userService) {
+        this.notifications = JsonUtil.loadList(FILE_NAME, LIST_TYPE);
+        this.userService = userService;
     }
 
     public void reload() {
@@ -40,6 +49,42 @@ public class NotificationService {
         return notification;
     }
 
+    // 手动发布通知给所有用户（例如管理员公告）
+    public void broadcastNotification(String message, Notification.Type type) {
+        List<String> allUserIds = getAllUserIds(); // 需要实现获取所有用户ID的方法
+        for (String userId : allUserIds) {
+            createNotification(userId, message, type);
+        }
+    }
+
+    // 发布通知给特定角色用户
+    public void notifyUsersByRole(String message, Notification.Type type, User.Role role) {
+        List<String> userIds = getUserIdsByRole(role); // 需要实现获取特定角色用户ID的方法
+        for (String userId : userIds) {
+            createNotification(userId, message, type);
+        }
+    }
+
+    // 辅助方法
+    private List<String> getAllUserIds() {
+        if (userService != null) {
+            return userService.getAllUsers().stream()
+                    .map(User::getId)
+                    .collect(Collectors.toList());
+        }
+        return new ArrayList<>();
+    }
+
+    private List<String> getUserIdsByRole(User.Role role) {
+        if (userService != null) {
+            return userService.getAllUsers().stream()
+                    .filter(user -> user.getRole() == role)
+                    .map(User::getId)
+                    .collect(Collectors.toList());
+        }
+        return new ArrayList<>();
+    }
+
     public List<Notification> getNotificationsByUser(String userId) {
         return notifications.stream()
                 .filter(n -> n.getUserId().equals(userId))
@@ -59,6 +104,7 @@ public class NotificationService {
         if (notification.isPresent()) {
             notification.get().setRead(true);
             save();
+            reload(); // 重新加载以确保数据一致性
             return true;
         }
         return false;
@@ -74,6 +120,7 @@ public class NotificationService {
     public void clearReadNotifications(String userId) {
         notifications.removeIf(n -> n.getUserId().equals(userId) && n.isRead());
         save();
+        reload(); // 重新加载以确保数据一致性
     }
 
     public Optional<Notification> findById(String id) {

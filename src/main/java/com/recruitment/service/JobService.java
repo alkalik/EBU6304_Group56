@@ -21,8 +21,14 @@ public class JobService {
 
     public JobService() {
         this.jobs = JsonUtil.loadList(FILE_NAME, LIST_TYPE);
-        this.notificationService = new NotificationService();
-        this.applicationService = new ApplicationService();
+    }
+
+    public void setApplicationService(ApplicationService applicationService) {
+        this.applicationService = applicationService;
+    }
+
+    public void setNotificationService(NotificationService notificationService) {
+        this.notificationService = notificationService;
     }
 
     public void reload() {

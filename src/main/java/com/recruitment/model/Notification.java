@@ -7,7 +7,9 @@ public class Notification {
         APPLICATION_STATUS_UPDATE,
         POSITION_EXPIRATION,
         WITHDRAWAL_SUCCESS,
-        NEW_APPLICATION
+        NEW_APPLICATION,
+        ANNOUNCEMENT,
+        INFO
     }
 
     private String id;
