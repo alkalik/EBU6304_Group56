@@ -1,5 +1,31 @@
 package com.recruitment.view;
 
+import java.awt.BorderLayout;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.Font;
+import java.util.List;
+import java.util.Optional;
+
+import javax.swing.BorderFactory;
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTabbedPane;
+import javax.swing.JTable;
+import javax.swing.JTextArea;
+import javax.swing.JTextField;
+import javax.swing.ListSelectionModel;
+import javax.swing.SwingConstants;
+import javax.swing.table.DefaultTableModel;
+
+import com.recruitment.AppContext;
 import com.recruitment.model.Application;
 import com.recruitment.model.Job;
 import com.recruitment.model.User;
@@ -8,12 +34,6 @@ import com.recruitment.service.BackupService;
 import com.recruitment.service.JobService;
 import com.recruitment.service.NotificationService;
 import com.recruitment.service.UserService;
-
-import javax.swing.*;
-import javax.swing.table.DefaultTableModel;
-import java.awt.*;
-import java.util.List;
-import java.util.Optional;
 
 public class AdminDashboard extends JFrame {
     private final User currentUser;
@@ -132,6 +152,9 @@ public class AdminDashboard extends JFrame {
             showTADetails(taId);
         });
         btnPanel.add(detailBtn);
+        JButton logoutBtn = new JButton("Logout");
+        logoutBtn.addActionListener(e -> logout());
+        btnPanel.add(logoutBtn);
         panel.add(btnPanel, BorderLayout.SOUTH);
 
         loadWorkload(model);
@@ -198,13 +221,33 @@ public class AdminDashboard extends JFrame {
         };
         JTable table = new JTable(model);
         table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+
+        JPanel searchPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 8, 0));
+        JTextField keywordField = new JTextField(22);
+        keywordField.setToolTipText("Search by username, name, role, email, or department");
+        JLabel resultLabel = new JLabel();
+        JButton searchBtn = new JButton("Search");
+        searchBtn.addActionListener(e -> loadUsers(model, keywordField.getText(), resultLabel));
+        JButton clearBtn = new JButton("Clear");
+        clearBtn.addActionListener(e -> {
+            keywordField.setText("");
+            loadUsers(model, "", resultLabel);
+        });
+        keywordField.addActionListener(e -> loadUsers(model, keywordField.getText(), resultLabel));
+        searchPanel.add(new JLabel("Keyword:"));
+        searchPanel.add(keywordField);
+        searchPanel.add(searchBtn);
+        searchPanel.add(clearBtn);
+        searchPanel.add(resultLabel);
+        panel.add(searchPanel, BorderLayout.NORTH);
+
         panel.add(new JScrollPane(table), BorderLayout.CENTER);
 
         JPanel btnPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 5));
         JButton refreshBtn = new JButton("Refresh");
         refreshBtn.addActionListener(e -> {
             userService.reload();
-            loadUsers(model);
+            loadUsers(model, keywordField.getText(), resultLabel);
         });
 
         JButton deleteBtn = new JButton("Delete User");
@@ -224,26 +267,42 @@ public class AdminDashboard extends JFrame {
                     "Delete this user permanently?", "Confirm", JOptionPane.YES_NO_OPTION);
             if (confirm == JOptionPane.YES_OPTION) {
                 userService.deleteUser(userId);
-                loadUsers(model);
+                loadUsers(model, keywordField.getText(), resultLabel);
             }
         });
 
         btnPanel.add(refreshBtn);
         btnPanel.add(deleteBtn);
+        JButton logoutBtn = new JButton("Logout");
+        logoutBtn.addActionListener(e -> logout());
+        btnPanel.add(logoutBtn);
         panel.add(btnPanel, BorderLayout.SOUTH);
 
-        loadUsers(model);
+        loadUsers(model, "", resultLabel);
         return panel;
     }
 
     private void loadUsers(DefaultTableModel model) {
+        loadUsers(model, "", null);
+    }
+
+    private void loadUsers(DefaultTableModel model, String keyword, JLabel resultLabel) {
         model.setRowCount(0);
-        for (User user : userService.getAllUsers()) {
+        String searchText = keyword == null ? "" : keyword.trim();
+        List<User> users = searchText.isEmpty()
+                ? userService.getAllUsers()
+                : userService.searchUsers(searchText);
+        for (User user : users) {
             model.addRow(new Object[]{
                     user.getId(), user.getUsername(), user.getName(),
                     user.getRole(), user.getEmail(),
                     user.getDepartment() != null ? user.getDepartment() : ""
             });
+        }
+        if (resultLabel != null) {
+            resultLabel.setText(searchText.isEmpty()
+                    ? "Users: " + users.size()
+                    : "Results: " + users.size());
         }
     }
 
@@ -268,6 +327,9 @@ public class AdminDashboard extends JFrame {
             loadAllJobs(model);
         });
         btnPanel.add(refreshBtn);
+        JButton logoutBtn = new JButton("Logout");
+        logoutBtn.addActionListener(e -> logout());
+        btnPanel.add(logoutBtn);
         panel.add(btnPanel, BorderLayout.SOUTH);
 
         loadAllJobs(model);
@@ -309,6 +371,9 @@ public class AdminDashboard extends JFrame {
             loadAllApplications(model);
         });
         btnPanel.add(refreshBtn);
+        JButton logoutBtn = new JButton("Logout");
+        logoutBtn.addActionListener(e -> logout());
+        btnPanel.add(logoutBtn);
         panel.add(btnPanel, BorderLayout.SOUTH);
 
         loadAllApplications(model);

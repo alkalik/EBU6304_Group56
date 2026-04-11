@@ -3,7 +3,6 @@ package com.recruitment.service;
 import com.google.gson.reflect.TypeToken;
 import com.recruitment.model.Application;
 import com.recruitment.model.Job;
-import com.recruitment.model.Notification;
 import com.recruitment.util.IDGenerator;
 import com.recruitment.util.JsonUtil;
 
@@ -18,10 +17,14 @@ public class ApplicationService {
     private static final Type LIST_TYPE = new TypeToken<List<Application>>() {}.getType();
 
     private List<Application> applications;
-    private NotificationService notificationService;
-    private JobService jobService;
+    private final JobService jobService;
 
     public ApplicationService() {
+        this(new JobService());
+    }
+
+    public ApplicationService(JobService jobService) {
+        this.jobService = jobService;
         this.applications = JsonUtil.loadList(FILE_NAME, LIST_TYPE);
     }
 
@@ -87,59 +90,62 @@ public class ApplicationService {
 
     public boolean acceptApplication(String appId, String reviewerId) {
         Optional<Application> app = findById(appId);
-        if (app.isPresent()) {
-            app.get().setStatus(Application.Status.ACCEPTED);
-            app.get().setReviewedBy(reviewerId);
-            save();
-            // Notify TA about status update
-            Optional<Job> job = jobService.findById(app.get().getJobId());
-            String jobTitle = job.isPresent() ? job.get().getTitle() : "Unknown Job";
-            notificationService.createNotification(
-                app.get().getApplicantId(),
-                "Your application for '" + jobTitle + "' has been accepted.",
-                Notification.Type.APPLICATION_STATUS_UPDATE
-            );
-            return true;
+        if (!app.isPresent()) {
+            return false;
         }
-        return false;
+        Application target = app.get();
+        if (target.getStatus() != Application.Status.PENDING) {
+            return false;
+        }
+
+        Optional<Job> jobOpt = jobService.findById(target.getJobId());
+        if (!jobOpt.isPresent()) {
+            return false;
+        }
+        Job job = jobOpt.get();
+        if (job.getStatus() != Job.Status.OPEN || job.getFilledPositions() >= job.getMaxPositions()) {
+            return false;
+        }
+
+        target.setStatus(Application.Status.ACCEPTED);
+        target.setReviewedBy(reviewerId);
+        job.setFilledPositions(job.getFilledPositions() + 1);
+        if (job.getFilledPositions() >= job.getMaxPositions()) {
+            job.setStatus(Job.Status.FILLED);
+        }
+        save();
+        jobService.updateJob(job);
+        return true;
     }
 
     public boolean rejectApplication(String appId, String reviewerId, String note) {
         Optional<Application> app = findById(appId);
-        if (app.isPresent()) {
-            app.get().setStatus(Application.Status.REJECTED);
-            app.get().setReviewedBy(reviewerId);
-            app.get().setReviewNote(note);
-            save();
-            // Notify TA about status update
-            Optional<Job> job = jobService.findById(app.get().getJobId());
-            String jobTitle = job.isPresent() ? job.get().getTitle() : "Unknown Job";
-            notificationService.createNotification(
-                app.get().getApplicantId(),
-                "Your application for '" + jobTitle + "' has been rejected.",
-                Notification.Type.APPLICATION_STATUS_UPDATE
-            );
-            return true;
+        if (!app.isPresent()) {
+            return false;
         }
-        return false;
+        Application target = app.get();
+        if (target.getStatus() != Application.Status.PENDING) {
+            return false;
+        }
+        target.setStatus(Application.Status.REJECTED);
+        target.setReviewedBy(reviewerId);
+        target.setReviewNote(note);
+        save();
+        return true;
     }
 
     public boolean withdrawApplication(String appId) {
         Optional<Application> app = findById(appId);
-        if (app.isPresent()) {
-            app.get().setStatus(Application.Status.WITHDRAWN);
-            save();
-            // Notify TA about withdrawal success
-            Optional<Job> job = jobService.findById(app.get().getJobId());
-            String jobTitle = job.isPresent() ? job.get().getTitle() : "Unknown Job";
-            notificationService.createNotification(
-                app.get().getApplicantId(),
-                "Your application for '" + jobTitle + "' has been successfully withdrawn.",
-                Notification.Type.WITHDRAWAL_SUCCESS
-            );
-            return true;
+        if (!app.isPresent()) {
+            return false;
         }
-        return false;
+        Application target = app.get();
+        if (target.getStatus() != Application.Status.PENDING) {
+            return false;
+        }
+        target.setStatus(Application.Status.WITHDRAWN);
+        save();
+        return true;
     }
 
     public Optional<Application> findById(String id) {

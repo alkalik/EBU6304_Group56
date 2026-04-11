@@ -86,6 +86,18 @@ public class UserService {
         return users.stream().filter(u -> u.getRole() == role).collect(Collectors.toList());
     }
 
+    public List<User> searchUsers(String keyword) {
+        String normalizedKeyword = keyword == null ? "" : keyword.trim().toLowerCase();
+        return users.stream()
+                .filter(u -> normalizedKeyword.isEmpty()
+                        || containsIgnoreCase(u.getUsername(), normalizedKeyword)
+                        || containsIgnoreCase(u.getName(), normalizedKeyword)
+                        || containsIgnoreCase(u.getEmail(), normalizedKeyword)
+                        || containsIgnoreCase(u.getDepartment(), normalizedKeyword)
+                        || (u.getRole() != null && u.getRole().name().toLowerCase().contains(normalizedKeyword)))
+                .collect(Collectors.toList());
+    }
+
     public List<User> getAllUsers() {
         return users;
     }
@@ -138,5 +150,9 @@ public class UserService {
         register(mo2);
         register(ta1);
         register(ta2);
+    }
+
+    private boolean containsIgnoreCase(String value, String keyword) {
+        return value != null && value.toLowerCase().contains(keyword);
     }
 }
