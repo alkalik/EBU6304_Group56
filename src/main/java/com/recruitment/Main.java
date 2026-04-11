@@ -199,6 +199,14 @@ public class Main {
             UIManager.put("ToolTip.foreground", new Color(0xE0, 0xE0, 0xEE));
             UIManager.put("ToolTip.borderColor", primary);
 
+            // ================================================================
+            // OPTION PANE — force English button text (Times New Roman has no CJK glyphs)
+            // ================================================================
+            UIManager.put("OptionPane.yesButtonText", "Yes");
+            UIManager.put("OptionPane.noButtonText", "No");
+            UIManager.put("OptionPane.cancelButtonText", "Cancel");
+            UIManager.put("OptionPane.okButtonText", "OK");
+
         } catch (Exception e) {
             try {
                 UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
