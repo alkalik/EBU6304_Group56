@@ -8,6 +8,7 @@ import com.recruitment.service.BackupService;
 import com.recruitment.service.JobService;
 import com.recruitment.service.NotificationService;
 import com.recruitment.service.UserService;
+import com.recruitment.util.ShadowBorder;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
@@ -27,10 +28,17 @@ public class MODashboard extends JFrame {
 
     private JTabbedPane tabbedPane;
 
+    private static final Color PRIMARY      = new Color(0x6C, 0x5C, 0xE7);
+    private static final Color DARK_BG      = new Color(0x1E, 0x1E, 0x2E);
+    private static final Color TEXT_SECONDARY = new Color(0x63, 0x6E, 0x72);
+    private static final Color DANGER       = new Color(0xE1, 0x70, 0x55);
+    private static final Color SUCCESS      = new Color(0x00, 0xB8, 0x94);
+    private static final Color BORDER       = new Color(0xDF, 0xE6, 0xE9);
+
     public MODashboard(User currentUser, LoginFrame loginFrame, JobService jobService, ApplicationService applicationService, NotificationService notificationService) {
         this.currentUser = currentUser;
         this.loginFrame = loginFrame;
-        this.userService = new UserService(); // Still needed?
+        this.userService = new UserService();
         this.jobService = jobService;
         this.applicationService = applicationService;
         this.notificationService = notificationService;
@@ -40,9 +48,48 @@ public class MODashboard extends JFrame {
     private void initUI() {
         setTitle("Module Organiser Dashboard - " + currentUser.getName());
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setSize(950, 650);
+        setSize(980, 660);
         setLocationRelativeTo(null);
 
+        JPanel root = new JPanel(new BorderLayout());
+
+        // ===== Welcome header bar =====
+        JPanel headerPanel = new JPanel(new BorderLayout());
+        headerPanel.setBackground(DARK_BG);
+        headerPanel.setBorder(BorderFactory.createEmptyBorder(14, 24, 14, 24));
+
+        JLabel welcomeLabel = new JLabel("Welcome, " + currentUser.getName() + "  (Module Organiser)");
+        welcomeLabel.setFont(new Font("Segoe UI", Font.BOLD, 16));
+        welcomeLabel.setForeground(new Color(0xCB, 0xC3, 0xF7));
+        headerPanel.add(welcomeLabel, BorderLayout.WEST);
+
+        JPanel headerRight = new JPanel(new FlowLayout(FlowLayout.RIGHT, 8, 0));
+        headerRight.setOpaque(false);
+
+        JButton notificationButton = new JButton("\uD83D\uDD14");
+        notificationButton.setToolTipText("Notifications");
+        notificationButton.setBorderPainted(false);
+        notificationButton.setContentAreaFilled(false);
+        notificationButton.setFocusPainted(false);
+        notificationButton.setFont(new Font("Segoe UI Emoji", Font.PLAIN, 18));
+        notificationButton.setForeground(Color.WHITE);
+        notificationButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        notificationButton.addActionListener(e -> showNotifications());
+        updateNotificationButton(notificationButton);
+        headerRight.add(notificationButton);
+
+        JButton logoutHeaderBtn = new JButton("Logout");
+        logoutHeaderBtn.setBackground(DANGER);
+        logoutHeaderBtn.setForeground(Color.WHITE);
+        logoutHeaderBtn.setFocusPainted(false);
+        logoutHeaderBtn.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        logoutHeaderBtn.addActionListener(e -> logout());
+        headerRight.add(logoutHeaderBtn);
+
+        headerPanel.add(headerRight, BorderLayout.EAST);
+        root.add(headerPanel, BorderLayout.NORTH);
+
+        // ===== Menu bar =====
         JMenuBar menuBar = new JMenuBar();
         JMenu accountMenu = new JMenu("Account");
         JMenuItem logoutItem = new JMenuItem("Logout");
@@ -74,33 +121,28 @@ public class MODashboard extends JFrame {
         boolean can = BackupService.canBackup(currentUser.getRole());
         dataMenu.setEnabled(can);
         menuBar.add(dataMenu);
-
-        // Notification bell button
-        JButton notificationButton = new JButton("🔔");
-        notificationButton.setToolTipText("Notifications");
-        notificationButton.setBorderPainted(false);
-        notificationButton.setContentAreaFilled(false);
-        notificationButton.setFocusPainted(false);
-        notificationButton.addActionListener(e -> showNotifications());
-        updateNotificationButton(notificationButton);
-        menuBar.add(Box.createHorizontalGlue()); // Push to right
-        menuBar.add(notificationButton);
-
         setJMenuBar(menuBar);
 
+        // ===== Tabbed pane =====
         tabbedPane = new JTabbedPane();
-        tabbedPane.addTab("Post New Job", createPostJobPanel());
-        tabbedPane.addTab("My Posted Jobs", createMyJobsPanel());
-        tabbedPane.addTab("Review Applicants", createReviewPanel());
+        tabbedPane.addTab("  Post New Job  ", createPostJobPanel());
+        tabbedPane.addTab("  My Posted Jobs  ", createMyJobsPanel());
+        tabbedPane.addTab("  Review Applicants  ", createReviewPanel());
+        root.add(tabbedPane, BorderLayout.CENTER);
 
-        setContentPane(tabbedPane);
+        setContentPane(root);
     }
 
     private JPanel createPostJobPanel() {
         JPanel panel = new JPanel(new BorderLayout(10, 10));
-        panel.setBorder(BorderFactory.createEmptyBorder(15, 20, 15, 20));
+        panel.setBorder(BorderFactory.createEmptyBorder(24, 32, 24, 32));
 
         JPanel formPanel = new JPanel(new GridBagLayout());
+        formPanel.setOpaque(false);
+        formPanel.setBorder(BorderFactory.createCompoundBorder(
+                ShadowBorder.card(),
+                BorderFactory.createEmptyBorder(22, 26, 22, 26)
+        ));
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(6, 5, 6, 5);
         gbc.fill = GridBagConstraints.HORIZONTAL;
@@ -122,13 +164,19 @@ public class MODashboard extends JFrame {
         addFormRow(formPanel, gbc, row++, "Module Name:", moduleField);
 
         gbc.gridx = 0; gbc.gridy = row; gbc.weightx = 0;
-        formPanel.add(new JLabel("Job Type:"), gbc);
+        JLabel typeLabel = new JLabel("Job Type:");
+        typeLabel.setFont(new Font("Segoe UI", Font.PLAIN, 13));
+        typeLabel.setForeground(TEXT_SECONDARY);
+        formPanel.add(typeLabel, gbc);
         gbc.gridx = 1; gbc.weightx = 1.0;
         formPanel.add(typeCombo, gbc);
         row++;
 
         gbc.gridx = 0; gbc.gridy = row; gbc.weightx = 0;
-        formPanel.add(new JLabel("Description:"), gbc);
+        JLabel descLabel = new JLabel("Description:");
+        descLabel.setFont(new Font("Segoe UI", Font.PLAIN, 13));
+        descLabel.setForeground(TEXT_SECONDARY);
+        formPanel.add(descLabel, gbc);
         gbc.gridx = 1; gbc.weightx = 1.0;
         formPanel.add(new JScrollPane(descArea), gbc);
         row++;
@@ -136,7 +184,10 @@ public class MODashboard extends JFrame {
         addFormRow(formPanel, gbc, row++, "Required Skills (comma-separated):", skillsField);
 
         gbc.gridx = 0; gbc.gridy = row; gbc.weightx = 0;
-        formPanel.add(new JLabel("Max Positions:"), gbc);
+        JLabel posLabel = new JLabel("Max Positions:");
+        posLabel.setFont(new Font("Segoe UI", Font.PLAIN, 13));
+        posLabel.setForeground(TEXT_SECONDARY);
+        formPanel.add(posLabel, gbc);
         gbc.gridx = 1; gbc.weightx = 1.0;
         formPanel.add(positionsSpinner, gbc);
         row++;
@@ -146,10 +197,13 @@ public class MODashboard extends JFrame {
 
         panel.add(formPanel, BorderLayout.CENTER);
 
-        JPanel btnPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        JPanel btnPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 12, 8));
         JButton postBtn = new JButton("Post Job");
-        postBtn.setPreferredSize(new Dimension(120, 35));
+        postBtn.setPreferredSize(new Dimension(130, 38));
+        postBtn.setBackground(SUCCESS);
+        postBtn.setForeground(Color.WHITE);
         postBtn.setFocusPainted(false);
+        postBtn.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         postBtn.addActionListener(e -> {
             String title = titleField.getText().trim();
             String desc = descArea.getText().trim();
@@ -180,21 +234,20 @@ public class MODashboard extends JFrame {
             jobService.createJob(job);
             JOptionPane.showMessageDialog(this, "Job posted successfully!");
 
-            // Clear fields
             titleField.setText("");
             moduleField.setText("");
             descArea.setText("");
             skillsField.setText("");
             positionsSpinner.setValue(1);
 
-            // Refresh jobs tab
             tabbedPane.setComponentAt(1, createMyJobsPanel());
             tabbedPane.setComponentAt(2, createReviewPanel());
         });
 
         JButton clearBtn = new JButton("Clear");
-        clearBtn.setPreferredSize(new Dimension(100, 35));
+        clearBtn.setPreferredSize(new Dimension(110, 38));
         clearBtn.setFocusPainted(false);
+        clearBtn.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         clearBtn.addActionListener(e -> {
             titleField.setText("");
             moduleField.setText("");
@@ -217,7 +270,7 @@ public class MODashboard extends JFrame {
 
     private JPanel createMyJobsPanel() {
         JPanel panel = new JPanel(new BorderLayout(10, 10));
-        panel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        panel.setBorder(BorderFactory.createEmptyBorder(18, 24, 18, 24));
 
         String[] columns = {"ID", "Title", "Module", "Type", "Positions", "Filled", "Status", "Deadline"};
         DefaultTableModel model = new DefaultTableModel(columns, 0) {
@@ -226,12 +279,19 @@ public class MODashboard extends JFrame {
         };
         JTable table = new JTable(model);
         table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        table.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
+        table.getTableHeader().setReorderingAllowed(false);
 
-        panel.add(new JScrollPane(table), BorderLayout.CENTER);
+        JScrollPane jobsScrollPane = new JScrollPane(table);
+        jobsScrollPane.setBorder(BorderFactory.createLineBorder(new Color(0xDF, 0xE6, 0xE9), 1));
+        jobsScrollPane.getViewport().setBackground(Color.WHITE);
+        panel.add(jobsScrollPane, BorderLayout.CENTER);
 
-        JPanel btnPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 5));
+        JPanel btnPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 8));
+
         JButton refreshBtn = new JButton("Refresh");
         refreshBtn.setFocusPainted(false);
+        refreshBtn.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         refreshBtn.addActionListener(e -> {
             jobService.reload();
             loadMyJobs(model);
@@ -239,6 +299,7 @@ public class MODashboard extends JFrame {
 
         JButton closeBtn = new JButton("Close Job");
         closeBtn.setFocusPainted(false);
+        closeBtn.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         closeBtn.addActionListener(e -> {
             int selectedRow = table.getSelectedRow();
             if (selectedRow < 0) {
@@ -256,6 +317,10 @@ public class MODashboard extends JFrame {
         });
 
         JButton deleteBtn = new JButton("Delete Job");
+        deleteBtn.setBackground(DANGER);
+        deleteBtn.setForeground(Color.WHITE);
+        deleteBtn.setFocusPainted(false);
+        deleteBtn.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         deleteBtn.addActionListener(e -> {
             int selectedRow = table.getSelectedRow();
             if (selectedRow < 0) {
@@ -298,13 +363,15 @@ public class MODashboard extends JFrame {
 
     private JPanel createReviewPanel() {
         JPanel panel = new JPanel(new BorderLayout(10, 10));
-        panel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        panel.setBorder(BorderFactory.createEmptyBorder(18, 24, 18, 24));
 
-        // Job selector at top
         JPanel topPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 5));
-        topPanel.add(new JLabel("Select Job:"));
+        JLabel selectLabel = new JLabel("Select Job:");
+        selectLabel.setFont(new Font("Segoe UI", Font.PLAIN, 13));
+        selectLabel.setForeground(TEXT_SECONDARY);
+        topPanel.add(selectLabel);
         JComboBox<String> jobCombo = new JComboBox<>();
-        jobCombo.setPreferredSize(new Dimension(300, 28));
+        jobCombo.setPreferredSize(new Dimension(320, 32));
         List<Job> myJobs = jobService.getJobsByMO(currentUser.getId());
         for (Job job : myJobs) {
             jobCombo.addItem(job.getId() + " - " + job.getTitle());
@@ -312,7 +379,6 @@ public class MODashboard extends JFrame {
         topPanel.add(jobCombo);
         panel.add(topPanel, BorderLayout.NORTH);
 
-        // Applications table
         String[] columns = {"App ID", "Applicant", "Email", "Skills", "Apply Date", "Status"};
         DefaultTableModel model = new DefaultTableModel(columns, 0) {
             @Override
@@ -320,7 +386,13 @@ public class MODashboard extends JFrame {
         };
         JTable table = new JTable(model);
         table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        panel.add(new JScrollPane(table), BorderLayout.CENTER);
+        table.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
+        table.getTableHeader().setReorderingAllowed(false);
+
+        JScrollPane appsScrollPane = new JScrollPane(table);
+        appsScrollPane.setBorder(BorderFactory.createLineBorder(new Color(0xDF, 0xE6, 0xE9), 1));
+        appsScrollPane.getViewport().setBackground(Color.WHITE);
+        panel.add(appsScrollPane, BorderLayout.CENTER);
 
         jobCombo.addActionListener(e -> {
             String selected = (String) jobCombo.getSelectedItem();
@@ -330,15 +402,32 @@ public class MODashboard extends JFrame {
             }
         });
 
-        // Load first job's applications
         if (jobCombo.getItemCount() > 0) {
             String first = jobCombo.getItemAt(0);
             String jobId = first.split(" - ")[0];
             loadApplicationsForJob(model, jobId);
         }
 
-        JPanel btnPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 5));
+        JPanel btnPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 8));
+
+        JButton refreshBtn = new JButton("Refresh");
+        refreshBtn.setFocusPainted(false);
+        refreshBtn.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        refreshBtn.addActionListener(e -> {
+            applicationService.reload();
+            userService.reload();
+            String selected = (String) jobCombo.getSelectedItem();
+            if (selected != null) {
+                String jobId = selected.split(" - ")[0];
+                loadApplicationsForJob(model, jobId);
+            }
+        });
+
         JButton acceptBtn = new JButton("Accept");
+        acceptBtn.setBackground(SUCCESS);
+        acceptBtn.setForeground(Color.WHITE);
+        acceptBtn.setFocusPainted(false);
+        acceptBtn.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         acceptBtn.addActionListener(e -> {
             int selectedRow = table.getSelectedRow();
             if (selectedRow < 0) {
@@ -364,6 +453,10 @@ public class MODashboard extends JFrame {
         });
 
         JButton rejectBtn = new JButton("Reject");
+        rejectBtn.setBackground(DANGER);
+        rejectBtn.setForeground(Color.WHITE);
+        rejectBtn.setFocusPainted(false);
+        rejectBtn.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         rejectBtn.addActionListener(e -> {
             int selectedRow = table.getSelectedRow();
             if (selectedRow < 0) {
@@ -379,17 +472,6 @@ public class MODashboard extends JFrame {
                 loadApplicationsForJob(model, jobId);
             }
             JOptionPane.showMessageDialog(this, "Applicant rejected.");
-        });
-
-        JButton refreshBtn = new JButton("Refresh");
-        refreshBtn.addActionListener(e -> {
-            applicationService.reload();
-            userService.reload();
-            String selected = (String) jobCombo.getSelectedItem();
-            if (selected != null) {
-                String jobId = selected.split(" - ")[0];
-                loadApplicationsForJob(model, jobId);
-            }
         });
 
         btnPanel.add(refreshBtn);
@@ -419,7 +501,10 @@ public class MODashboard extends JFrame {
 
     private void addFormRow(JPanel panel, GridBagConstraints gbc, int row, String label, JComponent field) {
         gbc.gridx = 0; gbc.gridy = row; gbc.weightx = 0;
-        panel.add(new JLabel(label), gbc);
+        JLabel l = new JLabel(label);
+        l.setFont(new Font("Segoe UI", Font.PLAIN, 13));
+        l.setForeground(TEXT_SECONDARY);
+        panel.add(l, gbc);
         gbc.gridx = 1; gbc.weightx = 1.0;
         panel.add(field, gbc);
     }
@@ -427,32 +512,36 @@ public class MODashboard extends JFrame {
     private void updateNotificationButton(JButton button) {
         int unreadCount = notificationService.getUnreadCount(currentUser.getId());
         if (unreadCount > 0) {
-            button.setText("🔔 (" + unreadCount + ")");
-            button.setForeground(Color.RED);
+            button.setText("\uD83D\uDD14 (" + unreadCount + ")");
+            button.setForeground(new Color(0xFF, 0x63, 0x48));
         } else {
-            button.setText("🔔");
-            button.setForeground(Color.BLACK);
+            button.setText("\uD83D\uDD14");
+            button.setForeground(Color.WHITE);
         }
     }
 
     private void showNotifications() {
         JDialog dialog = new JDialog(this, "Notifications", true);
-        dialog.setSize(500, 400);
+        dialog.setSize(520, 420);
         dialog.setLocationRelativeTo(this);
 
-        JPanel panel = new JPanel(new BorderLayout());
+        JPanel panel = new JPanel(new BorderLayout(0, 8));
+        panel.setBorder(BorderFactory.createEmptyBorder(12, 12, 12, 12));
 
         DefaultListModel<String> listModel = new DefaultListModel<>();
         JList<String> notificationList = new JList<>(listModel);
         notificationList.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+        notificationList.setFixedCellHeight(28);
 
         refreshNotificationList(listModel);
 
         JScrollPane scrollPane = new JScrollPane(notificationList);
         panel.add(scrollPane, BorderLayout.CENTER);
 
-        JPanel buttonPanel = new JPanel(new FlowLayout());
-        JButton markReadBtn = new JButton("Mark Selected as Read");
+        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 6));
+        JButton markReadBtn = new JButton("Mark as Read");
+        markReadBtn.setFocusPainted(false);
+        markReadBtn.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         markReadBtn.addActionListener(e -> {
             int[] selectedIndices = notificationList.getSelectedIndices();
             List<com.recruitment.model.Notification> currentNotifications = notificationService.getNotificationsByUser(currentUser.getId());
@@ -463,17 +552,21 @@ public class MODashboard extends JFrame {
                 }
             }
             refreshNotificationList(listModel);
-            updateNotificationButton((JButton) getJMenuBar().getComponent(getJMenuBar().getComponentCount() - 1));
         });
 
         JButton clearReadBtn = new JButton("Clear All Read");
+        clearReadBtn.setBackground(DANGER);
+        clearReadBtn.setForeground(Color.WHITE);
+        clearReadBtn.setFocusPainted(false);
+        clearReadBtn.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         clearReadBtn.addActionListener(e -> {
             notificationService.clearReadNotifications(currentUser.getId());
             refreshNotificationList(listModel);
-            updateNotificationButton((JButton) getJMenuBar().getComponent(getJMenuBar().getComponentCount() - 1));
         });
 
         JButton closeBtn = new JButton("Close");
+        closeBtn.setFocusPainted(false);
+        closeBtn.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         closeBtn.addActionListener(e -> dialog.dispose());
 
         buttonPanel.add(markReadBtn);
@@ -481,7 +574,7 @@ public class MODashboard extends JFrame {
         buttonPanel.add(closeBtn);
         panel.add(buttonPanel, BorderLayout.SOUTH);
 
-        dialog.add(panel);
+        dialog.setContentPane(panel);
         dialog.setVisible(true);
     }
 

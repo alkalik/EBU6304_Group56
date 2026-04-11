@@ -1,28 +1,11 @@
 package com.recruitment.view;
 
-import java.awt.BorderLayout;
-import java.awt.Dimension;
-import java.awt.FlowLayout;
-import java.awt.Font;
+import java.awt.*;
 import java.util.List;
 import java.util.Optional;
 
-import javax.swing.BorderFactory;
-import javax.swing.JButton;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JMenu;
-import javax.swing.JMenuBar;
-import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTabbedPane;
-import javax.swing.JTable;
-import javax.swing.JTextArea;
-import javax.swing.JTextField;
-import javax.swing.ListSelectionModel;
-import javax.swing.SwingConstants;
+import javax.swing.*;
+import com.recruitment.util.ShadowBorder;
 import javax.swing.table.DefaultTableModel;
 
 import com.recruitment.model.Application;
@@ -42,6 +25,13 @@ public class AdminDashboard extends JFrame {
     private final ApplicationService applicationService;
     private final NotificationService notificationService;
 
+    private static final Color PRIMARY      = new Color(0x6C, 0x5C, 0xE7);
+    private static final Color DARK_BG      = new Color(0x1E, 0x1E, 0x2E);
+    private static final Color TEXT_PRIMARY  = new Color(0x2D, 0x34, 0x36);
+    private static final Color TEXT_SECONDARY = new Color(0x63, 0x6E, 0x72);
+    private static final Color DANGER       = new Color(0xE1, 0x70, 0x55);
+    private static final Color BORDER       = new Color(0xDF, 0xE6, 0xE9);
+
     public AdminDashboard(User currentUser, LoginFrame loginFrame, JobService jobService, ApplicationService applicationService, NotificationService notificationService) {
         this.currentUser = currentUser;
         this.loginFrame = loginFrame;
@@ -55,9 +45,36 @@ public class AdminDashboard extends JFrame {
     private void initUI() {
         setTitle("Admin Dashboard - " + currentUser.getName());
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setSize(1000, 700);
+        setSize(1020, 720);
         setLocationRelativeTo(null);
 
+        JPanel root = new JPanel(new BorderLayout());
+
+        // ===== Welcome header bar =====
+        JPanel headerPanel = new JPanel(new BorderLayout());
+        headerPanel.setBackground(DARK_BG);
+        headerPanel.setBorder(BorderFactory.createEmptyBorder(14, 24, 14, 24));
+
+        JLabel welcomeLabel = new JLabel("Welcome, " + currentUser.getName() + "  (Administrator)");
+        welcomeLabel.setFont(new Font("Segoe UI", Font.BOLD, 16));
+        welcomeLabel.setForeground(new Color(0xCB, 0xC3, 0xF7));
+        headerPanel.add(welcomeLabel, BorderLayout.WEST);
+
+        JPanel headerRight = new JPanel(new FlowLayout(FlowLayout.RIGHT, 8, 0));
+        headerRight.setOpaque(false);
+
+        JButton logoutHeaderBtn = new JButton("Logout");
+        logoutHeaderBtn.setBackground(DANGER);
+        logoutHeaderBtn.setForeground(Color.WHITE);
+        logoutHeaderBtn.setFocusPainted(false);
+        logoutHeaderBtn.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        logoutHeaderBtn.addActionListener(e -> logout());
+        headerRight.add(logoutHeaderBtn);
+
+        headerPanel.add(headerRight, BorderLayout.EAST);
+        root.add(headerPanel, BorderLayout.NORTH);
+
+        // ===== Menu bar =====
         JMenuBar menuBar = new JMenuBar();
         JMenu accountMenu = new JMenu("Account");
         JMenuItem logoutItem = new JMenuItem("Logout");
@@ -104,21 +121,25 @@ public class AdminDashboard extends JFrame {
         menuBar.add(notificationMenu);
         setJMenuBar(menuBar);
 
+        // ===== Tabbed pane =====
         JTabbedPane tabbedPane = new JTabbedPane();
-        tabbedPane.addTab("TA Workload Overview", createWorkloadPanel());
-        tabbedPane.addTab("All Users", createUsersPanel());
-        tabbedPane.addTab("All Jobs", createAllJobsPanel());
-        tabbedPane.addTab("All Applications", createAllApplicationsPanel());
+        tabbedPane.addTab("  TA Workload  ", createWorkloadPanel());
+        tabbedPane.addTab("  All Users  ", createUsersPanel());
+        tabbedPane.addTab("  All Jobs  ", createAllJobsPanel());
+        tabbedPane.addTab("  All Applications  ", createAllApplicationsPanel());
+        tabbedPane.setTabPlacement(JTabbedPane.TOP);
+        root.add(tabbedPane, BorderLayout.CENTER);
 
-        setContentPane(tabbedPane);
+        setContentPane(root);
     }
 
     private JPanel createWorkloadPanel() {
         JPanel panel = new JPanel(new BorderLayout(10, 10));
-        panel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        panel.setBorder(BorderFactory.createEmptyBorder(18, 24, 18, 24));
 
         JLabel header = new JLabel("TA Workload Overview", SwingConstants.CENTER);
-        header.setFont(new Font("SansSerif", Font.BOLD, 16));
+        header.setFont(new Font("Segoe UI", Font.BOLD, 16));
+        header.setForeground(TEXT_PRIMARY);
         header.setBorder(BorderFactory.createEmptyBorder(5, 0, 10, 0));
         panel.add(header, BorderLayout.NORTH);
 
@@ -129,11 +150,17 @@ public class AdminDashboard extends JFrame {
         };
         JTable table = new JTable(model);
         table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        panel.add(new JScrollPane(table), BorderLayout.CENTER);
+        table.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
+        table.getTableHeader().setReorderingAllowed(false);
+        JScrollPane scrollPane = new JScrollPane(table);
+        scrollPane.setBorder(BorderFactory.createLineBorder(new Color(0xDF, 0xE6, 0xE9), 1));
+        scrollPane.getViewport().setBackground(Color.WHITE);
+        panel.add(scrollPane, BorderLayout.CENTER);
 
-        JPanel btnPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 5));
+        JPanel btnPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 8));
         JButton refreshBtn = new JButton("Refresh");
         refreshBtn.setFocusPainted(false);
+        refreshBtn.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         refreshBtn.addActionListener(e -> {
             userService.reload();
             applicationService.reload();
@@ -143,6 +170,7 @@ public class AdminDashboard extends JFrame {
 
         JButton detailBtn = new JButton("View TA Details");
         detailBtn.setFocusPainted(false);
+        detailBtn.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         detailBtn.addActionListener(e -> {
             int selectedRow = table.getSelectedRow();
             if (selectedRow < 0) {
@@ -214,7 +242,7 @@ public class AdminDashboard extends JFrame {
 
     private JPanel createUsersPanel() {
         JPanel panel = new JPanel(new BorderLayout(10, 10));
-        panel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        panel.setBorder(BorderFactory.createEmptyBorder(18, 24, 18, 24));
 
         String[] columns = {"ID", "Username", "Name", "Role", "Email", "Department"};
         DefaultTableModel model = new DefaultTableModel(columns, 0) {
@@ -223,36 +251,69 @@ public class AdminDashboard extends JFrame {
         };
         JTable table = new JTable(model);
         table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        table.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
+        table.getTableHeader().setReorderingAllowed(false);
 
-        JPanel searchPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 8, 0));
-        JTextField keywordField = new JTextField(22);
+        // Search bar with shadow card
+        JPanel searchPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 8));
+        searchPanel.setOpaque(false);
+        searchPanel.setBorder(BorderFactory.createCompoundBorder(
+                ShadowBorder.subtle(),
+                BorderFactory.createEmptyBorder(8, 14, 8, 14)
+        ));
+
+        JLabel searchIcon = new JLabel("Search:");
+        searchIcon.setFont(new Font("Segoe UI", Font.PLAIN, 13));
+        searchIcon.setForeground(TEXT_SECONDARY);
+        searchPanel.add(searchIcon);
+
+        JTextField keywordField = new JTextField(24);
         keywordField.setToolTipText("Search by username, name, role, email, or department");
+        searchPanel.add(keywordField);
+
         JLabel resultLabel = new JLabel();
+        resultLabel.setFont(new Font("Segoe UI", Font.PLAIN, 12));
+        resultLabel.setForeground(TEXT_SECONDARY);
+
         JButton searchBtn = new JButton("Search");
+        searchBtn.setFocusPainted(false);
+        searchBtn.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         searchBtn.addActionListener(e -> loadUsers(model, keywordField.getText(), resultLabel));
+
         JButton clearBtn = new JButton("Clear");
+        clearBtn.setFocusPainted(false);
+        clearBtn.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         clearBtn.addActionListener(e -> {
             keywordField.setText("");
             loadUsers(model, "", resultLabel);
         });
+
         keywordField.addActionListener(e -> loadUsers(model, keywordField.getText(), resultLabel));
-        searchPanel.add(new JLabel("Keyword:"));
-        searchPanel.add(keywordField);
+
         searchPanel.add(searchBtn);
         searchPanel.add(clearBtn);
         searchPanel.add(resultLabel);
         panel.add(searchPanel, BorderLayout.NORTH);
 
-        panel.add(new JScrollPane(table), BorderLayout.CENTER);
+        JScrollPane userScrollPane = new JScrollPane(table);
+        userScrollPane.setBorder(BorderFactory.createLineBorder(new Color(0xDF, 0xE6, 0xE9), 1));
+        userScrollPane.getViewport().setBackground(Color.WHITE);
+        panel.add(userScrollPane, BorderLayout.CENTER);
 
-        JPanel btnPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 5));
+        JPanel btnPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 8));
         JButton refreshBtn = new JButton("Refresh");
+        refreshBtn.setFocusPainted(false);
+        refreshBtn.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         refreshBtn.addActionListener(e -> {
             userService.reload();
             loadUsers(model, keywordField.getText(), resultLabel);
         });
 
         JButton deleteBtn = new JButton("Delete User");
+        deleteBtn.setBackground(DANGER);
+        deleteBtn.setForeground(Color.WHITE);
+        deleteBtn.setFocusPainted(false);
+        deleteBtn.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         deleteBtn.addActionListener(e -> {
             int selectedRow = table.getSelectedRow();
             if (selectedRow < 0) {
@@ -306,7 +367,7 @@ public class AdminDashboard extends JFrame {
 
     private JPanel createAllJobsPanel() {
         JPanel panel = new JPanel(new BorderLayout(10, 10));
-        panel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        panel.setBorder(BorderFactory.createEmptyBorder(18, 24, 18, 24));
 
         String[] columns = {"ID", "Title", "Module", "Type", "Posted By", "Positions", "Filled", "Status"};
         DefaultTableModel model = new DefaultTableModel(columns, 0) {
@@ -315,10 +376,17 @@ public class AdminDashboard extends JFrame {
         };
         JTable table = new JTable(model);
         table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        panel.add(new JScrollPane(table), BorderLayout.CENTER);
+        table.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
+        table.getTableHeader().setReorderingAllowed(false);
+        JScrollPane jobScrollPane = new JScrollPane(table);
+        jobScrollPane.setBorder(BorderFactory.createLineBorder(new Color(0xDF, 0xE6, 0xE9), 1));
+        jobScrollPane.getViewport().setBackground(Color.WHITE);
+        panel.add(jobScrollPane, BorderLayout.CENTER);
 
-        JPanel btnPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 5));
+        JPanel btnPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 8));
         JButton refreshBtn = new JButton("Refresh");
+        refreshBtn.setFocusPainted(false);
+        refreshBtn.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         refreshBtn.addActionListener(e -> {
             jobService.reload();
             userService.reload();
@@ -349,7 +417,7 @@ public class AdminDashboard extends JFrame {
 
     private JPanel createAllApplicationsPanel() {
         JPanel panel = new JPanel(new BorderLayout(10, 10));
-        panel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        panel.setBorder(BorderFactory.createEmptyBorder(18, 24, 18, 24));
 
         String[] columns = {"App ID", "Job Title", "Applicant", "Apply Date", "Status", "Reviewed By"};
         DefaultTableModel model = new DefaultTableModel(columns, 0) {
@@ -358,10 +426,17 @@ public class AdminDashboard extends JFrame {
         };
         JTable table = new JTable(model);
         table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        panel.add(new JScrollPane(table), BorderLayout.CENTER);
+        table.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
+        table.getTableHeader().setReorderingAllowed(false);
+        JScrollPane appScrollPane = new JScrollPane(table);
+        appScrollPane.setBorder(BorderFactory.createLineBorder(new Color(0xDF, 0xE6, 0xE9), 1));
+        appScrollPane.getViewport().setBackground(Color.WHITE);
+        panel.add(appScrollPane, BorderLayout.CENTER);
 
-        JPanel btnPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 5));
+        JPanel btnPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 8));
         JButton refreshBtn = new JButton("Refresh");
+        refreshBtn.setFocusPainted(false);
+        refreshBtn.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         refreshBtn.addActionListener(e -> {
             applicationService.reload();
             jobService.reload();
