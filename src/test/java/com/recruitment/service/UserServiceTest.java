@@ -21,8 +21,9 @@ public class UserServiceTest {
 
     @Test
     public void testRegisterAndAuthenticate() {
-        User user = new User(null, "testuser_" + System.currentTimeMillis(), "pass123",
-                User.Role.TA, "Test User", "test@example.com");
+        String suffix = String.valueOf(System.currentTimeMillis());
+        User user = new User(null, "testuser_" + suffix, "pass123",
+                User.Role.TA, "Test User", "test_" + suffix + "@example.com");
         boolean registered = userService.register(user);
         assertTrue("User should be registered successfully", registered);
         assertNotNull("User should have an ID after registration", user.getId());
@@ -37,19 +38,31 @@ public class UserServiceTest {
 
     @Test
     public void testDuplicateRegistration() {
-        String username = "dupuser_" + System.currentTimeMillis();
-        User user1 = new User(null, username, "pass1", User.Role.TA, "User1", "u1@test.com");
-        User user2 = new User(null, username, "pass2", User.Role.MO, "User2", "u2@test.com");
+        String suffix = String.valueOf(System.currentTimeMillis());
+        String username = "dupuser_" + suffix;
+        User user1 = new User(null, username, "pass1", User.Role.TA, "User1", "u1_" + suffix + "@test.com");
+        User user2 = new User(null, username, "pass2", User.Role.MO, "User2", "u2_" + suffix + "@test.com");
 
         assertTrue(userService.register(user1));
         assertFalse("Duplicate username should fail", userService.register(user2));
     }
 
     @Test
+    public void testDuplicateEmailRegistration() {
+        String suffix = String.valueOf(System.currentTimeMillis());
+        String email = "shared_" + suffix + "@test.com";
+        User user1 = new User(null, "user_a_" + suffix, "pass1", User.Role.TA, "A", email);
+        User user2 = new User(null, "user_b_" + suffix, "pass2", User.Role.TA, "B", email);
+
+        assertTrue(userService.register(user1));
+        assertFalse("Duplicate email should fail", userService.register(user2));
+    }
+
+    @Test
     public void testFindByRole() {
         String suffix = "_" + System.currentTimeMillis();
-        userService.register(new User(null, "ta" + suffix, "p", User.Role.TA, "TA", "ta@test.com"));
-        userService.register(new User(null, "mo" + suffix, "p", User.Role.MO, "MO", "mo@test.com"));
+        userService.register(new User(null, "ta" + suffix, "p", User.Role.TA, "TA", "ta" + suffix + "@test.com"));
+        userService.register(new User(null, "mo" + suffix, "p", User.Role.MO, "MO", "mo" + suffix + "@test.com"));
 
         List<User> tas = userService.findByRole(User.Role.TA);
         assertFalse("Should find at least one TA", tas.isEmpty());
@@ -58,8 +71,9 @@ public class UserServiceTest {
 
     @Test
     public void testUpdateUser() {
-        User user = new User(null, "upd_" + System.currentTimeMillis(), "pass",
-                User.Role.TA, "Original", "orig@test.com");
+        String suffix = String.valueOf(System.currentTimeMillis());
+        User user = new User(null, "upd_" + suffix, "pass",
+                User.Role.TA, "Original", "orig_" + suffix + "@test.com");
         userService.register(user);
 
         user.setName("Updated Name");
@@ -74,8 +88,9 @@ public class UserServiceTest {
 
     @Test
     public void testDeleteUser() {
-        User user = new User(null, "del_" + System.currentTimeMillis(), "pass",
-                User.Role.TA, "ToDelete", "del@test.com");
+        String suffix = String.valueOf(System.currentTimeMillis());
+        User user = new User(null, "del_" + suffix, "pass",
+                User.Role.TA, "ToDelete", "del_" + suffix + "@test.com");
         userService.register(user);
 
         assertTrue(userService.deleteUser(user.getId()));

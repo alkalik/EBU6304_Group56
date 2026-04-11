@@ -318,18 +318,6 @@ mvn test
 
 ---
 
-## 12. Contributors
-|Name|QMID|
-|---|------|
-|xxx|xxxxxx|
-|xxx|xxxxxx|
-|xxx|xxxxxx|
-|xxx|xxxxxx|
-|xxx|xxxxxx|
-|Xiuying Wang|231225317|
-
----
-
-## 13. License
+## 12. License
 
 This project is developed as coursework for **EBU6304 Software Engineering** at BUPT International School. For academic use only.

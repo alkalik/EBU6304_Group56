@@ -92,5 +92,634 @@
     "name": "Zeyue Zhang",
     "email": "fff",
     "skills": []
+  },
+  {
+    "id": "USR-a4f32670",
+    "username": "search_ta_1775933310917",
+    "password": "pbkdf2$120000$/4Rg9rNpJ0sBE1AqyF2QrA\u003d\u003d$bs9/frwEgUgIVsOVOwSklatO8RCrG2UUqxtgMbjpn/E\u003d",
+    "role": "TA",
+    "name": "Alice Search",
+    "email": "alice_1775933310917@test.com",
+    "skills": [],
+    "department": "Computer Science"
+  },
+  {
+    "id": "USR-531c5820",
+    "username": "search_mo_1775933310917",
+    "password": "pbkdf2$120000$2U9BF8qsypXsGDuoKFH2sw\u003d\u003d$gdsQWy//zWhzpfVc11LQF76LOt2+NZdDc9Wu7Gpw4OU\u003d",
+    "role": "MO",
+    "name": "Bob Review",
+    "email": "bob_1775933310917@test.com",
+    "skills": [],
+    "department": "Mathematics"
+  },
+  {
+    "id": "USR-cde9aca3",
+    "username": "ta_1775933311044",
+    "password": "pbkdf2$120000$LTeoj5yTaDfrcT1mFVsTWg\u003d\u003d$b+Ggb84q2MvHZXOfL3Z7Lnue+87xleCZRT7UGHjRZOY\u003d",
+    "role": "TA",
+    "name": "TA",
+    "email": "ta@test.com",
+    "skills": []
+  },
+  {
+    "id": "USR-418a94f2",
+    "username": "mo_1775933311044",
+    "password": "pbkdf2$120000$hvcC6mrk0MfsT88uSf1mnQ\u003d\u003d$tlyxn1rCKQAiPNjMUw26gpcBbq2iQ2HlStWNEfujYwc\u003d",
+    "role": "MO",
+    "name": "MO",
+    "email": "mo@test.com",
+    "skills": []
+  },
+  {
+    "id": "USR-8522f59a",
+    "username": "upd_1775933311093",
+    "password": "pbkdf2$120000$qQs2Bn8W9g+mv6OWHso+iQ\u003d\u003d$wSvjiByeiy5c3HGFMpIZhCuy+3tde9MOcS1FxnBrjsg\u003d",
+    "role": "TA",
+    "name": "Updated Name",
+    "email": "orig@test.com",
+    "phone": "1234567890",
+    "skills": []
+  },
+  {
+    "id": "USR-cdc7fdb6",
+    "username": "dupuser_1775933311144",
+    "password": "pbkdf2$120000$qGXS4HwV3Slr36LSUnSWmw\u003d\u003d$qqZhGNt0KTj1whi3yk+Nuqr+tu1uuF8A39HrXzL+2UY\u003d",
+    "role": "TA",
+    "name": "User1",
+    "email": "u1@test.com",
+    "skills": []
+  },
+  {
+    "id": "USR-f921b18d",
+    "username": "testuser_1775933311158",
+    "password": "pbkdf2$120000$fVY0b1XSI1rgR3HX+bpXGg\u003d\u003d$ctNPrCgteC73xWwpLdvE8aDzGtXZvevIGhifsR0rstU\u003d",
+    "role": "TA",
+    "name": "Test User",
+    "email": "test@example.com",
+    "skills": []
+  },
+  {
+    "id": "USR-bf310af6",
+    "username": "leo",
+    "password": "pbkdf2$120000$r2q8Da0UIqCDMkwxkVqkYw\u003d\u003d$WPIpjPFBU8Sti2j4azvgJ2mAyVwkL7/386tiF+DZ71A\u003d",
+    "role": "TA",
+    "name": "xiuying",
+    "email": "leowang",
+    "skills": []
+  },
+  {
+    "id": "USR-48182afc",
+    "username": "search_ta_1775933453277",
+    "password": "pbkdf2$120000$wYSumqIfeLLt2UF9VXTggA\u003d\u003d$ChBR4MIeu4tEhQKf4Vr6sJyWPvN5q0P5xDSHPx9IesY\u003d",
+    "role": "TA",
+    "name": "Alice Search",
+    "email": "alice_1775933453277@test.com",
+    "skills": [],
+    "department": "Computer Science"
+  },
+  {
+    "id": "USR-62258afa",
+    "username": "search_mo_1775933453277",
+    "password": "pbkdf2$120000$y6IRkVKebSeW9jgrnFd9+A\u003d\u003d$N8wBmgpOQZ9+w9aR23Pw5yVDn5WmDcuV6hRU+cscorE\u003d",
+    "role": "MO",
+    "name": "Bob Review",
+    "email": "bob_1775933453277@test.com",
+    "skills": [],
+    "department": "Mathematics"
+  },
+  {
+    "id": "USR-03085e65",
+    "username": "ta_1775933453409",
+    "password": "pbkdf2$120000$nbrl0owuPl7bMaVa8/KAWA\u003d\u003d$7W7gmpsNMFz6VCk3Ll7JZnROZekNK/FReXRIM0rWu5E\u003d",
+    "role": "TA",
+    "name": "TA",
+    "email": "ta@test.com",
+    "skills": []
+  },
+  {
+    "id": "USR-fb42dd08",
+    "username": "mo_1775933453409",
+    "password": "pbkdf2$120000$EFB992yzyD9hxXqJUsfN6Q\u003d\u003d$vFbj8nuJHqbfvUt7829YYcnRniKdaknVXjMNJYyBL+c\u003d",
+    "role": "MO",
+    "name": "MO",
+    "email": "mo@test.com",
+    "skills": []
+  },
+  {
+    "id": "USR-7b5ab580",
+    "username": "upd_1775933453459",
+    "password": "pbkdf2$120000$aUuxat/p6uulQ6xU8s93/g\u003d\u003d$4J7YsCTkoYdRrihKOA1dYUgYDYLnrgvnwxeXGFLO9UM\u003d",
+    "role": "TA",
+    "name": "Updated Name",
+    "email": "orig@test.com",
+    "phone": "1234567890",
+    "skills": []
+  },
+  {
+    "id": "USR-47199416",
+    "username": "dupuser_1775933453512",
+    "password": "pbkdf2$120000$6WLrcUtqqA7wOtONH/mwOQ\u003d\u003d$d4LhthiY468SkgC/Cj9BxpAWfz6AtEQnWv6Mnw8rutY\u003d",
+    "role": "TA",
+    "name": "User1",
+    "email": "u1@test.com",
+    "skills": []
+  },
+  {
+    "id": "USR-b92257b1",
+    "username": "testuser_1775933453528",
+    "password": "pbkdf2$120000$NNIUL60xI0VgWi0YAfCxCQ\u003d\u003d$90NgyHDlJBr0lk9fpyXJ2pcY6lF2brIoTrwoutS+kII\u003d",
+    "role": "TA",
+    "name": "Test User",
+    "email": "test@example.com",
+    "skills": []
+  },
+  {
+    "id": "USR-d8911aba",
+    "username": "user_a_1775935683200",
+    "password": "pbkdf2$120000$hJ/xKeBl8w0BXxU0wQBzfg\u003d\u003d$NLPCisTHUJBIvgDcsN71g8Hqr9KRdEHk2SqZDFTcD0k\u003d",
+    "role": "TA",
+    "name": "A",
+    "email": "shared_1775935683200@test.com",
+    "skills": []
+  },
+  {
+    "id": "USR-88332a2a",
+    "username": "search_ta_1775935683564",
+    "password": "pbkdf2$120000$XgU9vT2+aJk/ZOyo56daEw\u003d\u003d$hsVhv5MEJq1S+I590J+udTytbKCX+i7tl1SBRTJJctU\u003d",
+    "role": "TA",
+    "name": "Alice Search",
+    "email": "alice_1775935683564@test.com",
+    "skills": [],
+    "department": "Computer Science"
+  },
+  {
+    "id": "USR-35bf4351",
+    "username": "search_mo_1775935683564",
+    "password": "pbkdf2$120000$WL1pPkagQQ2sRxk7QhWTcQ\u003d\u003d$3BglIMPQ+luhLOMDun9DEra/M8af1FsLCmTjwP2VT0A\u003d",
+    "role": "MO",
+    "name": "Bob Review",
+    "email": "bob_1775935683564@test.com",
+    "skills": [],
+    "department": "Mathematics"
+  },
+  {
+    "id": "USR-6be7d3f9",
+    "username": "user_a_1775935754611",
+    "password": "pbkdf2$120000$Ncrs7M9qJdSp0YuLF6r7Gg\u003d\u003d$BLzT9A0yCuyL8qwIAqzuxdjZGWJ5wob5U2yFAdhONLQ\u003d",
+    "role": "TA",
+    "name": "A",
+    "email": "shared_1775935754611@test.com",
+    "skills": []
+  },
+  {
+    "id": "USR-e5e980a2",
+    "username": "search_ta_1775935754977",
+    "password": "pbkdf2$120000$IeJpNrHF4ZOUEvJ6f2jc6g\u003d\u003d$AAJzRPduGn8HdukcZ8CoqHi8XeBtSCIHiTNpeem4fCE\u003d",
+    "role": "TA",
+    "name": "Alice Search",
+    "email": "alice_1775935754977@test.com",
+    "skills": [],
+    "department": "Computer Science"
+  },
+  {
+    "id": "USR-3eb7ce68",
+    "username": "search_mo_1775935754977",
+    "password": "pbkdf2$120000$f7s8Uias0dRQU7JJSA2gsw\u003d\u003d$PH8im4+s/2MPKN4Aw+EAWrQT8mqoN5fzeSTNlRfRXW8\u003d",
+    "role": "MO",
+    "name": "Bob Review",
+    "email": "bob_1775935754977@test.com",
+    "skills": [],
+    "department": "Mathematics"
+  },
+  {
+    "id": "USR-9e9e65c7",
+    "username": "ta_1775935755453",
+    "password": "pbkdf2$120000$nEtBd+QxkdNnuifbs2Fzeg\u003d\u003d$w/e8k0QdKn+FRsPBnuLre7ZmK0MwrHd3EVEBk04vGs8\u003d",
+    "role": "TA",
+    "name": "TA",
+    "email": "ta_1775935755453@test.com",
+    "skills": []
+  },
+  {
+    "id": "USR-72afbf10",
+    "username": "mo_1775935755453",
+    "password": "pbkdf2$120000$/6+eDQ+zhAmrL1q+jF8t8A\u003d\u003d$z5GQ4YrVXvmYezfkFBzv/Sg+uYq38AJxK+VdmvPPMow\u003d",
+    "role": "MO",
+    "name": "MO",
+    "email": "mo_1775935755453@test.com",
+    "skills": []
+  },
+  {
+    "id": "USR-c56ca627",
+    "username": "upd_1775935755588",
+    "password": "pbkdf2$120000$qQDVpiRbks2h8Q3dmEQWhQ\u003d\u003d$XWqkzuSxlyaZto14Qo045EQTdquKznaqYyPrjCCjELg\u003d",
+    "role": "TA",
+    "name": "Updated Name",
+    "email": "orig_1775935755588@test.com",
+    "phone": "1234567890",
+    "skills": []
+  },
+  {
+    "id": "USR-12c895ee",
+    "username": "dupuser_1775935755845",
+    "password": "pbkdf2$120000$zUy15iE+P0Z6r80iaUHDDg\u003d\u003d$O7WYb+lVMHnofHj1qOXlCme7z71i/f2v17R3MRTBlLo\u003d",
+    "role": "TA",
+    "name": "User1",
+    "email": "u1_1775935755845@test.com",
+    "skills": []
+  },
+  {
+    "id": "USR-a2211710",
+    "username": "testuser_1775935755905",
+    "password": "pbkdf2$120000$wwcg7oVUfGa0HZAEpceR8w\u003d\u003d$sl7WBYpVQYjhPipASEZjcyKmAbQtdofUlG3LroV3Jkg\u003d",
+    "role": "TA",
+    "name": "Test User",
+    "email": "test_1775935755905@example.com",
+    "skills": []
+  },
+  {
+    "id": "USR-09765416",
+    "username": "user_a_1775936309530",
+    "password": "pbkdf2$120000$7beBID5ObnVgyraMRCAUlQ\u003d\u003d$aSiSBJCusp66lQENz/Ag7mUdL1J3dnk/1PFDw5HqA4I\u003d",
+    "role": "TA",
+    "name": "A",
+    "email": "shared_1775936309530@test.com",
+    "skills": []
+  },
+  {
+    "id": "USR-5c53f310",
+    "username": "search_ta_1775936310023",
+    "password": "pbkdf2$120000$Au94ik9FvN9HiVIfSMF68g\u003d\u003d$hTa7ibTxZnV9SCqp+CkzoNb0bJK8EZGmeh4kn7VSgG0\u003d",
+    "role": "TA",
+    "name": "Alice Search",
+    "email": "alice_1775936310023@test.com",
+    "skills": [],
+    "department": "Computer Science"
+  },
+  {
+    "id": "USR-191f9f25",
+    "username": "search_mo_1775936310023",
+    "password": "pbkdf2$120000$AoX225y3ruQVoF2ogkNiRg\u003d\u003d$L3S+BnAzQoCjxpY/G9inphCnIWCwjZtcYbOuKCl25lU\u003d",
+    "role": "MO",
+    "name": "Bob Review",
+    "email": "bob_1775936310023@test.com",
+    "skills": [],
+    "department": "Mathematics"
+  },
+  {
+    "id": "USR-ac41cd0a",
+    "username": "ta_1775936310361",
+    "password": "pbkdf2$120000$8JLK4xf/VAkUAVDWujtCCw\u003d\u003d$pOhVzcfvypjhnP87Cz8xhQOHW3R9IZYy0MuOP9ZwouE\u003d",
+    "role": "TA",
+    "name": "TA",
+    "email": "ta_1775936310361@test.com",
+    "skills": []
+  },
+  {
+    "id": "USR-76308eab",
+    "username": "mo_1775936310361",
+    "password": "pbkdf2$120000$0ZtWVlmEGeXlEiIqjsr0jw\u003d\u003d$fnSNJmZlhW5Ih9HW09LDlA8tJJXsmc7edlJiMi+vAag\u003d",
+    "role": "MO",
+    "name": "MO",
+    "email": "mo_1775936310361@test.com",
+    "skills": []
+  },
+  {
+    "id": "USR-57ed5d65",
+    "username": "upd_1775936310627",
+    "password": "pbkdf2$120000$aS1Gy8q70fGy8YhbtrEHJQ\u003d\u003d$2uzW8AGXuhWAOmHN9MYOqTho0/i/B4MYrWAcdqsZf6E\u003d",
+    "role": "TA",
+    "name": "Updated Name",
+    "email": "orig_1775936310627@test.com",
+    "phone": "1234567890",
+    "skills": []
+  },
+  {
+    "id": "USR-c01bba03",
+    "username": "dupuser_1775936310876",
+    "password": "pbkdf2$120000$1alJTkieV/czOPJA264TpA\u003d\u003d$qGMw6yy9DXyhYa41zaqsQyH1e4LhevYhmzQ7EFR6Zrw\u003d",
+    "role": "TA",
+    "name": "User1",
+    "email": "u1_1775936310876@test.com",
+    "skills": []
+  },
+  {
+    "id": "USR-f97ac0bc",
+    "username": "testuser_1775936310942",
+    "password": "pbkdf2$120000$B56YuN8IejempkMwlLX1jA\u003d\u003d$dL3A6NwcuxVtt3FisiZaQC2MXSNWasxqqsKv3XY28nU\u003d",
+    "role": "TA",
+    "name": "Test User",
+    "email": "test_1775936310942@example.com",
+    "skills": []
+  },
+  {
+    "id": "USR-4113092c",
+    "username": "user_a_1775936698851",
+    "password": "pbkdf2$120000$S8KLXHXHQgp8g6xSPgprOQ\u003d\u003d$De+rc11u7zR/wOntEbI2KmTWAeFaeQ8wxC4j5nUvezs\u003d",
+    "role": "TA",
+    "name": "A",
+    "email": "shared_1775936698851@test.com",
+    "skills": []
+  },
+  {
+    "id": "USR-9d2fc5cc",
+    "username": "search_ta_1775936699414",
+    "password": "pbkdf2$120000$1D4QycDaWEk3Z7ixig+Qaw\u003d\u003d$34jOz+AtgXhtFSP2WK6n7nVcWOsY3PaZKtKsp8a6qp0\u003d",
+    "role": "TA",
+    "name": "Alice Search",
+    "email": "alice_1775936699414@test.com",
+    "skills": [],
+    "department": "Computer Science"
+  },
+  {
+    "id": "USR-bbade4f2",
+    "username": "search_mo_1775936699414",
+    "password": "pbkdf2$120000$NdD6vWN0ke48MVYw/gfvEQ\u003d\u003d$H7LN2la6CTGOH8D3pCCdE3monBtK7UKOAsXT1+zTOG8\u003d",
+    "role": "MO",
+    "name": "Bob Review",
+    "email": "bob_1775936699414@test.com",
+    "skills": [],
+    "department": "Mathematics"
+  },
+  {
+    "id": "USR-a20fb1b8",
+    "username": "ta_1775936699610",
+    "password": "pbkdf2$120000$nDJ3X/WXbjUklhesMQQ75w\u003d\u003d$2yNdRl0M6prk+EOR+RmKJB+mOKZRagBO6QnqGnSuFVg\u003d",
+    "role": "TA",
+    "name": "TA",
+    "email": "ta_1775936699610@test.com",
+    "skills": []
+  },
+  {
+    "id": "USR-308ab136",
+    "username": "mo_1775936699610",
+    "password": "pbkdf2$120000$X2xV+3aH/SU9qp4/Ecdsvg\u003d\u003d$FON3e73odmNhU6ERoz04NghYoHN5sNl4HbSXGNPpq+o\u003d",
+    "role": "MO",
+    "name": "MO",
+    "email": "mo_1775936699610@test.com",
+    "skills": []
+  },
+  {
+    "id": "USR-2495f059",
+    "username": "upd_1775936699812",
+    "password": "pbkdf2$120000$Is9yRtXwgPfxJ3m5Hn/4jg\u003d\u003d$1PO5fDnCDWYmeDGhU2as3nHS6dG4Ah9HiNR1EH5vejg\u003d",
+    "role": "TA",
+    "name": "Updated Name",
+    "email": "orig_1775936699812@test.com",
+    "phone": "1234567890",
+    "skills": []
+  },
+  {
+    "id": "USR-98942cc2",
+    "username": "dupuser_1775936699964",
+    "password": "pbkdf2$120000$j1V4ZAtR6u5iIp7ToLOSew\u003d\u003d$++eorGOZsMVnylRxDHgeLiis8ZB3WHlGRdvp8T+DNyY\u003d",
+    "role": "TA",
+    "name": "User1",
+    "email": "u1_1775936699964@test.com",
+    "skills": []
+  },
+  {
+    "id": "USR-bd2faa4e",
+    "username": "testuser_1775936700018",
+    "password": "pbkdf2$120000$r8SHEGnWzww/Hv7yWZ/R0A\u003d\u003d$wrQzGicGCY9HQwUw1nvc8yC07kfhoU1EcsThtU3q81w\u003d",
+    "role": "TA",
+    "name": "Test User",
+    "email": "test_1775936700018@example.com",
+    "skills": []
+  },
+  {
+    "id": "USR-b4eb15fc",
+    "username": "leowang",
+    "password": "pbkdf2$120000$3NFPoj7FDgIYntGsHeW0GA\u003d\u003d$IyrfYupF8fsXfpgVA29ZdSa2PNkfFqO2oGOtcJyWm7Q\u003d",
+    "role": "TA",
+    "name": "xiuying",
+    "email": "leowang980@outlook.com",
+    "skills": []
+  },
+  {
+    "id": "USR-deee1f92",
+    "username": "user_a_1775937008213",
+    "password": "pbkdf2$120000$XBDHxrOfJ341ubIaMwqpwg\u003d\u003d$iSBUIM3qGlTbEaNT1QdET0WSom/iOaD9aoAtDIOf9TU\u003d",
+    "role": "TA",
+    "name": "A",
+    "email": "shared_1775937008213@test.com",
+    "skills": []
+  },
+  {
+    "id": "USR-0dec3acb",
+    "username": "search_ta_1775937008576",
+    "password": "pbkdf2$120000$tviNvtsU3JuCgiTHF30FQA\u003d\u003d$h1plSZh7XZX7nTx3NZNHbECPuJBJ5iHQaamzmjPHGdg\u003d",
+    "role": "TA",
+    "name": "Alice Search",
+    "email": "alice_1775937008576@test.com",
+    "skills": [],
+    "department": "Computer Science"
+  },
+  {
+    "id": "USR-ce9240ed",
+    "username": "search_mo_1775937008576",
+    "password": "pbkdf2$120000$uOqkIRkz76USdM4VWzm41w\u003d\u003d$txcdQNlTymD67dsi0Y15btRxTjGEeePbSQcnVG2rBoc\u003d",
+    "role": "MO",
+    "name": "Bob Review",
+    "email": "bob_1775937008576@test.com",
+    "skills": [],
+    "department": "Mathematics"
+  },
+  {
+    "id": "USR-9045a7ec",
+    "username": "ta_1775937008866",
+    "password": "pbkdf2$120000$1vVX2V55ra4Gn83wFkJEFg\u003d\u003d$JHMMGaVPCFavkxQ2lcqnUPO9NhmYFq6O4O+myXduGuo\u003d",
+    "role": "TA",
+    "name": "TA",
+    "email": "ta_1775937008866@test.com",
+    "skills": []
+  },
+  {
+    "id": "USR-f8d4383e",
+    "username": "mo_1775937008866",
+    "password": "pbkdf2$120000$I0S/e6S9mP6EvRlnquiMFg\u003d\u003d$ThomGYP3vuK/hrw/81PG7USXuYo3ozKmvWBkeNPJZxw\u003d",
+    "role": "MO",
+    "name": "MO",
+    "email": "mo_1775937008866@test.com",
+    "skills": []
+  },
+  {
+    "id": "USR-1aa2d302",
+    "username": "upd_1775937009082",
+    "password": "pbkdf2$120000$/K42G5sS6jaG7UB1ggay0A\u003d\u003d$OwEEwxdjk7o1A4jSwfKRoIAGrTF3SUZD8+QXmTC4BeI\u003d",
+    "role": "TA",
+    "name": "Updated Name",
+    "email": "orig_1775937009082@test.com",
+    "phone": "1234567890",
+    "skills": []
+  },
+  {
+    "id": "USR-209aec0b",
+    "username": "dupuser_1775937009268",
+    "password": "pbkdf2$120000$7IqoIKUiGXWvTfOqR2vLHQ\u003d\u003d$mOniziOYkGvNJbJlA0lFHIlUCcIcYZrl1qBfi4t/yDM\u003d",
+    "role": "TA",
+    "name": "User1",
+    "email": "u1_1775937009268@test.com",
+    "skills": []
+  },
+  {
+    "id": "USR-b9fb800b",
+    "username": "testuser_1775937009323",
+    "password": "pbkdf2$120000$kOKWkdm8iK/miLu+ucJw0A\u003d\u003d$gbxMHMNkdB8GFASWtL2NHqHQuTmPxJIEczgvr23msnI\u003d",
+    "role": "TA",
+    "name": "Test User",
+    "email": "test_1775937009323@example.com",
+    "skills": []
+  },
+  {
+    "id": "USR-5a724484",
+    "username": "user_a_1775937340672",
+    "password": "pbkdf2$120000$gaMa/QlrLd0xFw98jyUyiw\u003d\u003d$gdMzX6E2oRysoR9pFYOnRNlk39IJrATwJWHTZZqpZZ8\u003d",
+    "role": "TA",
+    "name": "A",
+    "email": "shared_1775937340672@test.com",
+    "skills": []
+  },
+  {
+    "id": "USR-2c0e521e",
+    "username": "search_ta_1775937341118",
+    "password": "pbkdf2$120000$BK3B/7LPhTNgD0tdGU9V5Q\u003d\u003d$tM8F75XqcKEIYjy4uf4/HIFtsAvUF3/UPSVdnYZeyA4\u003d",
+    "role": "TA",
+    "name": "Alice Search",
+    "email": "alice_1775937341118@test.com",
+    "skills": [],
+    "department": "Computer Science"
+  },
+  {
+    "id": "USR-bb92dc53",
+    "username": "search_mo_1775937341118",
+    "password": "pbkdf2$120000$s22D3BNxuB6c02BZ5t2A+Q\u003d\u003d$2xFdddPLVijb+ZN/kxxpMog+OU30NkP79Hi7IE5ZnHw\u003d",
+    "role": "MO",
+    "name": "Bob Review",
+    "email": "bob_1775937341118@test.com",
+    "skills": [],
+    "department": "Mathematics"
+  },
+  {
+    "id": "USR-0091f380",
+    "username": "ta_1775937341330",
+    "password": "pbkdf2$120000$k0+psiHRIQ5BPdpcdnr6MQ\u003d\u003d$U1mGsxnLfvxmzhWQfgeGqWFEbB3lh2I6p4f06Hnspb8\u003d",
+    "role": "TA",
+    "name": "TA",
+    "email": "ta_1775937341330@test.com",
+    "skills": []
+  },
+  {
+    "id": "USR-84cfc923",
+    "username": "mo_1775937341330",
+    "password": "pbkdf2$120000$Q7hpzwoL7mV98lDsOebYqg\u003d\u003d$qrtzg9yEWuCnlEfvVmE4FUkwrOw+DI8nFvV+l5qOySM\u003d",
+    "role": "MO",
+    "name": "MO",
+    "email": "mo_1775937341330@test.com",
+    "skills": []
+  },
+  {
+    "id": "USR-0b3717bd",
+    "username": "upd_1775937341537",
+    "password": "pbkdf2$120000$OsOxHw4i3VBo2nyxcYV+Bw\u003d\u003d$meWv9VuTK1uMOVzUbtMSEGRgH3wgrV/yzz+NmOHDhAM\u003d",
+    "role": "TA",
+    "name": "Updated Name",
+    "email": "orig_1775937341537@test.com",
+    "phone": "1234567890",
+    "skills": []
+  },
+  {
+    "id": "USR-8d8c3bcb",
+    "username": "dupuser_1775937341711",
+    "password": "pbkdf2$120000$raEb2WqdFQpX+dpz9BmRhQ\u003d\u003d$1yBRzIB5xJuuxsFjQ4sx5PAf+VTFWoDsqTgKxMMYJcM\u003d",
+    "role": "TA",
+    "name": "User1",
+    "email": "u1_1775937341711@test.com",
+    "skills": []
+  },
+  {
+    "id": "USR-0f2a62db",
+    "username": "testuser_1775937341832",
+    "password": "pbkdf2$120000$wEuSVCiG74f/KP6QduDb+g\u003d\u003d$MByfpxF9CM47gok3EyZXxkZ63D/9VRNk0p9LTEJ7SGA\u003d",
+    "role": "TA",
+    "name": "Test User",
+    "email": "test_1775937341832@example.com",
+    "skills": []
+  },
+  {
+    "id": "USR-78bd0604",
+    "username": "user_a_1775937452425",
+    "password": "pbkdf2$120000$aIJz94C9jFEx9iOVXnYmJw\u003d\u003d$3Z5hb9Vj1bfF0gylyP+30E65mNgke/e+/EFmWKFuE9U\u003d",
+    "role": "TA",
+    "name": "A",
+    "email": "shared_1775937452425@test.com",
+    "skills": []
+  },
+  {
+    "id": "USR-0efcd5e2",
+    "username": "search_ta_1775937452839",
+    "password": "pbkdf2$120000$m0JKJRisAv0N9DctJuAtfA\u003d\u003d$bqZDVyjsCv8wfPoL47HcVOp517/ka/AhAbHRbhD3R/4\u003d",
+    "role": "TA",
+    "name": "Alice Search",
+    "email": "alice_1775937452839@test.com",
+    "skills": [],
+    "department": "Computer Science"
+  },
+  {
+    "id": "USR-5a2cac56",
+    "username": "search_mo_1775937452839",
+    "password": "pbkdf2$120000$FNNFQcC77MpLVH7X0csh1w\u003d\u003d$lzkD6UEZSYGSdN5uE0xl/7zMf0t+3KXajjrcXEA8bLE\u003d",
+    "role": "MO",
+    "name": "Bob Review",
+    "email": "bob_1775937452839@test.com",
+    "skills": [],
+    "department": "Mathematics"
+  },
+  {
+    "id": "USR-0aca8a20",
+    "username": "ta_1775937453049",
+    "password": "pbkdf2$120000$H/dBi/iNUWLu05LC4AW0KA\u003d\u003d$RElUm+e1RxWLHY5hhdXh04C7b3TbmvT0v5ugHH96pws\u003d",
+    "role": "TA",
+    "name": "TA",
+    "email": "ta_1775937453049@test.com",
+    "skills": []
+  },
+  {
+    "id": "USR-a5ba1aa9",
+    "username": "mo_1775937453049",
+    "password": "pbkdf2$120000$hItKuqIPyroHJUDbn0wXRA\u003d\u003d$TWukOYoEcI+1tDJJCZash+jmCJY3+32VNgpksq7DWl8\u003d",
+    "role": "MO",
+    "name": "MO",
+    "email": "mo_1775937453049@test.com",
+    "skills": []
+  },
+  {
+    "id": "USR-8ed8b8ea",
+    "username": "upd_1775937453201",
+    "password": "pbkdf2$120000$Sq5/0Vemj/MLMcaQGRhE8Q\u003d\u003d$xmLTJqr6B13tr8MNJ9fVldw3GD64+T/BgojGvD+7cbg\u003d",
+    "role": "TA",
+    "name": "Updated Name",
+    "email": "orig_1775937453201@test.com",
+    "phone": "1234567890",
+    "skills": []
+  },
+  {
+    "id": "USR-48cd08d2",
+    "username": "dupuser_1775937453352",
+    "password": "pbkdf2$120000$eBgnLdgTjyjXr19dYGYDRA\u003d\u003d$0pS4YUdkK350lOjpDbn39bRqc+xiKWUdYUJZW19fZYo\u003d",
+    "role": "TA",
+    "name": "User1",
+    "email": "u1_1775937453352@test.com",
+    "skills": []
+  },
+  {
+    "id": "USR-79ba6b41",
+    "username": "testuser_1775937453402",
+    "password": "pbkdf2$120000$y4nVUutzK9AKKftIwlv54g\u003d\u003d$C3Y0aGO3RQ62JHPq4DhDMhFyjHNRSbga4PnM0GVrurs\u003d",
+    "role": "TA",
+    "name": "Test User",
+    "email": "test_1775937453402@example.com",
+    "skills": []
   }
 ]
