@@ -19,7 +19,6 @@ public class LoginFrame extends JFrame {
     private final NotificationService notificationService;
     private JTextField usernameField;
     private JPasswordField passwordField;
-    private JComboBox<String> roleComboBox;
     
     // Login attempt tracking
     private static final Map<String, LoginAttempt> loginAttempts = new ConcurrentHashMap<>();
@@ -193,7 +192,6 @@ public class LoginFrame extends JFrame {
     private void handleLogin() {
         String username = usernameField.getText().trim();
         String password = new String(passwordField.getPassword()).trim();
-        String selectedRole = (String) roleComboBox.getSelectedItem();
 
         if (username.isEmpty() || password.isEmpty()) {
             JOptionPane.showMessageDialog(this, "Please enter username and password.",
@@ -230,7 +228,6 @@ public class LoginFrame extends JFrame {
             }
             
             if (attempt.failureCount >= MAX_ATTEMPTS) {
-                // Lock the account
                 attempt.lockoutUntil = currentTime + LOCKOUT_DURATION_MS;
                 JOptionPane.showMessageDialog(this, 
                         "Invalid username or password.\nToo many failed attempts. Account locked for 1 minute.",
@@ -241,13 +238,6 @@ public class LoginFrame extends JFrame {
                         "Invalid username or password.\nRemaining attempts: " + remainingAttempts,
                         "Login Failed", JOptionPane.ERROR_MESSAGE);
             }
-            return;
-        }
-
-        // Check if user's role matches selected role
-        if (!user.getRole().toString().equals(selectedRole)) {
-            JOptionPane.showMessageDialog(this, "Your account role does not match the selected role.",
-                    "Role Mismatch", JOptionPane.ERROR_MESSAGE);
             return;
         }
 
@@ -281,7 +271,6 @@ public class LoginFrame extends JFrame {
     public void showAgain() {
         usernameField.setText("");
         passwordField.setText("");
-        roleComboBox.setSelectedIndex(0);
         userService.reload();
         setVisible(true);
     }
