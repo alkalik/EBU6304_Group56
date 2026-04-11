@@ -9,12 +9,15 @@ import com.recruitment.view.LoginFrame;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.Locale;
 import java.util.Timer;
 import java.util.TimerTask;
 
 public class Main {
     public static void main(String[] args) {
         try {
+            Locale.setDefault(Locale.ENGLISH);
+            JComponent.setDefaultLocale(Locale.ENGLISH);
             FlatLightLaf.setup();
 
             // ================================================================
