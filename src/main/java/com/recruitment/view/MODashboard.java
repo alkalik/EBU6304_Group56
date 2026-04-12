@@ -73,7 +73,11 @@ public class MODashboard extends JFrame {
         notificationButton.setForeground(Color.WHITE);
         notificationButton.setBackground(new Color(0x6C, 0x5C, 0xE7));
         notificationButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-        notificationButton.addActionListener(e -> showNotifications());
+        notificationButton.addActionListener(e -> {
+            notificationService.reload();
+            showNotifications();
+            updateNotificationButton(notificationButton);
+        });
         updateNotificationButton(notificationButton);
         headerRight.add(notificationButton);
 
@@ -538,6 +542,17 @@ public class MODashboard extends JFrame {
         panel.add(scrollPane, BorderLayout.CENTER);
 
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 6));
+
+        JButton refreshBtn = new JButton("Refresh");
+        refreshBtn.setBackground(PRIMARY);
+        refreshBtn.setForeground(Color.WHITE);
+        refreshBtn.setFocusPainted(false);
+        refreshBtn.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        refreshBtn.addActionListener(e -> {
+            notificationService.reload();
+            refreshNotificationList(listModel);
+        });
+
         JButton markReadBtn = new JButton("Mark as Read");
         markReadBtn.setFocusPainted(false);
         markReadBtn.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
@@ -568,6 +583,7 @@ public class MODashboard extends JFrame {
         closeBtn.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         closeBtn.addActionListener(e -> dialog.dispose());
 
+        buttonPanel.add(refreshBtn);
         buttonPanel.add(markReadBtn);
         buttonPanel.add(clearReadBtn);
         buttonPanel.add(closeBtn);
