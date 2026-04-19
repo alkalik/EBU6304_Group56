@@ -1,5 +1,44 @@
 package com.recruitment.view;
 
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Cursor;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.Font;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.io.File;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
+import javax.swing.BorderFactory;
+import javax.swing.DefaultListModel;
+import javax.swing.JButton;
+import javax.swing.JComponent;
+import javax.swing.JDialog;
+import javax.swing.JFileChooser;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JList;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTabbedPane;
+import javax.swing.JTable;
+import javax.swing.JTextArea;
+import javax.swing.JTextField;
+import javax.swing.ListSelectionModel;
+import javax.swing.table.DefaultTableModel;
+
 import com.recruitment.model.Application;
 import com.recruitment.model.Job;
 import com.recruitment.model.User;
@@ -9,15 +48,6 @@ import com.recruitment.service.JobService;
 import com.recruitment.service.NotificationService;
 import com.recruitment.service.UserService;
 import com.recruitment.util.ShadowBorder;
-
-import javax.swing.*;
-import javax.swing.table.DefaultTableModel;
-import java.awt.*;
-import java.io.File;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 public class TADashboard extends JFrame {
     private final User currentUser;
@@ -249,6 +279,19 @@ public class TADashboard extends JFrame {
         table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         table.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
         table.getTableHeader().setReorderingAllowed(false);
+        table.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                if (e.getClickCount() == 2) {
+                    int row = table.rowAtPoint(e.getPoint());
+                    if (row >= 0) {
+                        table.setRowSelectionInterval(row, row);
+                        String jobId = (String) model.getValueAt(row, 0);
+                        showJobDetails(jobId);
+                    }
+                }
+            }
+        });
 
         JScrollPane scrollPane = new JScrollPane(table);
         scrollPane.setBorder(BorderFactory.createLineBorder(new Color(0xDF, 0xE6, 0xE9), 1));
@@ -389,6 +432,19 @@ public class TADashboard extends JFrame {
         table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         table.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
         table.getTableHeader().setReorderingAllowed(false);
+        table.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                if (e.getClickCount() == 2) {
+                    int row = table.rowAtPoint(e.getPoint());
+                    if (row >= 0) {
+                        table.setRowSelectionInterval(row, row);
+                        String appId = (String) model.getValueAt(row, 0);
+                        showMyApplicationMessageReadOnly(appId);
+                    }
+                }
+            }
+        });
 
         JScrollPane scrollPane = new JScrollPane(table);
         scrollPane.setBorder(BorderFactory.createLineBorder(new Color(0xDF, 0xE6, 0xE9), 1));
@@ -437,6 +493,32 @@ public class TADashboard extends JFrame {
 
         loadApplicationsTable(model);
         return panel;
+    }
+
+    /** Cover letter submitted with the application (read-only). */
+    private void showMyApplicationMessageReadOnly(String appId) {
+        Optional<Application> appOpt = applicationService.findById(appId);
+        if (!appOpt.isPresent()) {
+            JOptionPane.showMessageDialog(this, "Application not found.");
+            return;
+        }
+        Application app = appOpt.get();
+        if (!currentUser.getId().equals(app.getApplicantId())) {
+            JOptionPane.showMessageDialog(this, "You can only view your own applications.");
+            return;
+        }
+        String cover = app.getCoverLetter();
+        String display = (cover == null || cover.trim().isEmpty())
+                ? "(No message was left when you applied.)"
+                : cover;
+        JTextArea textArea = new JTextArea(display);
+        textArea.setEditable(false);
+        textArea.setLineWrap(true);
+        textArea.setWrapStyleWord(true);
+        JScrollPane sp = new JScrollPane(textArea);
+        sp.setPreferredSize(new Dimension(420, 220));
+        JOptionPane.showMessageDialog(this, sp, "Your Application Message (read-only)",
+                JOptionPane.INFORMATION_MESSAGE);
     }
 
     private void loadApplicationsTable(DefaultTableModel model) {
