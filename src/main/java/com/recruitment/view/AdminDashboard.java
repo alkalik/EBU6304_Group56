@@ -1,6 +1,8 @@
 package com.recruitment.view;
 
 import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.List;
 import java.util.Optional;
 
@@ -152,6 +154,19 @@ public class AdminDashboard extends JFrame {
         table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         table.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
         table.getTableHeader().setReorderingAllowed(false);
+        table.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                if (e.getClickCount() == 2) {
+                    int row = table.rowAtPoint(e.getPoint());
+                    if (row >= 0) {
+                        table.setRowSelectionInterval(row, row);
+                        String taId = (String) model.getValueAt(row, 0);
+                        showTADetails(taId);
+                    }
+                }
+            }
+        });
         JScrollPane scrollPane = new JScrollPane(table);
         scrollPane.setBorder(BorderFactory.createLineBorder(new Color(0xDF, 0xE6, 0xE9), 1));
         scrollPane.getViewport().setBackground(Color.WHITE);
@@ -253,6 +268,19 @@ public class AdminDashboard extends JFrame {
         table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         table.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
         table.getTableHeader().setReorderingAllowed(false);
+        table.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                if (e.getClickCount() == 2) {
+                    int row = table.rowAtPoint(e.getPoint());
+                    if (row >= 0) {
+                        table.setRowSelectionInterval(row, row);
+                        String userId = (String) model.getValueAt(row, 0);
+                        showUserDetails(userId);
+                    }
+                }
+            }
+        });
 
         // Search bar with shadow card
         JPanel searchPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 8));
@@ -378,6 +406,19 @@ public class AdminDashboard extends JFrame {
         table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         table.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
         table.getTableHeader().setReorderingAllowed(false);
+        table.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                if (e.getClickCount() == 2) {
+                    int row = table.rowAtPoint(e.getPoint());
+                    if (row >= 0) {
+                        table.setRowSelectionInterval(row, row);
+                        String jobId = (String) model.getValueAt(row, 0);
+                        showJobDetails(jobId);
+                    }
+                }
+            }
+        });
         JScrollPane jobScrollPane = new JScrollPane(table);
         jobScrollPane.setBorder(BorderFactory.createLineBorder(new Color(0xDF, 0xE6, 0xE9), 1));
         jobScrollPane.getViewport().setBackground(Color.WHITE);
@@ -428,6 +469,19 @@ public class AdminDashboard extends JFrame {
         table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         table.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
         table.getTableHeader().setReorderingAllowed(false);
+        table.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                if (e.getClickCount() == 2) {
+                    int row = table.rowAtPoint(e.getPoint());
+                    if (row >= 0) {
+                        table.setRowSelectionInterval(row, row);
+                        String appId = (String) model.getValueAt(row, 0);
+                        showApplicationDetails(appId);
+                    }
+                }
+            }
+        });
         JScrollPane appScrollPane = new JScrollPane(table);
         appScrollPane.setBorder(BorderFactory.createLineBorder(new Color(0xDF, 0xE6, 0xE9), 1));
         appScrollPane.getViewport().setBackground(Color.WHITE);
@@ -468,6 +522,116 @@ public class AdminDashboard extends JFrame {
                     app.getApplyDate(), app.getStatus(), reviewerName
             });
         }
+    }
+
+    private void showUserDetails(String userId) {
+        Optional<User> userOpt = userService.findById(userId);
+        if (!userOpt.isPresent()) {
+            JOptionPane.showMessageDialog(this, "User not found.");
+            return;
+        }
+        User user = userOpt.get();
+        String details = String.format(
+                "ID: %s%nUsername: %s%nName: %s%nRole: %s%nEmail: %s%nPhone: %s%nDepartment: %s%nSkills: %s%nCV: %s",
+                user.getId(),
+                user.getUsername(),
+                user.getName(),
+                user.getRole(),
+                user.getEmail() != null ? user.getEmail() : "N/A",
+                user.getPhone() != null ? user.getPhone() : "N/A",
+                user.getDepartment() != null ? user.getDepartment() : "N/A",
+                user.getSkills() != null && !user.getSkills().isEmpty() ? String.join(", ", user.getSkills()) : "N/A",
+                user.getCvPath() != null ? user.getCvPath() : "Not uploaded"
+        );
+        JTextArea textArea = new JTextArea(details);
+        textArea.setEditable(false);
+        textArea.setLineWrap(true);
+        textArea.setWrapStyleWord(true);
+        JScrollPane sp = new JScrollPane(textArea);
+        sp.setPreferredSize(new Dimension(460, 280));
+        JOptionPane.showMessageDialog(this, sp, "User Details", JOptionPane.INFORMATION_MESSAGE);
+    }
+
+    private void showJobDetails(String jobId) {
+        Optional<Job> jobOpt = jobService.findById(jobId);
+        if (!jobOpt.isPresent()) {
+            JOptionPane.showMessageDialog(this, "Job not found.");
+            return;
+        }
+        Job job = jobOpt.get();
+        String postedByName = userService.findById(job.getPostedBy()).map(User::getName).orElse("Unknown");
+        String details = String.format(
+                "ID: %s%nTitle: %s%nModule: %s%nType: %s%nStatus: %s%n" +
+                        "Posted By: %s (%s)%nPositions: %d (Filled: %d)%nSemester: %s%nDeadline: %s%nPost Date: %s%n%n" +
+                        "Required Skills: %s%n%nDescription:%n%s",
+                job.getId(),
+                job.getTitle(),
+                job.getModuleName(),
+                job.getJobType(),
+                job.getStatus(),
+                postedByName,
+                job.getPostedBy(),
+                job.getMaxPositions(),
+                job.getFilledPositions(),
+                job.getSemester() != null ? job.getSemester() : "N/A",
+                job.getDeadline() != null ? job.getDeadline() : "N/A",
+                job.getPostDate() != null ? job.getPostDate() : "N/A",
+                job.getRequiredSkills() != null && !job.getRequiredSkills().isEmpty()
+                        ? String.join(", ", job.getRequiredSkills())
+                        : "N/A",
+                job.getDescription() != null ? job.getDescription() : ""
+        );
+        JTextArea textArea = new JTextArea(details);
+        textArea.setEditable(false);
+        textArea.setLineWrap(true);
+        textArea.setWrapStyleWord(true);
+        JScrollPane sp = new JScrollPane(textArea);
+        sp.setPreferredSize(new Dimension(500, 320));
+        JOptionPane.showMessageDialog(this, sp, "Job Details", JOptionPane.INFORMATION_MESSAGE);
+    }
+
+    private void showApplicationDetails(String appId) {
+        Optional<Application> appOpt = applicationService.findById(appId);
+        if (!appOpt.isPresent()) {
+            JOptionPane.showMessageDialog(this, "Application not found.");
+            return;
+        }
+        Application app = appOpt.get();
+        String jobTitle = jobService.findById(app.getJobId()).map(Job::getTitle).orElse("Unknown");
+        String applicantName = userService.findById(app.getApplicantId()).map(User::getName).orElse("Unknown");
+        String reviewerName = app.getReviewedBy() != null
+                ? userService.findById(app.getReviewedBy()).map(User::getName).orElse("Unknown")
+                : "N/A";
+        String coverLetter = app.getCoverLetter() != null && !app.getCoverLetter().trim().isEmpty()
+                ? app.getCoverLetter()
+                : "(No cover letter provided.)";
+        String reviewNote = app.getReviewNote() != null && !app.getReviewNote().trim().isEmpty()
+                ? app.getReviewNote()
+                : "(No review note.)";
+
+        String details = String.format(
+                "Application ID: %s%nJob: %s (%s)%nApplicant: %s (%s)%nStatus: %s%nApply Date: %s%n" +
+                        "Reviewed By: %s (%s)%n%nCover Letter:%n%s%n%nReview Note:%n%s",
+                app.getId(),
+                jobTitle,
+                app.getJobId(),
+                applicantName,
+                app.getApplicantId(),
+                app.getStatus(),
+                app.getApplyDate(),
+                reviewerName,
+                app.getReviewedBy() != null ? app.getReviewedBy() : "N/A",
+                coverLetter,
+                reviewNote
+        );
+
+        JTextArea textArea = new JTextArea(details);
+        textArea.setEditable(false);
+        textArea.setLineWrap(true);
+        textArea.setWrapStyleWord(true);
+        JScrollPane sp = new JScrollPane(textArea);
+        sp.setPreferredSize(new Dimension(500, 320));
+        JOptionPane.showMessageDialog(this, sp, "Application Details", JOptionPane.INFORMATION_MESSAGE);
     }
 
     private void broadcastAnnouncement() {

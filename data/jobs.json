@@ -6,7 +6,7 @@
     "moduleName": "EBU6304",
     "postedBy": "USR-mo001",
     "jobType": "MODULE_TA",
-    "status": "OPEN",
+    "status": "CLOSED",
     "requiredSkills": [
       "Java",
       "Agile",
@@ -25,7 +25,7 @@
     "moduleName": "EBU5302",
     "postedBy": "USR-mo002",
     "jobType": "MODULE_TA",
-    "status": "OPEN",
+    "status": "CLOSED",
     "requiredSkills": [
       "C++",
       "Data Structures",
@@ -59,7 +59,7 @@
     "moduleName": "RFID",
     "postedBy": "USR-9ca64c9c",
     "jobType": "MODULE_TA",
-    "status": "OPEN",
+    "status": "CLOSED",
     "requiredSkills": [
       "python",
       "c++"
@@ -69,5 +69,22 @@
     "semester": "2025-2026 Spring",
     "postDate": "2026-04-11",
     "deadline": "2026-04-30"
+  },
+  {
+    "id": "JOB-29c8def2",
+    "title": "module",
+    "description": "213",
+    "moduleName": "22",
+    "postedBy": "USR-mo001",
+    "jobType": "MODULE_TA",
+    "status": "OPEN",
+    "requiredSkills": [
+      "4213"
+    ],
+    "maxPositions": 3,
+    "filledPositions": 0,
+    "semester": "2025-2026 Spring",
+    "postDate": "2026-04-30",
+    "deadline": "2026-05-30"
   }
 ]

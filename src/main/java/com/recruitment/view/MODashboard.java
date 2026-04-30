@@ -13,6 +13,8 @@ import com.recruitment.util.ShadowBorder;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -284,6 +286,19 @@ public class MODashboard extends JFrame {
         table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         table.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
         table.getTableHeader().setReorderingAllowed(false);
+        table.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                if (e.getClickCount() == 2) {
+                    int row = table.rowAtPoint(e.getPoint());
+                    if (row >= 0) {
+                        table.setRowSelectionInterval(row, row);
+                        String jobId = (String) model.getValueAt(row, 0);
+                        showJobDetails(jobId);
+                    }
+                }
+            }
+        });
 
         JScrollPane jobsScrollPane = new JScrollPane(table);
         jobsScrollPane.setBorder(BorderFactory.createLineBorder(new Color(0xDF, 0xE6, 0xE9), 1));
@@ -391,6 +406,19 @@ public class MODashboard extends JFrame {
         table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         table.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
         table.getTableHeader().setReorderingAllowed(false);
+        table.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                if (e.getClickCount() == 2) {
+                    int row = table.rowAtPoint(e.getPoint());
+                    if (row >= 0) {
+                        table.setRowSelectionInterval(row, row);
+                        String appId = (String) model.getValueAt(row, 0);
+                        showApplicantDetails(appId);
+                    }
+                }
+            }
+        });
 
         JScrollPane appsScrollPane = new JScrollPane(table);
         appsScrollPane.setBorder(BorderFactory.createLineBorder(new Color(0xDF, 0xE6, 0xE9), 1));
@@ -500,6 +528,95 @@ public class MODashboard extends JFrame {
                     app.getId(), name, email, skills, app.getApplyDate(), app.getStatus()
             });
         }
+    }
+
+    private void showJobDetails(String jobId) {
+        Optional<Job> jobOpt = jobService.findById(jobId);
+        if (!jobOpt.isPresent()) {
+            JOptionPane.showMessageDialog(this, "Job not found.");
+            return;
+        }
+        Job job = jobOpt.get();
+        String requiredSkills = (job.getRequiredSkills() == null || job.getRequiredSkills().isEmpty())
+                ? "N/A"
+                : String.join(", ", job.getRequiredSkills());
+        String details = String.format(
+                "Title: %s%nModule: %s%nType: %s%nDescription: %s%n%nRequired Skills: %s%n" +
+                        "Positions: %d (Filled: %d)%nDeadline: %s%nPosted: %s%nStatus: %s",
+                job.getTitle(),
+                job.getModuleName(),
+                job.getJobType(),
+                job.getDescription(),
+                requiredSkills,
+                job.getMaxPositions(),
+                job.getFilledPositions(),
+                job.getDeadline(),
+                job.getPostDate(),
+                job.getStatus()
+        );
+
+        JTextArea textArea = new JTextArea(details);
+        textArea.setEditable(false);
+        textArea.setLineWrap(true);
+        textArea.setWrapStyleWord(true);
+        JScrollPane sp = new JScrollPane(textArea);
+        sp.setPreferredSize(new Dimension(430, 260));
+        JOptionPane.showMessageDialog(this, sp, "Job Details", JOptionPane.INFORMATION_MESSAGE);
+    }
+
+    private void showApplicantDetails(String appId) {
+        Optional<Application> appOpt = applicationService.findById(appId);
+        if (!appOpt.isPresent()) {
+            JOptionPane.showMessageDialog(this, "Application not found.");
+            return;
+        }
+        Application app = appOpt.get();
+        Optional<User> applicantOpt = userService.findById(app.getApplicantId());
+        if (!applicantOpt.isPresent()) {
+            JOptionPane.showMessageDialog(this, "Applicant details not found.");
+            return;
+        }
+
+        User applicant = applicantOpt.get();
+        String skills = (applicant.getSkills() == null || applicant.getSkills().isEmpty())
+                ? "N/A"
+                : String.join(", ", applicant.getSkills());
+        String coverLetter = (app.getCoverLetter() == null || app.getCoverLetter().trim().isEmpty())
+                ? "(No cover letter provided.)"
+                : app.getCoverLetter();
+        String cvPath = (applicant.getCvPath() == null || applicant.getCvPath().trim().isEmpty())
+                ? "Not uploaded"
+                : applicant.getCvPath();
+        String phone = (applicant.getPhone() == null || applicant.getPhone().trim().isEmpty())
+                ? "N/A"
+                : applicant.getPhone();
+        String department = (applicant.getDepartment() == null || applicant.getDepartment().trim().isEmpty())
+                ? "N/A"
+                : applicant.getDepartment();
+
+        String details = String.format(
+                "Application ID: %s%nApply Date: %s%nStatus: %s%n%n" +
+                        "Name: %s%nEmail: %s%nPhone: %s%nDepartment: %s%nSkills: %s%nCV: %s%n%n" +
+                        "Cover Letter:%n%s",
+                app.getId(),
+                app.getApplyDate(),
+                app.getStatus(),
+                applicant.getName(),
+                applicant.getEmail() != null ? applicant.getEmail() : "N/A",
+                phone,
+                department,
+                skills,
+                cvPath,
+                coverLetter
+        );
+
+        JTextArea textArea = new JTextArea(details);
+        textArea.setEditable(false);
+        textArea.setLineWrap(true);
+        textArea.setWrapStyleWord(true);
+        JScrollPane sp = new JScrollPane(textArea);
+        sp.setPreferredSize(new Dimension(460, 300));
+        JOptionPane.showMessageDialog(this, sp, "Applicant Details", JOptionPane.INFORMATION_MESSAGE);
     }
 
     private void addFormRow(JPanel panel, GridBagConstraints gbc, int row, String label, JComponent field) {
