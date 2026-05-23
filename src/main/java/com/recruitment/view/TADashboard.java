@@ -4,22 +4,23 @@ import com.recruitment.model.Application;
 import com.recruitment.model.Job;
 import com.recruitment.model.User;
 import com.recruitment.service.ApplicationService;
-import com.recruitment.service.BackupService;
 import com.recruitment.service.JobService;
 import com.recruitment.service.NotificationService;
 import com.recruitment.service.UserService;
 import com.recruitment.util.ShadowBorder;
+import com.recruitment.util.UiText;
 
 import javax.swing.*;
-import javax.swing.table.DefaultTableModel;
+import javax.swing.border.EmptyBorder;
+import javax.swing.table.*;
 import java.awt.*;
 import java.io.File;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class TADashboard extends JFrame {
+
     private final User currentUser;
     private final LoginFrame loginFrame;
     private final UserService userService;
@@ -27,15 +28,22 @@ public class TADashboard extends JFrame {
     private final ApplicationService applicationService;
     private final NotificationService notificationService;
 
-    private JTabbedPane tabbedPane;
+    // Shared palette
+    private static final Color C_BG      = AdminDashboard.C_BG;
+    private static final Color C_SURFACE = AdminDashboard.C_SURFACE;
+    private static final Color C_PRIMARY = AdminDashboard.C_PRIMARY;
+    private static final Color C_ACCENT  = AdminDashboard.C_ACCENT;
+    private static final Color C_DANGER  = AdminDashboard.C_DANGER;
+    private static final Color C_HDR     = AdminDashboard.C_HDR;
+    private static final Color C_TXT_PRI = AdminDashboard.C_TXT_PRI;
+    private static final Color C_TXT_SEC = AdminDashboard.C_TXT_SEC;
+    private static final Font  F_BODY    = AdminDashboard.F_BODY;
+    private static final Font  F_BOLD    = AdminDashboard.F_BOLD;
+    private static final Font  F_SMALL   = AdminDashboard.F_SMALL;
+    private static final Font  F_H2      = AdminDashboard.F_H2;
 
-    private static final Color PRIMARY      = new Color(0x6C, 0x5C, 0xE7);
-    private static final Color DARK_BG      = new Color(0x1E, 0x1E, 0x2E);
-    private static final Color TEXT_SECONDARY = new Color(0x63, 0x6E, 0x72);
-    private static final Color DANGER       = new Color(0xE1, 0x70, 0x55);
-    private static final Color SUCCESS      = new Color(0x00, 0xB8, 0x94);
-
-    public TADashboard(User currentUser, LoginFrame loginFrame, JobService jobService, ApplicationService applicationService, NotificationService notificationService) {
+    public TADashboard(User currentUser, LoginFrame loginFrame, JobService jobService,
+                       ApplicationService applicationService, NotificationService notificationService) {
         this.currentUser = currentUser;
         this.loginFrame = loginFrame;
         this.userService = new UserService();
@@ -46,514 +54,276 @@ public class TADashboard extends JFrame {
     }
 
     private void initUI() {
-        setTitle("TA Dashboard - " + currentUser.getName());
+        setTitle("Teaching Assistant – " + currentUser.getName());
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setSize(960, 640);
+        setSize(1100, 740);
         setLocationRelativeTo(null);
 
         JPanel root = new JPanel(new BorderLayout());
+        root.setBackground(C_BG);
+        root.add(buildHeader(), BorderLayout.NORTH);
 
-        // ===== Welcome header bar =====
-        JPanel headerPanel = new JPanel(new BorderLayout());
-        headerPanel.setBackground(DARK_BG);
-        headerPanel.setBorder(BorderFactory.createEmptyBorder(14, 24, 14, 24));
-
-        JLabel welcomeLabel = new JLabel("Welcome, " + currentUser.getName());
-        welcomeLabel.setFont(new Font("Segoe UI", Font.BOLD, 16));
-        welcomeLabel.setForeground(new Color(0xCB, 0xC3, 0xF7));
-        headerPanel.add(welcomeLabel, BorderLayout.WEST);
-
-        JPanel headerRight = new JPanel(new FlowLayout(FlowLayout.RIGHT, 8, 0));
-        headerRight.setOpaque(false);
-
-        JButton notificationButton = new JButton("Notifications");
-        notificationButton.setToolTipText("Notifications");
-        notificationButton.setFocusPainted(false);
-        notificationButton.setFont(new Font("Segoe UI", Font.BOLD, 12));
-        notificationButton.setForeground(Color.WHITE);
-        notificationButton.setBackground(new Color(0x6C, 0x5C, 0xE7));
-        notificationButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-        notificationButton.addActionListener(e -> {
-            notificationService.reload();
-            showNotifications();
-            updateNotificationButton(notificationButton);
-        });
-        updateNotificationButton(notificationButton);
-        headerRight.add(notificationButton);
-
-        JButton logoutHeaderBtn = new JButton("Logout");
-        logoutHeaderBtn.setBackground(DANGER);
-        logoutHeaderBtn.setForeground(Color.WHITE);
-        logoutHeaderBtn.setFocusPainted(false);
-        logoutHeaderBtn.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-        logoutHeaderBtn.addActionListener(e -> logout());
-        headerRight.add(logoutHeaderBtn);
-
-        headerPanel.add(headerRight, BorderLayout.EAST);
-        root.add(headerPanel, BorderLayout.NORTH);
-
-        // ===== Menu bar =====
-        JMenuBar menuBar = new JMenuBar();
-        JMenu accountMenu = new JMenu("Account");
-        JMenuItem logoutItem = new JMenuItem("Logout");
-        logoutItem.addActionListener(e -> logout());
-        accountMenu.add(logoutItem);
-        menuBar.add(accountMenu);
-
-        JMenu dataMenu = new JMenu("Data");
-        JMenuItem backupItem = new JMenuItem("Backup Data");
-        backupItem.addActionListener(e -> BackupService.backupAllData(currentUser, true));
-        dataMenu.add(backupItem);
-
-        JMenuItem restoreItem = new JMenuItem("Restore Data...");
-        restoreItem.addActionListener(e -> {
-            java.util.List<String> backups = BackupService.listBackups();
-            if (backups.isEmpty()) {
-                JOptionPane.showMessageDialog(this, "No backups available.", "Restore", JOptionPane.INFORMATION_MESSAGE);
-                return;
-            }
-            String sel = (String) JOptionPane.showInputDialog(this,
-                    "Select backup to restore:", "Restore Backup",
-                    JOptionPane.PLAIN_MESSAGE, null,
-                    backups.toArray(new String[0]), backups.get(0));
-            if (sel != null) {
-                BackupService.restoreBackup(currentUser, sel);
-            }
-        });
-        dataMenu.add(restoreItem);
-        boolean can = BackupService.canBackup(currentUser.getRole());
-        dataMenu.setEnabled(can);
-        menuBar.add(dataMenu);
-        setJMenuBar(menuBar);
-
-        // ===== Tabbed pane =====
-        tabbedPane = new JTabbedPane();
-        tabbedPane.addTab("  My Profile  ", createProfilePanel());
-        tabbedPane.addTab("  Browse Jobs  ", createBrowseJobsPanel());
-        tabbedPane.addTab("  My Applications  ", createMyApplicationsPanel());
-        root.add(tabbedPane, BorderLayout.CENTER);
-
+        JTabbedPane tabs = new JTabbedPane();
+        tabs.setFont(F_BOLD);
+        tabs.addTab("  My Profile  ",      createProfilePanel());
+        tabs.addTab("  Browse Jobs  ",     createBrowsePanel());
+        tabs.addTab("  My Applications  ", createAppsPanel());
+        root.add(tabs, BorderLayout.CENTER);
         setContentPane(root);
     }
 
+    // ── Header ─────────────────────────────────────────────────────────────
+    private JPanel buildHeader() {
+        JPanel h = new JPanel(new BorderLayout());
+        h.setBackground(C_HDR); h.setBorder(new EmptyBorder(16, 28, 16, 28));
+
+        JPanel left = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0)); left.setOpaque(false);
+        JLabel icon = new JLabel("🎓  "); icon.setFont(new Font("Segoe UI Emoji", Font.PLAIN, 18)); icon.setForeground(new Color(0xCB, 0xC5, 0xFF));
+        JLabel title = new JLabel("Teaching Assistant"); title.setFont(new Font("Segoe UI", Font.BOLD, 18)); title.setForeground(new Color(0xCB, 0xC5, 0xFF));
+        JLabel sep = new JLabel("  |  "); sep.setForeground(new Color(0x55, 0x55, 0x88));
+        JLabel name = new JLabel(currentUser.getName()); name.setFont(new Font("Segoe UI", Font.PLAIN, 14)); name.setForeground(new Color(0xA0, 0xA8, 0xCC));
+        left.add(icon); left.add(title); left.add(sep); left.add(name);
+        h.add(left, BorderLayout.WEST);
+
+        JPanel right = new JPanel(new FlowLayout(FlowLayout.RIGHT, 8, 0)); right.setOpaque(false);
+        JButton nb = AdminDashboard.pill("Notifications", C_PRIMARY);
+        nb.addActionListener(e -> { notificationService.reload(); showNotifications(); updateNotifBtn(nb); });
+        updateNotifBtn(nb); right.add(nb);
+        JButton lo = AdminDashboard.pill("Logout", C_DANGER); lo.addActionListener(e -> logout()); right.add(lo);
+        h.add(right, BorderLayout.EAST);
+        return h;
+    }
+
+    // ── Tab 1 – My Profile ─────────────────────────────────────────────────
     private JPanel createProfilePanel() {
-        JPanel panel = new JPanel(new BorderLayout(10, 10));
-        panel.setBorder(BorderFactory.createEmptyBorder(24, 32, 24, 32));
+        JPanel outer = new JPanel(new BorderLayout(0, 0));
+        outer.setBackground(C_BG); outer.setBorder(new EmptyBorder(24, 32, 24, 32));
 
-        JPanel formPanel = new JPanel(new GridBagLayout());
-        formPanel.setOpaque(false);
-        formPanel.setBorder(BorderFactory.createCompoundBorder(
-                ShadowBorder.card(),
-                BorderFactory.createEmptyBorder(22, 26, 22, 26)
-        ));
-        GridBagConstraints gbc = new GridBagConstraints();
-        gbc.insets = new Insets(6, 5, 6, 5);
-        gbc.fill = GridBagConstraints.HORIZONTAL;
-        gbc.anchor = GridBagConstraints.WEST;
+        JPanel card = new JPanel(new GridBagLayout());
+        card.setBackground(C_SURFACE);
+        card.setBorder(BorderFactory.createCompoundBorder(ShadowBorder.card(), new EmptyBorder(24, 30, 20, 30)));
 
-        JTextField nameField = new JTextField(currentUser.getName(), 25);
-        JTextField emailField = new JTextField(currentUser.getEmail() != null ? currentUser.getEmail() : "", 25);
-        JTextField phoneField = new JTextField(currentUser.getPhone() != null ? currentUser.getPhone() : "", 25);
-        JTextField skillsField = new JTextField(
-                currentUser.getSkills() != null ? String.join(", ", currentUser.getSkills()) : "", 25);
-        JTextField deptField = new JTextField(
-                currentUser.getDepartment() != null ? currentUser.getDepartment() : "", 25);
-        JLabel cvLabel = new JLabel(currentUser.getCvPath() != null ? currentUser.getCvPath() : "No CV uploaded");
+        JLabel secLbl = new JLabel("Edit Profile");
+        secLbl.setFont(F_H2); secLbl.setForeground(C_TXT_PRI);
 
-        int row = 0;
-        addFormRow(formPanel, gbc, row++, "Name:", nameField);
-        addFormRow(formPanel, gbc, row++, "Email:", emailField);
-        addFormRow(formPanel, gbc, row++, "Phone:", phoneField);
-        addFormRow(formPanel, gbc, row++, "Skills (comma-separated):", skillsField);
-        addFormRow(formPanel, gbc, row++, "Department:", deptField);
+        GridBagConstraints g = gbcBase();
+        g.gridx = 0; g.gridy = 0; g.gridwidth = 2; g.insets = new Insets(0, 0, 18, 0);
+        card.add(secLbl, g);
 
-        gbc.gridx = 0; gbc.gridy = row; gbc.weightx = 0;
-        JLabel cvTitleLabel = new JLabel("CV:");
-        cvTitleLabel.setFont(new Font("Segoe UI", Font.PLAIN, 13));
-        cvTitleLabel.setForeground(TEXT_SECONDARY);
-        formPanel.add(cvTitleLabel, gbc);
-        gbc.gridx = 1; gbc.weightx = 1.0;
-        JPanel cvPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 5, 0));
-        cvPanel.setBackground(Color.WHITE);
-        cvPanel.add(cvLabel);
-        JButton uploadBtn = new JButton("Upload CV");
-        uploadBtn.setFocusPainted(false);
-        uploadBtn.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        JTextField nameF   = tf(currentUser.getName(), 26);
+        JTextField emailF  = tf(currentUser.getEmail() != null ? currentUser.getEmail() : "", 26);
+        JTextField phoneF  = tf(currentUser.getPhone() != null ? currentUser.getPhone() : "", 26);
+        JTextField deptF   = tf(currentUser.getDepartment() != null ? currentUser.getDepartment() : "", 26);
+        JTextField skillsF = tf(currentUser.getSkills() != null ? String.join(", ", currentUser.getSkills()) : "", 26);
+        skillsF.putClientProperty("JTextField.placeholderText", "e.g. Java, Python, Machine Learning");
+        JPasswordField pwF = new JPasswordField(26); pwF.setFont(F_BODY);
+
+        int row = 1;
+        row = addField(card, g, row, "Full Name *", nameF);
+        row = addField(card, g, row, "Email", emailF);
+        row = addField(card, g, row, "Phone", phoneF);
+        row = addField(card, g, row, "Department", deptF);
+        row = addField(card, g, row, "Skills (comma-separated)", skillsF);
+        row = addField(card, g, row, "New Password (leave blank to keep)", pwF);
+
+        // CV row
+        g.gridx = 0; g.gridy = row; g.gridwidth = 1; g.weightx = 0; g.insets = new Insets(8, 0, 2, 8);
+        JLabel cvLbl = new JLabel("CV File"); cvLbl.setFont(F_BOLD); cvLbl.setForeground(C_TXT_SEC); card.add(cvLbl, g);
+        row++;
+        g.gridx = 0; g.gridy = row; g.gridwidth = 2; g.weightx = 1.0; g.insets = new Insets(4, 0, 10, 0);
+        JPanel cvRow = new JPanel(new FlowLayout(FlowLayout.LEFT, 8, 0)); cvRow.setBackground(C_SURFACE);
+        String cvInit = currentUser.getCvPath() != null ? new File(currentUser.getCvPath()).getName() : "Not uploaded";
+        JLabel cvPathLbl = new JLabel(cvInit); cvPathLbl.setFont(F_SMALL); cvPathLbl.setForeground(C_TXT_SEC);
+        JButton uploadBtn = AdminDashboard.pill("Upload CV", C_ACCENT);
         uploadBtn.addActionListener(e -> {
             JFileChooser fc = new JFileChooser();
+            fc.setFileFilter(new javax.swing.filechooser.FileNameExtensionFilter("Documents", "pdf", "doc", "docx"));
             if (fc.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
-                File file = fc.getSelectedFile();
-                File cvDir = new File("data/cv");
-                if (!cvDir.exists()) cvDir.mkdirs();
-                File dest = new File(cvDir, currentUser.getId() + "_" + file.getName());
-                try {
-                    java.nio.file.Files.copy(file.toPath(), dest.toPath(),
-                            java.nio.file.StandardCopyOption.REPLACE_EXISTING);
-                    currentUser.setCvPath(dest.getPath());
-                    cvLabel.setText(dest.getName());
-                    JOptionPane.showMessageDialog(this, "CV uploaded successfully.");
-                } catch (Exception ex) {
-                    JOptionPane.showMessageDialog(this, "Failed to upload CV: " + ex.getMessage(),
-                            "Error", JOptionPane.ERROR_MESSAGE);
-                }
+                currentUser.setCvPath(fc.getSelectedFile().getAbsolutePath());
+                cvPathLbl.setText(fc.getSelectedFile().getName());
+                userService.updateUser(currentUser); info("CV saved.");
             }
         });
-        cvPanel.add(uploadBtn);
-        formPanel.add(cvPanel, gbc);
+        cvRow.add(uploadBtn); cvRow.add(cvPathLbl); card.add(cvRow, g);
+        outer.add(card, BorderLayout.CENTER);
 
-        panel.add(formPanel, BorderLayout.CENTER);
-
-        JPanel btnPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 12, 8));
-        JButton saveBtn = new JButton("Save Profile");
-        saveBtn.setPreferredSize(new Dimension(140, 38));
-        saveBtn.setBackground(SUCCESS);
-        saveBtn.setForeground(Color.WHITE);
-        saveBtn.setFocusPainted(false);
-        saveBtn.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-        saveBtn.addActionListener(e -> {
-            currentUser.setName(nameField.getText().trim());
-            currentUser.setEmail(emailField.getText().trim());
-            currentUser.setPhone(phoneField.getText().trim());
-            currentUser.setDepartment(deptField.getText().trim());
-            String skillsText = skillsField.getText().trim();
-            if (!skillsText.isEmpty()) {
-                currentUser.setSkills(Arrays.stream(skillsText.split(","))
-                        .map(String::trim).filter(s -> !s.isEmpty())
-                        .collect(Collectors.toList()));
-            }
-            userService.updateUser(currentUser);
-            JOptionPane.showMessageDialog(this, "Profile saved successfully.");
-            setTitle("TA Dashboard - " + currentUser.getName());
+        JPanel btns = new JPanel(new FlowLayout(FlowLayout.CENTER, 12, 12)); btns.setBackground(C_BG);
+        JButton save = AdminDashboard.pill("Save Changes", C_ACCENT); save.setPreferredSize(new Dimension(140, 36));
+        save.addActionListener(e -> {
+            String nm = nameF.getText().trim(); if (nm.isEmpty()) { warn("Name cannot be empty."); return; }
+            currentUser.setName(nm); currentUser.setEmail(emailF.getText().trim());
+            currentUser.setPhone(phoneF.getText().trim()); currentUser.setDepartment(deptF.getText().trim());
+            String sk = skillsF.getText().trim();
+            if (!sk.isEmpty()) currentUser.setSkills(java.util.Arrays.stream(sk.split(",")).map(String::trim).filter(s -> !s.isEmpty()).collect(Collectors.toList()));
+            String pw = new String(pwF.getPassword());
+            if (!pw.isEmpty()) { if (pw.length() < 4) { warn("Password must be at least 4 characters."); return; } currentUser.setPassword(pw); }
+            userService.updateUser(currentUser); info("Profile updated!");
         });
-        btnPanel.add(saveBtn);
-        JButton logoutBtn = new JButton("Logout");
-        logoutBtn.setPreferredSize(new Dimension(120, 35));
-        logoutBtn.setFocusPainted(false);
-        logoutBtn.addActionListener(e -> logout());
-        btnPanel.add(logoutBtn);
-        panel.add(btnPanel, BorderLayout.SOUTH);
+        btns.add(save);
+        outer.add(btns, BorderLayout.SOUTH);
+        return outer;
+    }
 
+    // ── Tab 2 – Browse Jobs ────────────────────────────────────────────────
+    private JPanel createBrowsePanel() {
+        JPanel panel = new JPanel(new BorderLayout(0, 12));
+        panel.setBackground(C_BG); panel.setBorder(new EmptyBorder(18, 26, 16, 26));
+
+        JPanel searchBar = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 0));
+        searchBar.setBackground(C_SURFACE);
+        searchBar.setBorder(BorderFactory.createCompoundBorder(ShadowBorder.card(), new EmptyBorder(10, 16, 10, 16)));
+        JTextField kwF = new JTextField(28); kwF.setFont(F_BODY);
+        kwF.putClientProperty("JTextField.placeholderText", "Search by title, module or skill...");
+        JLabel resLbl = new JLabel(); resLbl.setFont(F_SMALL); resLbl.setForeground(C_TXT_SEC);
+        JButton sb = AdminDashboard.pill("Search", C_PRIMARY); JButton cb = AdminDashboard.ghost("Clear");
+        searchBar.add(new JLabel(UiText.symbolText("🔍", "", true))); searchBar.add(kwF); searchBar.add(sb); searchBar.add(cb); searchBar.add(resLbl);
+        panel.add(searchBar, BorderLayout.NORTH);
+
+        String[] cols = {"ID", "Title", "Module", "Type", "Required Skills", "Open Positions", "Deadline"};
+        DefaultTableModel model = AdminDashboard.noEdit(cols);
+        JTable table = AdminDashboard.styledTable(model);
+        table.getColumnModel().getColumn(4).setPreferredWidth(220);
+        panel.add(AdminDashboard.wrapInCard("Open Positions", AdminDashboard.wrapScroll(table)), BorderLayout.CENTER);
+
+        Runnable load = () -> loadJobs(model, kwF.getText(), resLbl);
+        sb.addActionListener(e -> load.run()); cb.addActionListener(e -> { kwF.setText(""); load.run(); }); kwF.addActionListener(e -> load.run());
+
+        JPanel btns = btnRow();
+        JButton refresh = AdminDashboard.ghost(UiText.symbolText("↻", "Refresh", false)); refresh.addActionListener(e -> { jobService.reload(); load.run(); });
+        JButton apply = AdminDashboard.pill("Apply for This Job", C_ACCENT);
+        apply.addActionListener(e -> {
+            int r = table.getSelectedRow(); if (r < 0) { warn("Please select a job."); return; }
+            String jobId = (String) model.getValueAt(r, 0);
+            Optional<Job> jobOpt = jobService.findById(jobId);
+            if (!jobOpt.isPresent()) { warn("Job not found."); return; }
+            if (jobOpt.get().getStatus() != Job.Status.OPEN) { warn("This job is no longer open for applications."); return; }
+            boolean dup = applicationService.getApplicationsByApplicant(currentUser.getId()).stream().anyMatch(a -> a.getJobId().equals(jobId));
+            if (dup) { warn("You have already applied for this position."); return; }
+            applicationService.apply(jobId, currentUser.getId(), "");
+            info("Application submitted successfully!");
+            load.run();
+        });
+        btns.add(refresh); btns.add(apply);
+        panel.add(btns, BorderLayout.SOUTH);
+        load.run();
         return panel;
     }
 
-    private JPanel createBrowseJobsPanel() {
-        JPanel panel = new JPanel(new BorderLayout(10, 10));
-        panel.setBorder(BorderFactory.createEmptyBorder(18, 24, 18, 24));
-
-        String[] columns = {"ID", "Title", "Module", "Type", "Positions", "Deadline", "Status"};
-        DefaultTableModel model = new DefaultTableModel(columns, 0) {
-            @Override
-            public boolean isCellEditable(int row, int col) { return false; }
-        };
-        JTable table = new JTable(model);
-        table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        table.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
-        table.getTableHeader().setReorderingAllowed(false);
-
-        JScrollPane scrollPane = new JScrollPane(table);
-        scrollPane.setBorder(BorderFactory.createLineBorder(new Color(0xDF, 0xE6, 0xE9), 1));
-        scrollPane.getViewport().setBackground(Color.WHITE);
-        panel.add(scrollPane, BorderLayout.CENTER);
-
-        JPanel btnPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 8));
-
-        JButton refreshBtn = new JButton("Refresh");
-        refreshBtn.setFocusPainted(false);
-        refreshBtn.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-        refreshBtn.addActionListener(e -> {
-            jobService.reload();
-            loadJobsTable(model);
-        });
-
-        JButton detailBtn = new JButton("View Details");
-        detailBtn.setFocusPainted(false);
-        detailBtn.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-        detailBtn.addActionListener(e -> {
-            int selectedRow = table.getSelectedRow();
-            if (selectedRow < 0) {
-                JOptionPane.showMessageDialog(this, "Please select a job.");
-                return;
-            }
-            String jobId = (String) model.getValueAt(selectedRow, 0);
-            showJobDetails(jobId);
-        });
-
-        JButton applyBtn = new JButton("Apply for Selected Job");
-        applyBtn.setBackground(SUCCESS);
-        applyBtn.setForeground(Color.WHITE);
-        applyBtn.setFocusPainted(false);
-        applyBtn.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-        applyBtn.addActionListener(e -> {
-            int selectedRow = table.getSelectedRow();
-            if (selectedRow < 0) {
-                JOptionPane.showMessageDialog(this, "Please select a job to apply.");
-                return;
-            }
-            String jobId = (String) model.getValueAt(selectedRow, 0);
-            applyForJob(jobId);
-        });
-
-        btnPanel.add(refreshBtn);
-        btnPanel.add(detailBtn);
-        btnPanel.add(applyBtn);
-        JButton logoutBtn = new JButton("Logout");
-        logoutBtn.setFocusPainted(false);
-        logoutBtn.addActionListener(e -> logout());
-        btnPanel.add(logoutBtn);
-        panel.add(btnPanel, BorderLayout.SOUTH);
-
-        loadJobsTable(model);
-        return panel;
-    }
-
-    private void loadJobsTable(DefaultTableModel model) {
+    private void loadJobs(DefaultTableModel model, String kw, JLabel resLbl) {
         model.setRowCount(0);
+        String k = kw == null ? "" : kw.trim().toLowerCase();
         List<Job> jobs = jobService.getOpenJobs();
-        for (Job job : jobs) {
-            model.addRow(new Object[]{
-                    job.getId(), job.getTitle(), job.getModuleName(),
-                    job.getJobType(), job.getMaxPositions() - job.getFilledPositions(),
-                    job.getDeadline(), job.getStatus()
-            });
-        }
+        if (!k.isEmpty()) jobs = jobs.stream().filter(j ->
+                (j.getTitle() != null && j.getTitle().toLowerCase().contains(k)) ||
+                (j.getModuleName() != null && j.getModuleName().toLowerCase().contains(k)) ||
+                (j.getRequiredSkills() != null && j.getRequiredSkills().stream().anyMatch(s -> s.toLowerCase().contains(k))))
+                .collect(Collectors.toList());
+        jobs.forEach(j -> model.addRow(new Object[]{j.getId(), j.getTitle(), j.getModuleName(), j.getJobType(),
+                j.getRequiredSkills() != null ? String.join(", ", j.getRequiredSkills()) : "",
+                j.getMaxPositions() - j.getFilledPositions(), j.getDeadline()}));
+        if (resLbl != null) resLbl.setText(k.isEmpty() ? "  " + jobs.size() + " open jobs" : "  " + jobs.size() + " results");
     }
 
-    private void showJobDetails(String jobId) {
-        Optional<Job> jobOpt = jobService.findById(jobId);
-        if (!jobOpt.isPresent()) {
-            JOptionPane.showMessageDialog(this, "Job not found.");
-            return;
-        }
-        Job job = jobOpt.get();
-        String details = String.format(
-                "Title: %s\nModule: %s\nType: %s\nDescription: %s\n\nRequired Skills: %s\n" +
-                        "Positions: %d (Filled: %d)\nDeadline: %s\nPosted: %s",
-                job.getTitle(), job.getModuleName(), job.getJobType(),
-                job.getDescription(), String.join(", ", job.getRequiredSkills()),
-                job.getMaxPositions(), job.getFilledPositions(),
-                job.getDeadline(), job.getPostDate()
-        );
-        JTextArea textArea = new JTextArea(details);
-        textArea.setEditable(false);
-        textArea.setLineWrap(true);
-        textArea.setWrapStyleWord(true);
-        JScrollPane sp = new JScrollPane(textArea);
-        sp.setPreferredSize(new Dimension(400, 250));
-        JOptionPane.showMessageDialog(this, sp, "Job Details", JOptionPane.INFORMATION_MESSAGE);
-    }
+    // ── Tab 3 – My Applications ────────────────────────────────────────────
+    private JPanel createAppsPanel() {
+        JPanel panel = new JPanel(new BorderLayout(0, 12));
+        panel.setBackground(C_BG); panel.setBorder(new EmptyBorder(18, 26, 16, 26));
 
-    private void applyForJob(String jobId) {
-        Optional<Job> jobOpt = jobService.findById(jobId);
-        if (!jobOpt.isPresent()) {
-            JOptionPane.showMessageDialog(this, "Job not found.");
-            return;
-        }
+        String[] cols = {"App ID", "Job Title", "Module", "Apply Date", "Status", "Review Note", "Withdrawn At"};
+        DefaultTableModel model = AdminDashboard.noEdit(cols);
+        JTable table = AdminDashboard.styledTable(model);
+        table.getColumnModel().getColumn(4).setCellRenderer(AdminDashboard.statusBadgeRenderer());
+        table.getColumnModel().getColumn(5).setPreferredWidth(200);
+        panel.add(AdminDashboard.wrapInCard("My Applications", AdminDashboard.wrapScroll(table)), BorderLayout.CENTER);
 
-        JTextArea coverLetterArea = new JTextArea(5, 30);
-        coverLetterArea.setLineWrap(true);
-        coverLetterArea.setWrapStyleWord(true);
-        JScrollPane sp = new JScrollPane(coverLetterArea);
-
-        JPanel panel = new JPanel(new BorderLayout(5, 5));
-        panel.add(new JLabel("Cover Letter (optional):"), BorderLayout.NORTH);
-        panel.add(sp, BorderLayout.CENTER);
-
-        int result = JOptionPane.showConfirmDialog(this, panel,
-                "Apply for: " + jobOpt.get().getTitle(),
-                JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
-
-        if (result == JOptionPane.OK_OPTION) {
+        JPanel btns = btnRow();
+        JButton refresh = AdminDashboard.ghost(UiText.symbolText("↻", "Refresh", false)); refresh.addActionListener(e -> { applicationService.reload(); loadMyApps(model); });
+        JButton withdraw = AdminDashboard.pill("Withdraw", C_DANGER);
+        withdraw.addActionListener(e -> {
+            int r = table.getSelectedRow(); if (r < 0) { warn("Please select an application."); return; }
+            String appId = (String) model.getValueAt(r, 0);
             applicationService.reload();
-            Application app = applicationService.apply(jobId, currentUser.getId(),
-                    coverLetterArea.getText().trim());
-            if (app != null) {
-                JOptionPane.showMessageDialog(this, "Application submitted successfully!");
-                tabbedPane.setComponentAt(2, createMyApplicationsPanel());
-            } else {
-                JOptionPane.showMessageDialog(this, "You have already applied for this job.",
-                        "Duplicate Application", JOptionPane.WARNING_MESSAGE);
+            Optional<Application> appOpt = applicationService.findById(appId);
+            if (!appOpt.isPresent()) { warn("Application not found."); return; }
+            Application app = appOpt.get();
+            if (app.getStatus() != Application.Status.PENDING) {
+                warn("<html>Only <b>PENDING</b> applications can be withdrawn.<br>Current status: <b>" + app.getStatus() + "</b></html>"); return;
             }
-        }
-    }
-
-    private JPanel createMyApplicationsPanel() {
-        JPanel panel = new JPanel(new BorderLayout(10, 10));
-        panel.setBorder(BorderFactory.createEmptyBorder(18, 24, 18, 24));
-
-        String[] columns = {"App ID", "Job Title", "Apply Date", "Status", "Review Note"};
-        DefaultTableModel model = new DefaultTableModel(columns, 0) {
-            @Override
-            public boolean isCellEditable(int row, int col) { return false; }
-        };
-        JTable table = new JTable(model);
-        table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        table.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
-        table.getTableHeader().setReorderingAllowed(false);
-
-        JScrollPane scrollPane = new JScrollPane(table);
-        scrollPane.setBorder(BorderFactory.createLineBorder(new Color(0xDF, 0xE6, 0xE9), 1));
-        scrollPane.getViewport().setBackground(Color.WHITE);
-        panel.add(scrollPane, BorderLayout.CENTER);
-
-        JPanel btnPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 8));
-
-        JButton refreshBtn = new JButton("Refresh");
-        refreshBtn.setFocusPainted(false);
-        refreshBtn.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-        refreshBtn.addActionListener(e -> {
-            applicationService.reload();
-            jobService.reload();
-            loadApplicationsTable(model);
+            if (!confirm("<html><b>Withdraw this application?</b><br><br>Once withdrawn, this cannot be undone.</html>")) return;
+            if (!confirm("Final confirmation: withdraw this application?")) return;
+            applicationService.withdrawApplication(appId);
+            applicationService.reload(); loadMyApps(model);
+            info("Application withdrawn.");
         });
-
-        JButton withdrawBtn = new JButton("Withdraw Application");
-        withdrawBtn.setBackground(DANGER);
-        withdrawBtn.setForeground(Color.WHITE);
-        withdrawBtn.setFocusPainted(false);
-        withdrawBtn.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-        withdrawBtn.addActionListener(e -> {
-            int selectedRow = table.getSelectedRow();
-            if (selectedRow < 0) {
-                JOptionPane.showMessageDialog(this, "Please select an application.");
-                return;
-            }
-            String appId = (String) model.getValueAt(selectedRow, 0);
-            int confirm = JOptionPane.showConfirmDialog(this,
-                    "Are you sure you want to withdraw this application?",
-                    "Confirm Withdrawal", JOptionPane.YES_NO_OPTION);
-            if (confirm == JOptionPane.YES_OPTION) {
-                applicationService.withdrawApplication(appId);
-                loadApplicationsTable(model);
-            }
-        });
-
-        btnPanel.add(refreshBtn);
-        btnPanel.add(withdrawBtn);
-        JButton logoutBtn = new JButton("Logout");
-        logoutBtn.setFocusPainted(false);
-        logoutBtn.addActionListener(e -> logout());
-        btnPanel.add(logoutBtn);
-        panel.add(btnPanel, BorderLayout.SOUTH);
-
-        loadApplicationsTable(model);
+        btns.add(refresh); btns.add(withdraw);
+        panel.add(btns, BorderLayout.SOUTH);
+        loadMyApps(model);
         return panel;
     }
 
-    private void loadApplicationsTable(DefaultTableModel model) {
+    private void loadMyApps(DefaultTableModel model) {
         model.setRowCount(0);
-        List<Application> apps = applicationService.getApplicationsByApplicant(currentUser.getId());
-        for (Application app : apps) {
-            String jobTitle = jobService.findById(app.getJobId())
-                    .map(Job::getTitle).orElse("Unknown");
-            model.addRow(new Object[]{
-                    app.getId(), jobTitle, app.getApplyDate(),
-                    app.getStatus(), app.getReviewNote() != null ? app.getReviewNote() : ""
-            });
-        }
+        applicationService.getApplicationsByApplicant(currentUser.getId()).forEach(app -> {
+            String jt  = jobService.findById(app.getJobId()).map(Job::getTitle).orElse("Unknown");
+            String mod = jobService.findById(app.getJobId()).map(Job::getModuleName).orElse("");
+            model.addRow(new Object[]{app.getId(), jt, mod, app.getApplyDate(), app.getStatus(),
+                    app.getReviewNote() != null ? app.getReviewNote() : "",
+                    app.getWithdrawnAt() != null ? app.getWithdrawnAt() : ""});
+        });
     }
 
-    private void addFormRow(JPanel panel, GridBagConstraints gbc, int row, String label, JComponent field) {
-        gbc.gridx = 0; gbc.gridy = row; gbc.weightx = 0;
-        JLabel l = new JLabel(label);
-        l.setFont(new Font("Segoe UI", Font.PLAIN, 13));
-        l.setForeground(TEXT_SECONDARY);
-        panel.add(l, gbc);
-        gbc.gridx = 1; gbc.weightx = 1.0;
-        panel.add(field, gbc);
-    }
-
-    private void updateNotificationButton(JButton button) {
-        int unreadCount = notificationService.getUnreadCount(currentUser.getId());
-        if (unreadCount > 0) {
-            button.setText("Notifications (" + unreadCount + ")");
-            button.setForeground(new Color(0xFF, 0x63, 0x48));
-        } else {
-            button.setText("Notifications");
-            button.setForeground(Color.WHITE);
-        }
+    // ── Notifications ──────────────────────────────────────────────────────
+    private void updateNotifBtn(JButton btn) {
+        int n = notificationService.getUnreadCount(currentUser.getId());
+        btn.setText(n > 0 ? "Notifications (" + n + ")" : "Notifications");
+        btn.setForeground(n > 0 ? new Color(0xFF, 0xCC, 0x00) : Color.WHITE);
     }
 
     private void showNotifications() {
-        JDialog dialog = new JDialog(this, "Notifications", true);
-        dialog.setSize(520, 420);
-        dialog.setLocationRelativeTo(this);
-
-        JPanel panel = new JPanel(new BorderLayout(0, 8));
-        panel.setBorder(BorderFactory.createEmptyBorder(12, 12, 12, 12));
-
-        DefaultListModel<String> listModel = new DefaultListModel<>();
-        JList<String> notificationList = new JList<>(listModel);
-        notificationList.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
-        notificationList.setFixedCellHeight(28);
-
-        refreshNotificationList(listModel);
-
-        JScrollPane scrollPane = new JScrollPane(notificationList);
-        panel.add(scrollPane, BorderLayout.CENTER);
-
-        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 6));
-
-        JButton refreshBtn = new JButton("Refresh");
-        refreshBtn.setBackground(PRIMARY);
-        refreshBtn.setForeground(Color.WHITE);
-        refreshBtn.setFocusPainted(false);
-        refreshBtn.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-        refreshBtn.addActionListener(e -> {
-            notificationService.reload();
-            refreshNotificationList(listModel);
+        JDialog dlg = new JDialog(this, "Notifications", true);
+        dlg.setSize(540, 420); dlg.setLocationRelativeTo(this);
+        JPanel p = new JPanel(new BorderLayout(0, 8)); p.setBackground(C_BG); p.setBorder(new EmptyBorder(12, 16, 12, 16));
+        DefaultListModel<String> lm = new DefaultListModel<>();
+        JList<String> list = new JList<>(lm); list.setFont(F_BODY); list.setFixedCellHeight(30);
+        refreshNL(lm);
+        p.add(new JScrollPane(list), BorderLayout.CENTER);
+        JPanel bRow = new JPanel(new FlowLayout(FlowLayout.CENTER, 8, 6)); bRow.setBackground(C_BG);
+        JButton ref = AdminDashboard.pill("Refresh", C_PRIMARY); ref.addActionListener(e -> { notificationService.reload(); refreshNL(lm); });
+        JButton mark = AdminDashboard.ghost("Mark as Read"); mark.addActionListener(e -> {
+            int[] idx = list.getSelectedIndices();
+            List<com.recruitment.model.Notification> all = notificationService.getNotificationsByUser(currentUser.getId());
+            for (int i : idx) if (i < all.size()) notificationService.markAsRead(all.get(i).getId());
+            refreshNL(lm);
         });
-
-        JButton markReadBtn = new JButton("Mark as Read");
-        markReadBtn.setFocusPainted(false);
-        markReadBtn.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-        markReadBtn.addActionListener(e -> {
-            int[] selectedIndices = notificationList.getSelectedIndices();
-            List<com.recruitment.model.Notification> currentNotifications = notificationService.getNotificationsByUser(currentUser.getId());
-            for (int index : selectedIndices) {
-                if (index < currentNotifications.size()) {
-                    com.recruitment.model.Notification n = currentNotifications.get(index);
-                    notificationService.markAsRead(n.getId());
-                }
-            }
-            refreshNotificationList(listModel);
-        });
-
-        JButton clearReadBtn = new JButton("Clear All Read");
-        clearReadBtn.setBackground(DANGER);
-        clearReadBtn.setForeground(Color.WHITE);
-        clearReadBtn.setFocusPainted(false);
-        clearReadBtn.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-        clearReadBtn.addActionListener(e -> {
-            notificationService.clearReadNotifications(currentUser.getId());
-            refreshNotificationList(listModel);
-        });
-
-        JButton closeBtn = new JButton("Close");
-        closeBtn.setFocusPainted(false);
-        closeBtn.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-        closeBtn.addActionListener(e -> dialog.dispose());
-
-        buttonPanel.add(refreshBtn);
-        buttonPanel.add(markReadBtn);
-        buttonPanel.add(clearReadBtn);
-        buttonPanel.add(closeBtn);
-        panel.add(buttonPanel, BorderLayout.SOUTH);
-
-        dialog.setContentPane(panel);
-        dialog.setVisible(true);
+        JButton clr = AdminDashboard.pill("Clear Read", C_DANGER); clr.addActionListener(e -> { notificationService.clearReadNotifications(currentUser.getId()); refreshNL(lm); });
+        JButton cls = AdminDashboard.ghost("Close"); cls.addActionListener(e -> dlg.dispose());
+        bRow.add(ref); bRow.add(mark); bRow.add(clr); bRow.add(cls);
+        p.add(bRow, BorderLayout.SOUTH); dlg.setContentPane(p); dlg.setVisible(true);
     }
 
-    private void refreshNotificationList(DefaultListModel<String> listModel) {
-        listModel.clear();
-        List<com.recruitment.model.Notification> notifications = notificationService.getNotificationsByUser(currentUser.getId());
-        for (com.recruitment.model.Notification n : notifications) {
-            String status = n.isRead() ? "[Read]" : "[Unread]";
-            listModel.addElement(status + " " + n.getTimestamp().toString() + ": " + n.getMessage());
-        }
+    private void refreshNL(DefaultListModel<String> lm) {
+        lm.clear();
+        notificationService.getNotificationsByUser(currentUser.getId()).forEach(n ->
+                lm.addElement((n.isRead() ? "[Read]   " : "[Unread] ") + n.getTimestamp() + ": " + n.getMessage()));
     }
 
-    private void logout() {
-        dispose();
-        loginFrame.showAgain();
+    // ── Helpers ────────────────────────────────────────────────────────────
+    private void logout() { dispose(); loginFrame.showAgain(); }
+    private void warn(String m) { JOptionPane.showMessageDialog(this, m, "Warning", JOptionPane.WARNING_MESSAGE); }
+    private void info(String m) { JOptionPane.showMessageDialog(this, m, "Info", JOptionPane.INFORMATION_MESSAGE); }
+    private boolean confirm(String m) { return JOptionPane.showConfirmDialog(this, m, "Confirm", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION; }
+
+    // ── Widget helpers ─────────────────────────────────────────────────────
+    private JPanel btnRow() { JPanel p = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 8)); p.setBackground(C_BG); return p; }
+    private JTextField tf(String d, int c) { JTextField f = new JTextField(d, c); f.setFont(F_BODY); return f; }
+    private GridBagConstraints gbcBase() {
+        GridBagConstraints g = new GridBagConstraints();
+        g.insets = new Insets(7, 6, 7, 6); g.fill = GridBagConstraints.HORIZONTAL; g.anchor = GridBagConstraints.WEST; return g;
+    }
+    private int addField(JPanel p, GridBagConstraints g, int row, String label, JComponent c) {
+        g.gridx = 0; g.gridy = row; g.gridwidth = 1; g.weightx = 0; g.insets = new Insets(8, 0, 2, 8);
+        JLabel l = new JLabel(label); l.setFont(F_BOLD); l.setForeground(C_TXT_SEC); p.add(l, g);
+        g.gridx = 1; g.gridwidth = 1; g.weightx = 1.0; g.insets = new Insets(4, 0, 4, 0); p.add(c, g);
+        return row + 1;
     }
 }
