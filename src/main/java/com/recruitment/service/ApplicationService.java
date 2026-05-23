@@ -9,6 +9,7 @@ import com.recruitment.util.JsonUtil;
 
 import java.lang.reflect.Type;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -141,6 +142,7 @@ public class ApplicationService {
             return false;
         }
         target.setStatus(Application.Status.WITHDRAWN);
+        target.setWithdrawnAt(LocalDateTime.now().toString());
         save();
         return true;
     }
