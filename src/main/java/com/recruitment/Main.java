@@ -42,7 +42,7 @@ public class Main {
             Font baseFont   = new Font("Segoe UI", Font.PLAIN, 14);
             Font headerFont = new Font("Segoe UI", Font.BOLD, 14);
             UIManager.put("Label.font", baseFont);
-            UIManager.put("Button.font", new Font("Times New Roman", Font.BOLD, 14));
+            UIManager.put("Button.font", new Font("Segoe UI", Font.BOLD, 14));
             UIManager.put("TextField.font", baseFont);
             UIManager.put("TextArea.font", baseFont);
             UIManager.put("Table.font", baseFont);
