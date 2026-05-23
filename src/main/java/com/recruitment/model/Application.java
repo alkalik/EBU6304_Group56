@@ -13,6 +13,7 @@ public class Application {
     private String coverLetter;
     private String reviewNote;
     private String reviewedBy;
+    private String withdrawnAt;
 
     public Application() {
         this.status = Status.PENDING;
@@ -49,6 +50,9 @@ public class Application {
 
     public String getReviewedBy() { return reviewedBy; }
     public void setReviewedBy(String reviewedBy) { this.reviewedBy = reviewedBy; }
+
+    public String getWithdrawnAt() { return withdrawnAt; }
+    public void setWithdrawnAt(String withdrawnAt) { this.withdrawnAt = withdrawnAt; }
 
     @Override
     public String toString() {
