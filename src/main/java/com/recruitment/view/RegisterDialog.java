@@ -5,9 +5,11 @@ import com.recruitment.service.UserService;
 import com.recruitment.util.ShadowBorder;
 
 import javax.swing.*;
+import javax.swing.border.EmptyBorder;
 import java.awt.*;
 
 public class RegisterDialog extends JDialog {
+
     private final UserService userService;
     private JTextField usernameField;
     private JPasswordField passwordField;
@@ -16,174 +18,202 @@ public class RegisterDialog extends JDialog {
     private JTextField emailField;
     private JComboBox<User.Role> roleCombo;
 
-    private static final Color PRIMARY      = new Color(0x6C, 0x5C, 0xE7);
-    private static final Color DARK_BG      = new Color(0x1E, 0x1E, 0x2E);
-    private static final Color CARD_BG      = Color.WHITE;
-    private static final Color TEXT_PRIMARY  = new Color(0x2D, 0x34, 0x36);
-    private static final Color TEXT_SECONDARY = new Color(0x63, 0x6E, 0x72);
-    private static final Color BORDER       = new Color(0xDF, 0xE6, 0xE9);
-    private static final Color DANGER       = new Color(0xE1, 0x70, 0x55);
+    private static final Color C_HEADER  = new Color(0x1A, 0x1A, 0x2E);
+    private static final Color C_BG      = new Color(0xF0, 0xF2, 0xF8);
+    private static final Color C_SURFACE = Color.WHITE;
+    private static final Color C_PRIMARY = new Color(0x5C, 0x6B, 0xE8);
+    private static final Color C_ACCENT  = new Color(0x43, 0xC6, 0xAC);
+    private static final Color C_DANGER  = new Color(0xE5, 0x53, 0x53);
+    private static final Color C_TXT_SEC = new Color(0x66, 0x72, 0x80);
+    private static final Font  F_BOLD    = new Font("Segoe UI", Font.BOLD, 13);
+    private static final Font  F_BODY    = new Font("Segoe UI", Font.PLAIN, 13);
 
     public RegisterDialog(JFrame parent, UserService userService) {
-        super(parent, "Register New Account", true);
+        super(parent, "Create New Account", true);
         this.userService = userService;
         initUI();
     }
 
     private void initUI() {
-        setSize(520, 600);
+        setSize(500, 600);
         setLocationRelativeTo(getParent());
         setResizable(false);
 
-        JPanel root = new JPanel(new BorderLayout()) {
-            @Override
-            protected void paintComponent(Graphics g) {
-                super.paintComponent(g);
-                Graphics2D g2 = (Graphics2D) g.create();
-                GradientPaint gp = new GradientPaint(
-                        0, 0, new Color(0xF4, 0xF5, 0xF8),
-                        0, getHeight(), new Color(0xEE, 0xEC, 0xFB));
-                g2.setPaint(gp);
-                g2.fillRect(0, 0, getWidth(), getHeight());
-                g2.dispose();
-            }
-        };
-        root.setOpaque(false);
+        JPanel root = new JPanel(new BorderLayout());
+        root.setBackground(C_BG);
 
-        // ===== Title banner =====
-        JPanel titlePanel = new JPanel();
-        titlePanel.setLayout(new BoxLayout(titlePanel, BoxLayout.Y_AXIS));
-        titlePanel.setBackground(DARK_BG);
-        titlePanel.setBorder(BorderFactory.createEmptyBorder(24, 30, 20, 30));
+        // ── Header ─────────────────────────────────────────────────────────
+        JPanel header = new JPanel();
+        header.setLayout(new BoxLayout(header, BoxLayout.Y_AXIS));
+        header.setBackground(C_HEADER);
+        header.setBorder(new EmptyBorder(26, 0, 22, 0));
 
-        JLabel titleLabel = new JLabel("Create Account");
-        titleLabel.setFont(new Font("Segoe UI", Font.BOLD, 22));
-        titleLabel.setForeground(new Color(0xCB, 0xC3, 0xF7));
-        titleLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        JLabel titleLbl = new JLabel("Create Account");
+        titleLbl.setFont(new Font("Segoe UI", Font.BOLD, 24));
+        titleLbl.setForeground(new Color(0xCB, 0xC5, 0xFF));
+        titleLbl.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-        JLabel subtitleLabel = new JLabel("Join the TA Recruitment platform");
-        subtitleLabel.setFont(new Font("Segoe UI", Font.PLAIN, 12));
-        subtitleLabel.setForeground(new Color(0xA0, 0xA0, 0xC0));
-        subtitleLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        JLabel subLbl = new JLabel("Join the TA Recruitment Platform");
+        subLbl.setFont(F_BODY);
+        subLbl.setForeground(new Color(0xA0, 0xA8, 0xCC));
+        subLbl.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-        titlePanel.add(titleLabel);
-        titlePanel.add(Box.createVerticalStrut(4));
-        titlePanel.add(subtitleLabel);
-        root.add(titlePanel, BorderLayout.NORTH);
+        header.add(titleLbl);
+        header.add(Box.createVerticalStrut(5));
+        header.add(subLbl);
+        root.add(header, BorderLayout.NORTH);
 
-        // ===== Form card =====
-        JPanel cardWrapper = new JPanel(new GridBagLayout());
-        cardWrapper.setOpaque(false);
-        cardWrapper.setBorder(BorderFactory.createEmptyBorder(0, 28, 20, 28));
+        // ── Form card ──────────────────────────────────────────────────────
+        JPanel cardWrap = new JPanel(new GridBagLayout());
+        cardWrap.setBackground(C_BG);
+        cardWrap.setBorder(new EmptyBorder(20, 28, 20, 28));
 
         JPanel card = new JPanel(new GridBagLayout());
-        card.setOpaque(false);
+        card.setBackground(C_SURFACE);
         card.setBorder(BorderFactory.createCompoundBorder(
                 ShadowBorder.card(),
-                BorderFactory.createEmptyBorder(24, 24, 20, 24)
-        ));
+                new EmptyBorder(22, 28, 18, 28)));
 
-        GridBagConstraints gbc = new GridBagConstraints();
-        gbc.insets = new Insets(4, 4, 4, 4);
-        gbc.fill = GridBagConstraints.HORIZONTAL;
-        gbc.anchor = GridBagConstraints.WEST;
+        GridBagConstraints g = new GridBagConstraints();
+        g.fill = GridBagConstraints.HORIZONTAL;
+        g.anchor = GridBagConstraints.WEST;
 
-        int row = 0;
+        usernameField = field();
+        passwordField = new JPasswordField(20);
+        confirmField  = new JPasswordField(20);
+        nameField     = field();
+        emailField    = field();
+        styleComp(passwordField);
+        styleComp(confirmField);
 
-        addFormField(card, gbc, row++, "Username", usernameField = new JTextField(20));
-        addFormField(card, gbc, row++, "Password", passwordField = new JPasswordField(20));
-        addFormField(card, gbc, row++, "Confirm Password", confirmField = new JPasswordField(20));
-        addFormField(card, gbc, row++, "Full Name", nameField = new JTextField(20));
-        addFormField(card, gbc, row++, "Email", emailField = new JTextField(20));
+        int r = 0;
+        r = addField(card, g, r, "Username *",         usernameField);
+        r = addField(card, g, r, "Password *",          passwordField);
+        r = addField(card, g, r, "Confirm Password *",  confirmField);
+        r = addField(card, g, r, "Full Name *",          nameField);
+        r = addField(card, g, r, "Email *",              emailField);
 
-        // Role
-        gbc.gridx = 0; gbc.gridy = row; gbc.weightx = 0;
-        JLabel roleLabel = new JLabel("Role");
-        roleLabel.setFont(new Font("Segoe UI", Font.PLAIN, 13));
-        roleLabel.setForeground(TEXT_SECONDARY);
-        card.add(roleLabel, gbc);
-        gbc.gridx = 1; gbc.weightx = 1.0;
+        // Role row
+        g.gridx = 0; g.gridy = r; g.gridwidth = 1; g.weightx = 0;
+        g.insets = new Insets(8, 0, 2, 0);
+        JLabel roleLbl = new JLabel("Role *");
+        roleLbl.setFont(F_BOLD); roleLbl.setForeground(C_TXT_SEC);
+        card.add(roleLbl, g);
+        r++;
+        g.gridx = 0; g.gridy = r; g.gridwidth = 2; g.weightx = 1.0;
+        g.insets = new Insets(2, 0, 10, 0);
         roleCombo = new JComboBox<>(new User.Role[]{User.Role.TA, User.Role.MO});
-        card.add(roleCombo, gbc);
+        roleCombo.setFont(F_BODY);
+        card.add(roleCombo, g);
+        r++;
 
-        row++;
-        gbc.gridx = 0; gbc.gridy = row; gbc.gridwidth = 2;
-        gbc.anchor = GridBagConstraints.CENTER;
-        gbc.insets = new Insets(16, 4, 4, 4);
+        // Separator
+        g.gridx = 0; g.gridy = r; g.gridwidth = 2;
+        g.insets = new Insets(6, 0, 6, 0);
+        card.add(new JSeparator(), g);
+        r++;
 
-        JPanel btnPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 12, 0));
-        btnPanel.setBackground(CARD_BG);
+        // Buttons
+        g.gridx = 0; g.gridy = r; g.gridwidth = 2;
+        g.insets = new Insets(10, 0, 0, 0);
+        g.anchor = GridBagConstraints.CENTER;
+        JPanel btnRow = new JPanel(new FlowLayout(FlowLayout.CENTER, 14, 0));
+        btnRow.setBackground(C_SURFACE);
 
-        JButton registerBtn = new JButton("Register");
-        registerBtn.setPreferredSize(new Dimension(120, 36));
-        registerBtn.setFocusPainted(false);
-        registerBtn.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-        registerBtn.addActionListener(e -> handleRegister());
+        JButton regBtn = makeBtn("Register", C_ACCENT);
+        regBtn.setPreferredSize(new Dimension(120, 38));
+        regBtn.addActionListener(e -> handleRegister());
 
-        JButton cancelBtn = new JButton("Cancel");
-        cancelBtn.setPreferredSize(new Dimension(120, 36));
-        cancelBtn.setFocusPainted(false);
-        cancelBtn.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-        cancelBtn.setBackground(DANGER);
-        cancelBtn.setForeground(Color.WHITE);
+        JButton cancelBtn = makeBtn("Cancel", C_DANGER);
+        cancelBtn.setPreferredSize(new Dimension(100, 38));
         cancelBtn.addActionListener(e -> dispose());
 
-        btnPanel.add(registerBtn);
-        btnPanel.add(cancelBtn);
-        card.add(btnPanel, gbc);
+        btnRow.add(regBtn);
+        btnRow.add(cancelBtn);
+        card.add(btnRow, g);
 
-        cardWrapper.add(card);
-        root.add(cardWrapper, BorderLayout.CENTER);
-
+        cardWrap.add(card, new GridBagConstraints());
+        root.add(cardWrap, BorderLayout.CENTER);
         setContentPane(root);
+        getRootPane().setDefaultButton(regBtn);
     }
 
-    private void addFormField(JPanel panel, GridBagConstraints gbc, int row, String labelText, JComponent field) {
-        gbc.gridx = 0; gbc.gridy = row; gbc.weightx = 0; gbc.gridwidth = 1;
-        gbc.anchor = GridBagConstraints.WEST;
-        gbc.insets = new Insets(4, 4, 4, 4);
-        JLabel label = new JLabel(labelText);
-        label.setFont(new Font("Segoe UI", Font.PLAIN, 13));
-        label.setForeground(TEXT_SECONDARY);
-        panel.add(label, gbc);
-        gbc.gridx = 1; gbc.weightx = 1.0;
-        panel.add(field, gbc);
+    private int addField(JPanel p, GridBagConstraints g, int row, String label, JComponent comp) {
+        g.gridx = 0; g.gridy = row; g.gridwidth = 1; g.weightx = 0;
+        g.insets = new Insets(8, 0, 2, 0);
+        JLabel lbl = new JLabel(label);
+        lbl.setFont(F_BOLD); lbl.setForeground(C_TXT_SEC);
+        p.add(lbl, g);
+        row++;
+        g.gridx = 0; g.gridy = row; g.gridwidth = 2; g.weightx = 1.0;
+        g.insets = new Insets(2, 0, 2, 0);
+        p.add(comp, g);
+        return row + 1;
+    }
+
+    private JTextField field() {
+        JTextField f = new JTextField(20);
+        styleComp(f);
+        return f;
+    }
+
+    private void styleComp(JComponent c) {
+        c.setFont(F_BODY);
+        c.setPreferredSize(new Dimension(280, 34));
+    }
+
+    private JButton makeBtn(String text, Color bg) {
+        JButton b = new JButton(text);
+        b.setFont(F_BOLD);
+        b.setBackground(bg);
+        b.setForeground(Color.WHITE);
+        b.setFocusPainted(false);
+        b.setBorderPainted(false);
+        b.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        return b;
     }
 
     private void handleRegister() {
         String username = usernameField.getText().trim();
-        String password = new String(passwordField.getPassword()).trim();
-        String confirm = new String(confirmField.getPassword()).trim();
-        String name = nameField.getText().trim();
-        String email = emailField.getText().trim();
-        User.Role role = (User.Role) roleCombo.getSelectedItem();
+        String password = new String(passwordField.getPassword());
+        String confirm  = new String(confirmField.getPassword());
+        String name     = nameField.getText().trim();
+        String email    = emailField.getText().trim();
+        User.Role role  = (User.Role) roleCombo.getSelectedItem();
 
         if (username.isEmpty() || password.isEmpty() || name.isEmpty() || email.isEmpty()) {
-            JOptionPane.showMessageDialog(this, "All fields are required.",
-                    "Validation Error", JOptionPane.WARNING_MESSAGE);
+            warn("All fields marked with * are required.");
             return;
         }
-
+        if (username.length() < 3) {
+            warn("Username must be at least 3 characters.");
+            return;
+        }
         if (!password.equals(confirm)) {
-            JOptionPane.showMessageDialog(this, "Passwords do not match.",
-                    "Validation Error", JOptionPane.WARNING_MESSAGE);
+            warn("Passwords do not match.");
             return;
         }
-
         if (password.length() < 4) {
-            JOptionPane.showMessageDialog(this, "Password must be at least 4 characters.",
-                    "Validation Error", JOptionPane.WARNING_MESSAGE);
+            warn("Password must be at least 4 characters.");
+            return;
+        }
+        if (!email.contains("@")) {
+            warn("Please enter a valid email address.");
             return;
         }
 
         User user = new User(null, username, password, role, name, email);
         if (userService.register(user)) {
-            JOptionPane.showMessageDialog(this, "Registration successful! You can now login.",
+            JOptionPane.showMessageDialog(this,
+                    "Registration successful! You can now log in.",
                     "Success", JOptionPane.INFORMATION_MESSAGE);
             dispose();
         } else {
-            JOptionPane.showMessageDialog(this, "Username already exists.",
-                    "Registration Failed", JOptionPane.ERROR_MESSAGE);
+            warn("Username already exists. Please choose a different one.");
         }
+    }
+
+    private void warn(String msg) {
+        JOptionPane.showMessageDialog(this, msg, "Validation Error", JOptionPane.WARNING_MESSAGE);
     }
 }
