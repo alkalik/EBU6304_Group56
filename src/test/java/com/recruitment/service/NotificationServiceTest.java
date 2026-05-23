@@ -1,23 +1,28 @@
 package com.recruitment.service;
 
-import com.recruitment.model.Notification;
-import org.junit.Before;
-import org.junit.Test;
-
 import java.io.File;
 import java.util.List;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import org.junit.Before;
+import org.junit.Test;
+
+import com.recruitment.model.Notification;
 
 public class NotificationServiceTest {
     private NotificationService notificationService;
 
+    // Initializes the NotificationService and ensures the dynamic storage directory exists before every test run
     @Before
     public void setUp() {
         new File("data").mkdirs();
         notificationService = new NotificationService();
     }
 
+    // Verifies that a notification can be successfully created with an unread status, increasing the unread count
     @Test
     public void testCreateNotificationAndUnreadCount() {
         String userId = "USR-notify-" + System.currentTimeMillis();
@@ -36,6 +41,7 @@ public class NotificationServiceTest {
         assertTrue(notificationService.getUnreadCount(userId) >= 1);
     }
 
+    // Ensures that an individual notification can be flagged as read, which subsequently drops the user's unread counter
     @Test
     public void testMarkAsRead() {
         String userId = "USR-read-" + System.currentTimeMillis();
@@ -53,6 +59,7 @@ public class NotificationServiceTest {
         assertEquals(0, notificationService.getUnreadCount(userId));
     }
 
+    // Validates that cleaning up history deletes only the read alerts while leaving all unread alerts completely untouched
     @Test
     public void testClearReadNotificationsOnlyRemovesReadOnes() {
         String userId = "USR-clear-" + System.currentTimeMillis();
@@ -76,6 +83,7 @@ public class NotificationServiceTest {
         assertFalse(remaining.get(0).isRead());
     }
 
+    // Assures that a user can perform a bulk update action to instantly mark all of their incoming alerts as read
     @Test
     public void testMarkAllAsRead() {
         String userId = "USR-all-read-" + System.currentTimeMillis();
