@@ -1,17 +1,22 @@
 package com.recruitment.service;
 
-import com.recruitment.model.User;
-import org.junit.Before;
-import org.junit.Test;
-
 import java.io.File;
 import java.util.List;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+import org.junit.Before;
+import org.junit.Test;
+
+import com.recruitment.model.User;
 
 public class UserServiceTest {
     private UserService userService;
 
+    // Initializes the UserService instance and ensures the test data storage directory exists before every test run
     @Before
     public void setUp() {
         // Ensure clean data directory for tests
@@ -19,6 +24,7 @@ public class UserServiceTest {
         userService = new UserService();
     }
 
+    // Verifies successful user registration and checks that authentication passes with valid credentials but fails with invalid ones
     @Test
     public void testRegisterAndAuthenticate() {
         User user = new User(null, "testuser_" + System.currentTimeMillis(), "pass123",
@@ -35,6 +41,7 @@ public class UserServiceTest {
         assertNull("Authentication should fail with wrong password", failAuth);
     }
 
+    // Ensures that the system rejects new registrations that attempt to use an already taken username
     @Test
     public void testDuplicateRegistration() {
         String username = "dupuser_" + System.currentTimeMillis();
@@ -45,6 +52,7 @@ public class UserServiceTest {
         assertFalse("Duplicate username should fail", userService.register(user2));
     }
 
+    // Verifies that users can be retrieved and filtered properly from the persistent store based on their functional role
     @Test
     public void testFindByRole() {
         String suffix = "_" + System.currentTimeMillis();
@@ -56,6 +64,7 @@ public class UserServiceTest {
         assertTrue(tas.stream().allMatch(u -> u.getRole() == User.Role.TA));
     }
 
+    // Validates that an existing user's profile attributes can be successfully updated and saved in the repository
     @Test
     public void testUpdateUser() {
         User user = new User(null, "upd_" + System.currentTimeMillis(), "pass",
@@ -72,6 +81,7 @@ public class UserServiceTest {
         assertEquals("1234567890", found.getPhone());
     }
 
+    // Assures that a user record can be deleted by its ID and will no longer be discoverable in subsequent lookups
     @Test
     public void testDeleteUser() {
         User user = new User(null, "del_" + System.currentTimeMillis(), "pass",
@@ -82,6 +92,7 @@ public class UserServiceTest {
         assertFalse(userService.findById(user.getId()).isPresent());
     }
 
+    // Checks that the universal search functionality can locate users by matching strings against name, department, or role
     @Test
     public void testSearchUsers() {
         String suffix = "_" + System.currentTimeMillis();
