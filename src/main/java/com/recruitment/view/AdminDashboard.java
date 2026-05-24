@@ -106,8 +106,9 @@ public class AdminDashboard extends JFrame {
 
         JPanel left = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
         left.setOpaque(false);
-        JLabel icon = new JLabel("⚙  ");
-        icon.setFont(new Font("Segoe UI Emoji", Font.PLAIN, 20));
+        // Use plain text markers so the UI does not depend on emoji glyph availability.
+        JLabel icon = new JLabel("[Admin]  ");
+        icon.setFont(F_BOLD);
         icon.setForeground(new Color(0xCB, 0xC5, 0xFF));
         JLabel title = new JLabel("Administrator Panel");
         title.setFont(new Font("Segoe UI", Font.BOLD, 18));
@@ -193,13 +194,13 @@ public class AdminDashboard extends JFrame {
         JPanel btns = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 10));
         btns.setBackground(C_BG);
 
-        JButton refreshBtn = ghost("↻  Refresh");
+        JButton refreshBtn = ghost("Refresh");
         refreshBtn.addActionListener(e -> {
             userService.reload(); applicationService.reload();
             loadWorkloadTable(workloadModel, null, statTotal, statOver, statBal, statAvail);
         });
 
-        JButton aiBtn = pill("  ✦  Run AI Analysis  ", C_PRIMARY);
+        JButton aiBtn = pill("* Run AI Analysis", C_PRIMARY);
         aiBtn.setPreferredSize(new Dimension(180, 36));
         aiBtn.addActionListener(e -> {
             aiBtn.setEnabled(false); aiBtn.setText("  Analysing...");
@@ -213,7 +214,7 @@ public class AdminDashboard extends JFrame {
                     loadWorkloadTable(workloadModel, result.workloads, statTotal, statOver, statBal, statAvail);
                     loadSuggestions(suggestModel, result.suggestions);
                     summaryArea.setText(result.summary);
-                    aiBtn.setEnabled(true); aiBtn.setText("  ✦  Run AI Analysis  ");
+                    aiBtn.setEnabled(true); aiBtn.setText("* Run AI Analysis");
                 });
                 if (AppConfig.isDeepSeekEnabled()) {
                     StringBuilder wd = new StringBuilder();
@@ -241,7 +242,7 @@ public class AdminDashboard extends JFrame {
             }, "ds-workload").start();
         });
 
-        JButton detailBtn = ghost("👤  TA Details");
+        JButton detailBtn = ghost("TA Details");
         detailBtn.addActionListener(e -> {
             int r = workloadTable.getSelectedRow();
             if (r < 0) { warn("Please select a TA first."); return; }
@@ -251,7 +252,7 @@ public class AdminDashboard extends JFrame {
                     .ifPresent(u -> showTADetails(u.getId()));
         });
 
-        JButton adoptBtn = pill("✔  Adopt Suggestion", C_ACCENT);
+        JButton adoptBtn = pill("Adopt Suggestion", C_ACCENT);
         adoptBtn.addActionListener(e -> {
             if (lastResult[0] == null) { warn("Please run AI analysis first."); return; }
             int r = suggestTable.getSelectedRow();
@@ -273,7 +274,7 @@ public class AdminDashboard extends JFrame {
             info("Suggestion adopted. TAs have been notified.");
         });
 
-        JButton exportBtn = ghost("⬇  Export Report");
+        JButton exportBtn = ghost("Export Report");
         exportBtn.addActionListener(e -> {
             if (lastResult[0] == null) { warn("Please run analysis first."); return; }
             JFileChooser fc = new JFileChooser();
@@ -461,7 +462,7 @@ public class AdminDashboard extends JFrame {
         kwF.putClientProperty("JTextField.placeholderText", "Search by name, username or role...");
         JLabel resLbl = new JLabel(); resLbl.setFont(F_SMALL); resLbl.setForeground(C_TXT_SEC);
         JButton sb = pill("Search", C_PRIMARY); JButton cb = ghost("Clear");
-        searchBar.add(new JLabel("  🔍 ")); searchBar.add(kwF); searchBar.add(sb); searchBar.add(cb); searchBar.add(resLbl);
+        searchBar.add(lbl("Search:")); searchBar.add(kwF); searchBar.add(sb); searchBar.add(cb); searchBar.add(resLbl);
         panel.add(searchBar, BorderLayout.NORTH);
 
         String[] cols = {"ID", "Username", "Name", "Role", "Email", "Department"};
@@ -475,7 +476,7 @@ public class AdminDashboard extends JFrame {
         kwF.addActionListener(e -> doSearch.run());
 
         JPanel btns = btnRow();
-        JButton refresh = ghost("↻  Refresh"); refresh.addActionListener(e -> { userService.reload(); doSearch.run(); });
+        JButton refresh = ghost("Refresh"); refresh.addActionListener(e -> { userService.reload(); doSearch.run(); });
         JButton del = pill("Delete User", C_DANGER); del.addActionListener(e -> {
             int r = table.getSelectedRow(); if (r < 0) { warn("Please select a user."); return; }
             String uid = (String) model.getValueAt(r, 0);
@@ -506,19 +507,139 @@ public class AdminDashboard extends JFrame {
         JTable table = styledTable(model);
         panel.add(wrapInCard("All Jobs", wrapScroll(table)), BorderLayout.CENTER);
         JPanel btns = btnRow();
-        JButton refresh = ghost("↻  Refresh");
-        refresh.addActionListener(e -> { jobService.reload(); userService.reload(); loadAllJobs(model); });
-        btns.add(refresh); panel.add(btns, BorderLayout.SOUTH);
+        JButton refresh = ghost("Refresh");
+        refresh.addActionListener(e -> loadAllJobs(model));
+
+        JButton edit = pill("Edit Job", C_PRIMARY);
+        edit.addActionListener(e -> {
+            String jobId = selectedId(table, model);
+            if (jobId == null) { warn("Please select a job."); return; }
+            jobService.reload();
+            jobService.findById(jobId).ifPresentOrElse(
+                    job -> {
+                        showEditJobDialog(job);
+                        loadAllJobs(model);
+                    },
+                    () -> warn("Job not found. It may have been deleted by another user."));
+        });
+
+        JButton toggleStatus = ghost("Close/Reopen");
+        toggleStatus.addActionListener(e -> {
+            String jobId = selectedId(table, model);
+            if (jobId == null) { warn("Please select a job."); return; }
+            jobService.reload();
+            Optional<Job> jobOpt = jobService.findById(jobId);
+            if (!jobOpt.isPresent()) { warn("Job not found. It may have been deleted by another user."); loadAllJobs(model); return; }
+            Job job = jobOpt.get();
+            if (job.getStatus() == Job.Status.FILLED) { warn("Filled jobs cannot be reopened from this screen."); return; }
+            job.setStatus(job.getStatus() == Job.Status.OPEN ? Job.Status.CLOSED : Job.Status.OPEN);
+            jobService.updateJob(job);
+            loadAllJobs(model);
+        });
+
+        JButton del = pill("Delete Job", C_DANGER);
+        del.addActionListener(e -> {
+            String jobId = selectedId(table, model);
+            if (jobId == null) { warn("Please select a job."); return; }
+            if (!confirm("Permanently delete this job?")) return;
+            jobService.reload();
+            if (!jobService.deleteJob(jobId)) warn("Job not found. It may have been deleted by another user.");
+            loadAllJobs(model);
+        });
+
+        btns.add(refresh); btns.add(edit); btns.add(toggleStatus); btns.add(del); panel.add(btns, BorderLayout.SOUTH);
+
+        // Poll the JSON-backed service while the panel is visible so MO changes appear in admin without a manual refresh.
+        javax.swing.Timer liveRefresh = new javax.swing.Timer(4000, e -> { if (panel.isShowing()) loadAllJobs(model); });
+        liveRefresh.start();
+        panel.addHierarchyListener(e -> { if (!panel.isDisplayable()) liveRefresh.stop(); });
         loadAllJobs(model); return panel;
     }
 
     private void loadAllJobs(DefaultTableModel model) {
+        jobService.reload();
+        userService.reload();
         model.setRowCount(0);
         jobService.getAllJobs().forEach(j -> {
             String poster = userService.findById(j.getPostedBy()).map(User::getName).orElse("Unknown");
             model.addRow(new Object[]{j.getId(), j.getTitle(), j.getModuleName(), j.getJobType(),
                     poster, j.getMaxPositions(), j.getFilledPositions(), j.getStatus()});
         });
+    }
+
+    private String selectedId(JTable table, DefaultTableModel model) {
+        int selectedRow = table.getSelectedRow();
+        if (selectedRow < 0) return null;
+        int modelRow = table.convertRowIndexToModel(selectedRow);
+        return (String) model.getValueAt(modelRow, 0);
+    }
+
+    private void showEditJobDialog(Job job) {
+        JPanel form = new JPanel(new GridBagLayout());
+        form.setBorder(new EmptyBorder(8, 8, 8, 8));
+        GridBagConstraints g = new GridBagConstraints();
+        g.insets = new Insets(5, 4, 5, 4);
+        g.fill = GridBagConstraints.HORIZONTAL;
+        g.anchor = GridBagConstraints.WEST;
+
+        JTextField titleF = new JTextField(job.getTitle() != null ? job.getTitle() : "", 24);
+        JTextField moduleF = new JTextField(job.getModuleName() != null ? job.getModuleName() : "", 24);
+        JComboBox<Job.JobType> typeC = new JComboBox<>(Job.JobType.values());
+        typeC.setSelectedItem(job.getJobType());
+        JComboBox<Job.Status> statusC = new JComboBox<>(Job.Status.values());
+        statusC.setSelectedItem(job.getStatus());
+        JSpinner maxSpin = new JSpinner(new SpinnerNumberModel(
+                job.getMaxPositions(), Math.max(1, job.getFilledPositions()), 100, 1));
+        JTextField semesterF = new JTextField(job.getSemester() != null ? job.getSemester() : "", 24);
+        JTextField deadlineF = new JTextField(job.getDeadline() != null ? job.getDeadline() : "", 24);
+        JTextField skillsF = new JTextField(job.getRequiredSkills() != null ? String.join(", ", job.getRequiredSkills()) : "", 24);
+        JTextArea descA = new JTextArea(job.getDescription() != null ? job.getDescription() : "", 4, 24);
+        descA.setLineWrap(true);
+        descA.setWrapStyleWord(true);
+
+        int row = 0;
+        row = editRow(form, g, row, "Title *", titleF);
+        row = editRow(form, g, row, "Module", moduleF);
+        row = editRow(form, g, row, "Type", typeC);
+        row = editRow(form, g, row, "Status", statusC);
+        row = editRow(form, g, row, "Max Positions", maxSpin);
+        row = editRow(form, g, row, "Semester", semesterF);
+        row = editRow(form, g, row, "Deadline", deadlineF);
+        row = editRow(form, g, row, "Required Skills", skillsF);
+        editRow(form, g, row, "Description", new JScrollPane(descA));
+
+        int result = JOptionPane.showConfirmDialog(this, form, "Edit Job", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
+        if (result != JOptionPane.OK_OPTION) return;
+
+        String title = titleF.getText().trim();
+        if (title.isEmpty()) { warn("Job title is required."); return; }
+        int maxPositions = (int) maxSpin.getValue();
+        if (maxPositions < job.getFilledPositions()) {
+            warn("Max positions cannot be lower than filled positions.");
+            return;
+        }
+
+        // Update only editable job fields; postedBy and filledPositions remain system-managed.
+        job.setTitle(title);
+        job.setModuleName(moduleF.getText().trim());
+        job.setJobType((Job.JobType) typeC.getSelectedItem());
+        job.setStatus((Job.Status) statusC.getSelectedItem());
+        job.setMaxPositions(maxPositions);
+        job.setSemester(semesterF.getText().trim());
+        job.setDeadline(deadlineF.getText().trim());
+        job.setDescription(descA.getText().trim());
+        job.setRequiredSkills(java.util.Arrays.stream(skillsF.getText().split(","))
+                .map(String::trim)
+                .filter(s -> !s.isEmpty())
+                .collect(java.util.stream.Collectors.toList()));
+        if (!jobService.updateJob(job)) warn("Job not found. It may have been deleted by another user.");
+    }
+
+    private int editRow(JPanel form, GridBagConstraints g, int row, String label, JComponent field) {
+        g.gridx = 0; g.gridy = row; g.weightx = 0;
+        JLabel l = new JLabel(label); l.setFont(F_BOLD); l.setForeground(C_TXT_SEC); form.add(l, g);
+        g.gridx = 1; g.weightx = 1.0; form.add(field, g);
+        return row + 1;
     }
 
     // ── Tab 4 – All Applications ───────────────────────────────────────────
@@ -531,7 +652,7 @@ public class AdminDashboard extends JFrame {
         table.getColumnModel().getColumn(4).setCellRenderer(statusBadgeRenderer());
         panel.add(wrapInCard("All Applications", wrapScroll(table)), BorderLayout.CENTER);
         JPanel btns = btnRow();
-        JButton refresh = ghost("↻  Refresh");
+        JButton refresh = ghost("Refresh");
         refresh.addActionListener(e -> { applicationService.reload(); jobService.reload(); userService.reload(); loadAllApps(model); });
         btns.add(refresh); panel.add(btns, BorderLayout.SOUTH);
         loadAllApps(model); return panel;
@@ -594,6 +715,13 @@ public class AdminDashboard extends JFrame {
 
     private JPanel btnRow() {
         JPanel p = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 8)); p.setBackground(C_BG); return p;
+    }
+
+    private JLabel lbl(String t) {
+        JLabel l = new JLabel(t);
+        l.setFont(F_BODY);
+        l.setForeground(C_TXT_SEC);
+        return l;
     }
 
     static JPanel wrapInCard(String title, Component content) {

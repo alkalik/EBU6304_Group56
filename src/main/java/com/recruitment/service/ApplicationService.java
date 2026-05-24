@@ -62,9 +62,9 @@ public class ApplicationService {
         applications.add(app);
         save();
 
-        // Notify MO about new application
+        // Notify MO about new application when the notification service is available.
         Optional<Job> job = jobService.findById(jobId);
-        if (job.isPresent()) {
+        if (job.isPresent() && notificationService != null) {
             notificationService.createNotification(
                 job.get().getPostedBy(),
                 "New application received for '" + job.get().getTitle() + "'.",
