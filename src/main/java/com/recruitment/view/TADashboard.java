@@ -201,6 +201,7 @@ public class TADashboard extends JFrame {
         JLabel resLbl = new JLabel(); resLbl.setFont(F_SMALL); resLbl.setForeground(C_TXT_SEC);
         JButton sb = AdminDashboard.pill("Search", C_PRIMARY); JButton cb = AdminDashboard.ghost("Clear");
         searchBar.add(new JLabel(UiText.symbolText("🔍", "", true))); searchBar.add(kwF); searchBar.add(sb); searchBar.add(cb); searchBar.add(resLbl);
+        searchBar.add(new JLabel("  🔍 ")); searchBar.add(kwF); searchBar.add(sb); searchBar.add(cb); searchBar.add(resLbl);
         panel.add(searchBar, BorderLayout.NORTH);
 
         String[] cols = {"ID", "Title", "Module", "Type", "Required Skills", "Open Positions", "Deadline"};
@@ -214,6 +215,7 @@ public class TADashboard extends JFrame {
 
         JPanel btns = btnRow();
         JButton refresh = AdminDashboard.ghost(UiText.symbolText("↻", "Refresh", false)); refresh.addActionListener(e -> { jobService.reload(); load.run(); });
+        JButton refresh = AdminDashboard.ghost("↻  Refresh"); refresh.addActionListener(e -> { jobService.reload(); load.run(); });
         JButton apply = AdminDashboard.pill("Apply for This Job", C_ACCENT);
         apply.addActionListener(e -> {
             int r = table.getSelectedRow(); if (r < 0) { warn("Please select a job."); return; }
@@ -262,6 +264,7 @@ public class TADashboard extends JFrame {
 
         JPanel btns = btnRow();
         JButton refresh = AdminDashboard.ghost(UiText.symbolText("↻", "Refresh", false)); refresh.addActionListener(e -> { applicationService.reload(); loadMyApps(model); });
+        JButton refresh = AdminDashboard.ghost("↻  Refresh"); refresh.addActionListener(e -> { applicationService.reload(); loadMyApps(model); });
         JButton withdraw = AdminDashboard.pill("Withdraw", C_DANGER);
         withdraw.addActionListener(e -> {
             int r = table.getSelectedRow(); if (r < 0) { warn("Please select an application."); return; }

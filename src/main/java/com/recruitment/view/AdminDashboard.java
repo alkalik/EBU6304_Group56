@@ -40,6 +40,7 @@ import com.recruitment.util.UiText;
  * reused by {@link TADashboard} and {@link MODashboard}.
  * </p>
  */
+
 public class AdminDashboard extends JFrame {
 
     private final User currentUser;
@@ -222,6 +223,7 @@ public class AdminDashboard extends JFrame {
         btns.setBackground(C_BG);
 
         JButton refreshBtn = ghost(UiText.symbolText("↻", "Refresh", false));
+        JButton refreshBtn = ghost("↻  Refresh");
         refreshBtn.addActionListener(e -> {
             userService.reload(); applicationService.reload();
             loadWorkloadTable(workloadModel, null, statTotal, statOver, statBal, statAvail);
@@ -232,6 +234,10 @@ public class AdminDashboard extends JFrame {
         aiBtn.setPreferredSize(new Dimension(180, 36));
         aiBtn.addActionListener(e -> {
             aiBtn.setEnabled(false); aiBtn.setText("Analysing...");
+        JButton aiBtn = pill("  ✦  Run AI Analysis  ", C_PRIMARY);
+        aiBtn.setPreferredSize(new Dimension(180, 36));
+        aiBtn.addActionListener(e -> {
+            aiBtn.setEnabled(false); aiBtn.setText("  Analysing...");
             userService.reload(); applicationService.reload(); jobService.reload();
             List<User> tas = userService.findByRole(User.Role.TA);
             new Thread(() -> {
@@ -243,6 +249,7 @@ public class AdminDashboard extends JFrame {
                     loadSuggestions(suggestModel, result.suggestions);
                     summaryArea.setText(result.summary);
                     aiBtn.setEnabled(true); aiBtn.setText(aiBtnLabel);
+                    aiBtn.setEnabled(true); aiBtn.setText("  ✦  Run AI Analysis  ");
                 });
                 if (AppConfig.isDeepSeekEnabled()) {
                     StringBuilder wd = new StringBuilder();
@@ -271,6 +278,7 @@ public class AdminDashboard extends JFrame {
         });
 
         JButton detailBtn = ghost(UiText.symbolText("👤", "TA Details", true));
+        JButton detailBtn = ghost("👤  TA Details");
         detailBtn.addActionListener(e -> {
             int r = workloadTable.getSelectedRow();
             if (r < 0) { warn("Please select a TA first."); return; }
@@ -281,6 +289,7 @@ public class AdminDashboard extends JFrame {
         });
 
         JButton adoptBtn = pill(UiText.symbolText("✔", "Adopt Suggestion", false, Color.WHITE), C_ACCENT);
+        JButton adoptBtn = pill("✔  Adopt Suggestion", C_ACCENT);
         adoptBtn.addActionListener(e -> {
             if (lastResult[0] == null) { warn("Please run AI analysis first."); return; }
             int r = suggestTable.getSelectedRow();
@@ -303,6 +312,20 @@ public class AdminDashboard extends JFrame {
         });
 
         JButton exportBtn = ghost(UiText.symbolText("⬇", "Export Report", false));
+        exportBtn.addActionListener(e -> {
+            if (lastResult[0] == null) { warn("Please run analysis first."); return; }
+            JFileChooser fc = new JFileChooser();
+            fc.setSelectedFile(new java.io.File("workload_report.txt"));
+            if (fc.showSaveDialog(this) == JFileChooser.APPROVE_OPTION)
+                try (java.io.FileWriter fw = new java.io.FileWriter(fc.getSelectedFile())) {
+                    fw.write(buildWorkloadReport(lastResult[0]));
+                    info("Exported: " + fc.getSelectedFile().getAbsolutePath());
+                } catch (java.io.IOException ex) { warn("Export failed: " + ex.getMessage()); }
+        });
+
+        });
+
+        JButton exportBtn = ghost("⬇  Export Report");
         exportBtn.addActionListener(e -> {
             if (lastResult[0] == null) { warn("Please run analysis first."); return; }
             JFileChooser fc = new JFileChooser();
@@ -491,6 +514,7 @@ public class AdminDashboard extends JFrame {
         JLabel resLbl = new JLabel(); resLbl.setFont(F_SMALL); resLbl.setForeground(C_TXT_SEC);
         JButton sb = pill("Search", C_PRIMARY); JButton cb = ghost("Clear");
         searchBar.add(new JLabel(UiText.symbolText("🔍", "", true))); searchBar.add(kwF); searchBar.add(sb); searchBar.add(cb); searchBar.add(resLbl);
+        searchBar.add(new JLabel("  🔍 ")); searchBar.add(kwF); searchBar.add(sb); searchBar.add(cb); searchBar.add(resLbl);
         panel.add(searchBar, BorderLayout.NORTH);
 
         String[] cols = {"ID", "Username", "Name", "Role", "Email", "Department"};
@@ -505,6 +529,7 @@ public class AdminDashboard extends JFrame {
 
         JPanel btns = btnRow();
         JButton refresh = ghost(UiText.symbolText("↻", "Refresh", false)); refresh.addActionListener(e -> { userService.reload(); doSearch.run(); });
+        JButton refresh = ghost("↻  Refresh"); refresh.addActionListener(e -> { userService.reload(); doSearch.run(); });
         JButton del = pill("Delete User", C_DANGER); del.addActionListener(e -> {
             int r = table.getSelectedRow(); if (r < 0) { warn("Please select a user."); return; }
             String uid = (String) model.getValueAt(r, 0);
@@ -536,6 +561,7 @@ public class AdminDashboard extends JFrame {
         panel.add(wrapInCard("All Jobs", wrapScroll(table)), BorderLayout.CENTER);
         JPanel btns = btnRow();
         JButton refresh = ghost(UiText.symbolText("↻", "Refresh", false));
+        JButton refresh = ghost("↻  Refresh");
         refresh.addActionListener(e -> { jobService.reload(); userService.reload(); loadAllJobs(model); });
         btns.add(refresh); panel.add(btns, BorderLayout.SOUTH);
         loadAllJobs(model); return panel;
@@ -561,6 +587,7 @@ public class AdminDashboard extends JFrame {
         panel.add(wrapInCard("All Applications", wrapScroll(table)), BorderLayout.CENTER);
         JPanel btns = btnRow();
         JButton refresh = ghost(UiText.symbolText("↻", "Refresh", false));
+        JButton refresh = ghost("↻  Refresh");
         refresh.addActionListener(e -> { applicationService.reload(); jobService.reload(); userService.reload(); loadAllApps(model); });
         btns.add(refresh); panel.add(btns, BorderLayout.SOUTH);
         loadAllApps(model); return panel;

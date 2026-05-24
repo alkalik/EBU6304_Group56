@@ -9,6 +9,7 @@ import java.util.Properties;
  * <p>
  * Reads settings lazily from {@code data/config.properties} on first access.
  * Missing or unreadable files are logged to stderr; callers receive default values.
+ * Reads settings from data/config.properties at runtime.
  */
 public class AppConfig {
 

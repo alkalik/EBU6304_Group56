@@ -50,6 +50,7 @@ public class DeepSeekClient {
      * @param userMessage  end-user prompt content
      * @param maxTokens    maximum tokens in the completion
      * @return assistant reply text, or {@code null} on any error (including missing API key)
+     * @return assistant reply text, or {@code null} on any error
      */
     public String chat(String systemPrompt, String userMessage, int maxTokens) {
         if (apiKey == null || apiKey.isEmpty()) return null;
@@ -89,6 +90,9 @@ public class DeepSeekClient {
      * @param onToken      called with each incremental text fragment (never null)
      * @param onDone       called once when the stream ends successfully
      * @param onError      called with an error message if the request fails
+     * @param onToken   called with each incremental text fragment (never null)
+     * @param onDone    called once when the stream ends successfully
+     * @param onError   called with an error message if the request fails
      */
     public void chatStreaming(String systemPrompt, String userMessage, int maxTokens,
                               Consumer<String> onToken, Runnable onDone,
@@ -211,6 +215,7 @@ public class DeepSeekClient {
      * @param missingSkills    skills the candidate lacks
      * @return full analysis text, or {@code null} on failure
      */
+    // Non-streaming convenience (kept for export/text use)
     public String analyzeSkillGap(String jobTitle, String requiredSkills,
                                    String candidateName, String candidateSkills,
                                    double matchPercent, String missingSkills) {

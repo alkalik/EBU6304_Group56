@@ -67,6 +67,25 @@ public class AIAnalysisService {
          * @param matchedSkills skills satisfied
          * @param missingSkills skills missing with importance
          */
+ * AI-assisted analysis service.
+ * Provides skill matching analysis and workload balancing recommendations.
+ */
+public class AIAnalysisService {
+
+    public enum SkillImportance {
+        HIGH("High"), MEDIUM("Medium"), LOW("Low");
+        private final String label;
+        SkillImportance(String label) { this.label = label; }
+        public String getLabel() { return label; }
+    }
+
+    public static class SkillMatchResult {
+        public final User ta;
+        public final Job job;
+        public final double matchPercent;
+        public final List<String> matchedSkills;
+        public final List<MissingSkill> missingSkills;
+
         public SkillMatchResult(User ta, Job job, double matchPercent,
                                 List<String> matchedSkills, List<MissingSkill> missingSkills) {
             this.ta = ta;
@@ -90,6 +109,10 @@ public class AIAnalysisService {
          * @param skill      the missing skill name
          * @param importance how critical the skill is considered for this job
          */
+    public static class MissingSkill {
+        public final String skill;
+        public final SkillImportance importance;
+
         public MissingSkill(String skill, SkillImportance importance) {
             this.skill = skill;
             this.importance = importance;
@@ -120,6 +143,15 @@ public class AIAnalysisService {
          * @param matchedSkills  satisfied skills
          * @param missingSkills  gaps with importance
          */
+    public static class CandidateAnalysis {
+        public final User ta;
+        public final Application application;
+        public final double matchPercent;
+        public final List<String> matchedSkills;
+        public final List<MissingSkill> missingSkills;
+        /** DeepSeek-generated narrative analysis (null if API disabled/failed) */
+        public String aiComment;
+
         public CandidateAnalysis(User ta, Application application, double matchPercent,
                                  List<String> matchedSkills, List<MissingSkill> missingSkills) {
             this.ta = ta;
@@ -151,6 +183,14 @@ public class AIAnalysisService {
          * @param avgWorkload average workload score
          * @param summary     text summary for display
          */
+    public static class WorkloadAnalysisResult {
+        public final List<TAWorkload> workloads;
+        public final List<WorkloadSuggestion> suggestions;
+        public final double avgWorkload;
+        public final String summary;
+        /** DeepSeek-generated workload balance narrative (null if API disabled/failed) */
+        public String aiComment;
+
         public WorkloadAnalysisResult(List<TAWorkload> workloads,
                                       List<WorkloadSuggestion> suggestions,
                                       double avgWorkload, String summary) {
@@ -183,6 +223,13 @@ public class AIAnalysisService {
          * @param workloadScore computed score
          * @param status        workload classification label
          */
+    public static class TAWorkload {
+        public final User ta;
+        public final int acceptedJobs;
+        public final int pendingApps;
+        public final double workloadScore;
+        public final String status; // OVERLOADED / BALANCED / UNDERLOADED
+
         public TAWorkload(User ta, int acceptedJobs, int pendingApps, double workloadScore, String status) {
             this.ta = ta;
             this.acceptedJobs = acceptedJobs;
@@ -222,6 +269,16 @@ public class AIAnalysisService {
          * @param jobTitle       job title
          * @param matchScore     target TA skill match to the job
          */
+    public static class WorkloadSuggestion {
+        public final String type;           // "REASSIGN" / "BALANCE"
+        public final String description;
+        public final String fromTA;
+        public final String toTA;
+        public final String applicationId;
+        public final String jobTitle;
+        public final double matchScore;     // match between toTA and the job
+        public boolean adopted;
+
         public WorkloadSuggestion(String type, String description,
                                    String fromTA, String toTA,
                                    String applicationId, String jobTitle,
@@ -237,6 +294,7 @@ public class AIAnalysisService {
         }
     }
 
+    // ─── DeepSeek client (lazy-initialised) ────────────────────────────────
     private DeepSeekClient deepSeek() {
         return new DeepSeekClient();
     }
@@ -252,6 +310,9 @@ public class AIAnalysisService {
      * @param applications applications to evaluate (typically for this job)
      * @param userService used to resolve applicant {@link User} profiles
      * @return sorted list of {@link CandidateAnalysis}; skips applications whose applicant is unknown
+     * Analyse skill match between a list of applicants and a job.
+     * Results are sorted by match percentage (descending).
+     * If DeepSeek is enabled, the top-3 candidates also receive an AI narrative comment.
      */
     public List<CandidateAnalysis> analyzeJobApplicants(Job job,
                                                          List<Application> applications,
@@ -320,6 +381,7 @@ public class AIAnalysisService {
      * @param index zero-based index of the skill in the required list
      * @param total number of required skills
      * @return the assigned {@link SkillImportance}
+     * First 1/3 → HIGH, middle 1/3 → MEDIUM, last 1/3 → LOW.
      */
     private SkillImportance assignImportance(int index, int total) {
         if (total <= 1) return SkillImportance.HIGH;
@@ -335,6 +397,7 @@ public class AIAnalysisService {
      * @param job     the analysed job (title, module, skills included in header)
      * @param results output from {@link #analyzeJobApplicants(Job, List, UserService)}
      * @return multi-line report string including optional DeepSeek sections
+     * Export candidate analysis results to a formatted text string.
      */
     public String exportAnalysisToText(Job job, List<CandidateAnalysis> results) {
         StringBuilder sb = new StringBuilder();
@@ -405,6 +468,7 @@ public class AIAnalysisService {
      * @param appService source of application counts per TA
      * @param jobService used to resolve job details for suggestions
      * @return aggregate {@link WorkloadAnalysisResult} with metrics, suggestions, and summary
+     * Analyse TA workload and produce balancing suggestions.
      */
     public WorkloadAnalysisResult analyzeWorkload(List<User> tas,
                                                    ApplicationService appService,

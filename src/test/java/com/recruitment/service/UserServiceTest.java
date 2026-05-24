@@ -1,13 +1,17 @@
 package com.recruitment.service;
 
-import com.recruitment.model.User;
-import org.junit.Before;
-import org.junit.Test;
-
 import java.io.File;
 import java.util.List;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+import org.junit.Before;
+import org.junit.Test;
+
+import com.recruitment.model.User;
 
 /**
  * Unit tests for {@link UserService} registration, authentication, lookup, update, delete, and search.
@@ -15,6 +19,7 @@ import static org.junit.Assert.*;
 public class UserServiceTest {
     private UserService userService;
 
+    // Initializes the UserService instance and ensures the test data storage directory exists before every test run
     @Before
     public void setUp() {
         // Ensure clean data directory for tests
@@ -26,6 +31,7 @@ public class UserServiceTest {
      * Verifies successful registration assigns an ID, authentication succeeds with correct password,
      * and fails with an incorrect password.
      */
+    // Verifies successful user registration and checks that authentication passes with valid credentials but fails with invalid ones
     @Test
     public void testRegisterAndAuthenticate() {
         User user = new User(null, "testuser_" + System.currentTimeMillis(), "pass123",
@@ -45,6 +51,7 @@ public class UserServiceTest {
     /**
      * Verifies that registering a second user with the same username fails.
      */
+    // Ensures that the system rejects new registrations that attempt to use an already taken username
     @Test
     public void testDuplicateRegistration() {
         String username = "dupuser_" + System.currentTimeMillis();
@@ -58,6 +65,7 @@ public class UserServiceTest {
     /**
      * Verifies that {@code findByRole} returns only users with the requested role.
      */
+    // Verifies that users can be retrieved and filtered properly from the persistent store based on their functional role
     @Test
     public void testFindByRole() {
         String suffix = "_" + System.currentTimeMillis();
@@ -72,6 +80,7 @@ public class UserServiceTest {
     /**
      * Verifies that updating a user persists name and phone changes retrievable by ID.
      */
+    // Validates that an existing user's profile attributes can be successfully updated and saved in the repository
     @Test
     public void testUpdateUser() {
         User user = new User(null, "upd_" + System.currentTimeMillis(), "pass",
@@ -91,6 +100,7 @@ public class UserServiceTest {
     /**
      * Verifies that deleting a user removes them from lookup by ID.
      */
+    // Assures that a user record can be deleted by its ID and will no longer be discoverable in subsequent lookups
     @Test
     public void testDeleteUser() {
         User user = new User(null, "del_" + System.currentTimeMillis(), "pass",
@@ -104,6 +114,7 @@ public class UserServiceTest {
     /**
      * Verifies that search finds users by display name, department, and role-related terms.
      */
+    // Checks that the universal search functionality can locate users by matching strings against name, department, or role
     @Test
     public void testSearchUsers() {
         String suffix = "_" + System.currentTimeMillis();

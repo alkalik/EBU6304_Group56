@@ -212,6 +212,7 @@ public class MODashboard extends JFrame {
         panel.add(AdminDashboard.wrapInCard("My Posted Jobs", AdminDashboard.wrapScroll(table)), BorderLayout.CENTER);
         JPanel btns = btnRow();
         JButton refresh = AdminDashboard.ghost(UiText.symbolText("↻", "Refresh", false));
+        JButton refresh = AdminDashboard.ghost("↻  Refresh");
         refresh.addActionListener(e -> { jobService.reload(); loadMyJobs(model); });
         JButton closeJ = AdminDashboard.ghost("Close Job");
         closeJ.addActionListener(e -> {
@@ -268,6 +269,7 @@ public class MODashboard extends JFrame {
 
         JPanel btns = btnRow();
         JButton refresh = AdminDashboard.ghost(UiText.symbolText("↻", "Refresh", false));
+        JButton refresh = AdminDashboard.ghost("↻  Refresh");
         refresh.addActionListener(e -> {
             applicationService.reload(); userService.reload();
             String sel = (String) jobCombo.getSelectedItem();
@@ -281,6 +283,7 @@ public class MODashboard extends JFrame {
                     userService.findById(app.getApplicantId()).ifPresent(this::showCVDialog));
         });
         JButton accept = AdminDashboard.pill(UiText.symbolText("✔", "Accept", false, Color.WHITE), C_ACCENT);
+        JButton accept = AdminDashboard.pill("✔  Accept", C_ACCENT);
         accept.addActionListener(e -> {
             int r = table.getSelectedRow(); if (r < 0) { warn("Please select an applicant."); return; }
             if (!applicationService.acceptApplication((String) model.getValueAt(r, 0), currentUser.getId())) {
@@ -291,6 +294,7 @@ public class MODashboard extends JFrame {
             info("Applicant accepted!");
         });
         JButton reject = AdminDashboard.pill(UiText.symbolText("✘", "Reject", false, Color.WHITE), C_DANGER);
+        JButton reject = AdminDashboard.pill("✘  Reject", C_DANGER);
         reject.addActionListener(e -> {
             int r = table.getSelectedRow(); if (r < 0) { warn("Please select an applicant."); return; }
             String note = JOptionPane.showInputDialog(this, "Rejection reason (optional):", "Reject", JOptionPane.PLAIN_MESSAGE);
@@ -389,6 +393,7 @@ public class MODashboard extends JFrame {
         topBar.add(jobCombo);
         final String analyseBtnLabel = UiText.symbolText("✦", "Analyse", false, Color.WHITE);
         JButton analyseBtn = AdminDashboard.pill(analyseBtnLabel, C_PRIMARY);
+        JButton analyseBtn = AdminDashboard.pill("  ✦  Analyse  ", C_PRIMARY);
         topBar.add(analyseBtn);
         panel.add(topBar, BorderLayout.NORTH);
 
@@ -416,6 +421,7 @@ public class MODashboard extends JFrame {
             if (apps.isEmpty()) { info("No applicants for this job yet."); model.setRowCount(0); return; }
 
             analyseBtn.setEnabled(false); analyseBtn.setText("Analysing…");
+            analyseBtn.setEnabled(false); analyseBtn.setText("  Analysing…  ");
             Job jSnap = selJob[0]; List<Application> aSnap = apps;
             new Thread(() -> {
                 List<AIAnalysisService.CandidateAnalysis> results = aiAnalysisService.analyzeJobApplicants(jSnap, aSnap, userService);
@@ -423,6 +429,7 @@ public class MODashboard extends JFrame {
                     lastResult[0] = results;
                     fillTable(model, results);
                     analyseBtn.setEnabled(true); analyseBtn.setText(analyseBtnLabel);
+                    analyseBtn.setEnabled(true); analyseBtn.setText("  ✦  Analyse  ");
                     if (results.stream().anyMatch(r -> r.aiComment != null))
                         info("Analysis complete! DeepSeek AI comments added for top 3 candidates.");
                 });
@@ -431,6 +438,7 @@ public class MODashboard extends JFrame {
 
         JPanel btns = btnRow();
         JButton refreshJobs = AdminDashboard.ghost(UiText.symbolText("↻", "Refresh", false));
+        JButton refreshJobs = AdminDashboard.ghost("↻  Refresh");
         refreshJobs.addActionListener(e -> {
             jobCombo.removeAllItems(); jobService.reload();
             jobService.getJobsByMO(currentUser.getId()).forEach(j -> jobCombo.addItem(j.getId() + " – " + j.getTitle()));
@@ -510,6 +518,10 @@ public class MODashboard extends JFrame {
         List<String> missingLines = r.missingSkills.isEmpty() ? List.of("(none)") :
                 r.missingSkills.stream().map(m -> m.skill + "  [" + m.importance.getLabel() + "]").collect(Collectors.toList());
         skillsRow.add(skillListCard(UiText.symbolText("✘", "Missing Skills", false, C_DANGER), missingLines, C_DANGER));
+        skillsRow.add(skillListCard("✔  Matched Skills", r.matchedSkills.isEmpty() ? List.of("(none)") : r.matchedSkills, AdminDashboard.C_BALANCED));
+        List<String> missingLines = r.missingSkills.isEmpty() ? List.of("(none)") :
+                r.missingSkills.stream().map(m -> m.skill + "  [" + m.importance.getLabel() + "]").collect(Collectors.toList());
+        skillsRow.add(skillListCard("✘  Missing Skills", missingLines, C_DANGER));
         body.add(skillsRow, BorderLayout.NORTH);
 
         // AI comment area
@@ -553,6 +565,7 @@ public class MODashboard extends JFrame {
         JLabel tl = new JLabel(title); tl.setFont(F_BOLD);
         if (!title.startsWith("<html>")) tl.setForeground(accent);
         card.add(tl, BorderLayout.NORTH);
+        JLabel tl = new JLabel(title); tl.setFont(F_BOLD); tl.setForeground(accent); card.add(tl, BorderLayout.NORTH);
         JPanel list = new JPanel(); list.setLayout(new BoxLayout(list, BoxLayout.Y_AXIS)); list.setBackground(C_SURFACE);
         items.forEach(it -> {
             JLabel l = new JLabel("  " + it); l.setFont(F_BODY); l.setForeground(C_TXT_PRI);

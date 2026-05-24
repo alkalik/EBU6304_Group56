@@ -1,15 +1,18 @@
 package com.recruitment.service;
 
-import com.recruitment.model.Job;
-import org.junit.Before;
-import org.junit.Test;
-
 import java.io.File;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import org.junit.Before;
+import org.junit.Test;
+
+import com.recruitment.model.Job;
 
 /**
  * Unit tests for {@link JobService} CRUD, search, filter, sort, and statistics operations.
@@ -17,6 +20,7 @@ import static org.junit.Assert.*;
 public class JobServiceTest {
     private JobService jobService;
 
+    // Initializes the JobService instance and ensures the storage directory exists before each test running
     @Before
     public void setUp() {
         new File("data").mkdirs();
@@ -26,6 +30,7 @@ public class JobServiceTest {
     /**
      * Verifies that creating a job assigns an ID, OPEN status, and a post date.
      */
+    // Verifies that a new job posting can be successfully created with default OPEN status and a post date
     @Test
     public void testCreateJob() {
         Job job = new Job();
@@ -46,6 +51,7 @@ public class JobServiceTest {
     /**
      * Verifies that {@code getOpenJobs} returns only jobs with OPEN status.
      */
+    // Ensures that the system can successfully fetch all job postings that are currently active and open
     @Test
     public void testGetOpenJobs() {
         Job job = new Job();
@@ -63,6 +69,7 @@ public class JobServiceTest {
     /**
      * Verifies that closing a job by ID updates its status to CLOSED.
      */
+    // Checks that an open job can be manually closed, changing its state to CLOSED
     @Test
     public void testCloseJob() {
         Job job = new Job();
@@ -79,6 +86,7 @@ public class JobServiceTest {
     /**
      * Verifies that jobs posted by a specific module officer are returned for that MO ID.
      */
+    // Verifies that a specific Module Organizer (MO) can retrieve all the jobs they have personally posted
     @Test
     public void testGetJobsByMO() {
         String moId = "MO-" + System.currentTimeMillis();
@@ -97,6 +105,7 @@ public class JobServiceTest {
     /**
      * Verifies that deleting a job removes it from lookup by ID.
      */
+    // Validates that a job can be fully deleted and removed from the underlying data storage
     @Test
     public void testDeleteJob() {
         Job job = new Job();
@@ -113,6 +122,7 @@ public class JobServiceTest {
     /**
      * Verifies that filtering by status and job type returns only matching jobs.
      */
+    // Tests the capability to filter jobs simultaneously by both their operational status and recruitment type
     @Test
     public void testFilterJobs() {
         Job job1 = new Job();
@@ -129,6 +139,7 @@ public class JobServiceTest {
     /**
      * Verifies that keyword search finds jobs whose title contains the search term.
      */
+    // Verifies text-based keyword search targeting core job properties like the title or description text
     @Test
     public void testSearchJobs() {
         Job job = new Job();
@@ -147,6 +158,7 @@ public class JobServiceTest {
     /**
      * Verifies that skill-based search returns jobs listing the given required skill.
      */
+    // Verifies that applicants can look up matching jobs based on exact technical skill prerequisites
     @Test
     public void testSearchJobsBySkill() {
         Job job = new Job();
@@ -165,6 +177,7 @@ public class JobServiceTest {
     /**
      * Verifies that jobs sorted by title ascending are in non-decreasing title order.
      */
+    // Checks if the sorting algorithm correctly arranges job lists in alphabetical order based on title
     @Test
     public void testSortJobsByTitle() {
         List<Job> sorted = jobService.sortJobsByTitle(true);
@@ -176,6 +189,7 @@ public class JobServiceTest {
     /**
      * Verifies that job statistics include total and open job counts with non-negative values.
      */
+    // Confirms basic system-wide dashboard counters like total records vs. open positions are properly grouped
     @Test
     public void testJobStatistics() {
         Map<String, Integer> stats = jobService.getJobStatistics();
@@ -188,6 +202,7 @@ public class JobServiceTest {
     /**
      * Verifies that job counts by type include all defined {@link Job.JobType} values.
      */
+    // Assures job categories (TA, Invigilation, etc.) map successfully to their respective occurrence counts
     @Test
     public void testGetJobCountByType() {
         Map<Job.JobType, Integer> counts = jobService.getJobCountByType();
@@ -200,9 +215,11 @@ public class JobServiceTest {
     /**
      * Verifies that total available positions across open jobs is non-negative.
      */
+    // Checks that the aggregate sum of unfulfilled seats across all job offers remains a non-negative number
     @Test
     public void testGetTotalAvailablePositions() {
         int available = jobService.getTotalAvailablePositions();
         assertTrue(available >= 0);
     }
+}
 }

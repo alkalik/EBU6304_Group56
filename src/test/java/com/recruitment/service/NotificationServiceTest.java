@@ -1,13 +1,16 @@
 package com.recruitment.service;
 
-import com.recruitment.model.Notification;
-import org.junit.Before;
-import org.junit.Test;
-
 import java.io.File;
 import java.util.List;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import org.junit.Before;
+import org.junit.Test;
+
+import com.recruitment.model.Notification;
 
 /**
  * Unit tests for {@link NotificationService} creation, read state, unread counts, and bulk clear operations.
@@ -15,6 +18,7 @@ import static org.junit.Assert.*;
 public class NotificationServiceTest {
     private NotificationService notificationService;
 
+    // Initializes the NotificationService and ensures the dynamic storage directory exists before every test run
     @Before
     public void setUp() {
         new File("data").mkdirs();
@@ -24,6 +28,7 @@ public class NotificationServiceTest {
     /**
      * Verifies that creating a notification sets fields correctly and increases the user's unread count.
      */
+    // Verifies that a notification can be successfully created with an unread status, increasing the unread count
     @Test
     public void testCreateNotificationAndUnreadCount() {
         String userId = "USR-notify-" + System.currentTimeMillis();
@@ -45,6 +50,7 @@ public class NotificationServiceTest {
     /**
      * Verifies that marking a notification as read updates its state and clears the unread count for that user.
      */
+    // Ensures that an individual notification can be flagged as read, which subsequently drops the user's unread counter
     @Test
     public void testMarkAsRead() {
         String userId = "USR-read-" + System.currentTimeMillis();
@@ -65,6 +71,7 @@ public class NotificationServiceTest {
     /**
      * Verifies that {@code clearReadNotifications} removes only read notifications for a user.
      */
+    // Validates that cleaning up history deletes only the read alerts while leaving all unread alerts completely untouched
     @Test
     public void testClearReadNotificationsOnlyRemovesReadOnes() {
         String userId = "USR-clear-" + System.currentTimeMillis();
@@ -91,6 +98,7 @@ public class NotificationServiceTest {
     /**
      * Verifies that {@code markAllAsRead} sets all notifications read and zeroes the unread count.
      */
+    // Assures that a user can perform a bulk update action to instantly mark all of their incoming alerts as read
     @Test
     public void testMarkAllAsRead() {
         String userId = "USR-all-read-" + System.currentTimeMillis();
