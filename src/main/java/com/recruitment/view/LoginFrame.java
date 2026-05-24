@@ -39,12 +39,14 @@ public class LoginFrame extends JFrame {
         }
     }
 
-    private static final Color PRIMARY      = new Color(0x6C, 0x5C, 0xE7);
-    private static final Color DARK_BG      = new Color(0x1E, 0x1E, 0x2E);
-    private static final Color CARD_BG      = Color.WHITE;
-    private static final Color TEXT_PRIMARY  = new Color(0x2D, 0x34, 0x36);
-    private static final Color TEXT_SECONDARY = new Color(0x63, 0x6E, 0x72);
-    private static final Color BORDER       = new Color(0xDF, 0xE6, 0xE9);
+    private static final Color PRIMARY        = new Color(0x5C, 0x6B, 0xE8);
+    private static final Color PRIMARY_DARK   = new Color(0x3A, 0x4A, 0xC8);
+    private static final Color DARK_BG        = new Color(0x1A, 0x1A, 0x2E);
+    private static final Color CARD_BG        = Color.WHITE;
+    private static final Color TEXT_PRIMARY   = new Color(0x22, 0x22, 0x33);
+    private static final Color TEXT_SECONDARY = new Color(0x66, 0x72, 0x80);
+    private static final Color BORDER         = new Color(0xDF, 0xE6, 0xE9);
+    private static final Color ACCENT         = new Color(0x43, 0xC6, 0xAC);
 
     public LoginFrame(UserService userService, JobService jobService, ApplicationService applicationService, NotificationService notificationService) {
         this.userService = userService;
@@ -57,7 +59,7 @@ public class LoginFrame extends JFrame {
     private void initUI() {
         setTitle("TA Recruitment System");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setSize(540, 640);
+        setSize(560, 660);
         setLocationRelativeTo(null);
         setResizable(false);
 
@@ -85,13 +87,13 @@ public class LoginFrame extends JFrame {
         brandPanel.setBorder(BorderFactory.createEmptyBorder(40, 30, 30, 30));
 
         JLabel titleLabel = new JLabel("TA Recruitment");
-        titleLabel.setFont(new Font("Segoe UI", Font.BOLD, 28));
-        titleLabel.setForeground(new Color(0xCB, 0xC3, 0xF7));
+        titleLabel.setFont(new Font("Segoe UI", Font.BOLD, 30));
+        titleLabel.setForeground(new Color(0xCB, 0xC5, 0xFF));
         titleLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
 
         JLabel subtitleLabel = new JLabel("Teaching Assistant Management System");
-        subtitleLabel.setFont(new Font("Segoe UI", Font.PLAIN, 13));
-        subtitleLabel.setForeground(new Color(0xA0, 0xA0, 0xC0));
+        subtitleLabel.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+        subtitleLabel.setForeground(new Color(0xA0, 0xA8, 0xCC));
         subtitleLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
 
         brandPanel.add(titleLabel);
@@ -115,7 +117,7 @@ public class LoginFrame extends JFrame {
         ));
 
         JLabel signInLabel = new JLabel("Sign In");
-        signInLabel.setFont(new Font("Segoe UI", Font.BOLD, 20));
+        signInLabel.setFont(new Font("Segoe UI", Font.BOLD, 22));
         signInLabel.setForeground(TEXT_PRIMARY);
         signInLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
         card.add(signInLabel);
@@ -150,10 +152,14 @@ public class LoginFrame extends JFrame {
         card.add(Box.createVerticalStrut(24));
 
         // Login button
-        JButton loginBtn = new JButton("Login");
+        JButton loginBtn = new JButton("Sign In");
         loginBtn.setAlignmentX(Component.LEFT_ALIGNMENT);
-        loginBtn.setMaximumSize(new Dimension(Integer.MAX_VALUE, 44));
+        loginBtn.setMaximumSize(new Dimension(Integer.MAX_VALUE, 46));
+        loginBtn.setFont(new Font("Segoe UI", Font.BOLD, 14));
+        loginBtn.setBackground(PRIMARY);
+        loginBtn.setForeground(Color.WHITE);
         loginBtn.setFocusPainted(false);
+        loginBtn.setBorderPainted(false);
         loginBtn.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         loginBtn.addActionListener(e -> handleLogin());
         card.add(loginBtn);
@@ -165,7 +171,7 @@ public class LoginFrame extends JFrame {
         linkPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
 
         JLabel noAccountLabel = new JLabel("Don't have an account?");
-        noAccountLabel.setFont(new Font("Segoe UI", Font.PLAIN, 12));
+        noAccountLabel.setFont(new Font("Segoe UI", Font.PLAIN, 13));
         noAccountLabel.setForeground(TEXT_SECONDARY);
 
         JButton registerLink = new JButton("Register");
@@ -272,6 +278,8 @@ public class LoginFrame extends JFrame {
         usernameField.setText("");
         passwordField.setText("");
         userService.reload();
+        jobService.reload();
+        applicationService.reload();
         setVisible(true);
     }
 }
