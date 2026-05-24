@@ -1,6 +1,6 @@
 # Build output
-target/
-*.class
+# target/
+# *.class
 *.jar
 *.war
 

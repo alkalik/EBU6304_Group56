@@ -1,0 +1,6 @@
+com\recruitment\util\PasswordUtilSelfTest.class
+com\recruitment\service\ApplicationServiceTest.class
+com\recruitment\model\ModelDefaultsTest.class
+com\recruitment\service\NotificationServiceTest.class
+com\recruitment\service\UserServiceTest.class
+com\recruitment\service\JobServiceTest.class

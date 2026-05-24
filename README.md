@@ -321,8 +321,8 @@ mvn test
 ## 12. Contributors
 |Name|QMID|
 |---|------|
-|xxx|xxxxxx|
-|xxx|xxxxxx|
+|Mengke Zhang|231225133|
+|Kai Feng|xxxxxx|
 |xxx|xxxxxx|
 |xxx|xxxxxx|
 |xxx|xxxxxx|
