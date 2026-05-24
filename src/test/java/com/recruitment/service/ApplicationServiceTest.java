@@ -14,6 +14,10 @@ import org.junit.Test;
 import com.recruitment.model.Application;
 import com.recruitment.model.Job;
 
+/**
+ * Integration-style unit tests for {@link ApplicationService} application lifecycle,
+ * listing, acceptance limits, and interaction with {@link JobService}.
+ */
 public class ApplicationServiceTest {
     private ApplicationService applicationService;
     private JobService jobService;
@@ -37,6 +41,9 @@ public class ApplicationServiceTest {
         return jobService.createJob(job);
     }
 
+    /**
+     * Verifies that applying to a job creates a pending application with correct job and applicant IDs.
+     */
     // Verifies that a valid job application can be submitted successfully with default PENDING status
     @Test
     public void testApply() {
@@ -51,6 +58,9 @@ public class ApplicationServiceTest {
         assertEquals(applicantId, app.getApplicantId());
     }
 
+    /**
+     * Verifies that a second application by the same applicant to the same job returns null.
+     */
     // Ensures that an applicant cannot apply to the exact same job multiple times
     @Test
     public void testDuplicateApplication() {
@@ -64,6 +74,9 @@ public class ApplicationServiceTest {
         assertNull("Duplicate application should return null", duplicate);
     }
 
+    /**
+     * Verifies that accepting an application sets status to ACCEPTED and records the reviewer.
+     */
     // Checks that an application can be approved by a reviewer and its status transitions to ACCEPTED
     @Test
     public void testAcceptApplication() {
@@ -79,6 +92,9 @@ public class ApplicationServiceTest {
         assertEquals("REVIEWER-001", updated.getReviewedBy());
     }
 
+    /**
+     * Verifies that rejecting an application sets status to REJECTED and stores the review note.
+     */
     // Checks that an application can be denied and includes the reviewer's justification note
     @Test
     public void testRejectApplication() {
@@ -94,6 +110,9 @@ public class ApplicationServiceTest {
         assertEquals("Not qualified", updated.getReviewNote());
     }
 
+    /**
+     * Verifies that withdrawing an application sets status to WITHDRAWN.
+     */
     // Verifies that applicants can cancel their own pending applications, changing the status to WITHDRAWN
     @Test
     public void testWithdrawApplication() {
@@ -108,6 +127,9 @@ public class ApplicationServiceTest {
         assertEquals(Application.Status.WITHDRAWN, updated.getStatus());
     }
 
+    /**
+     * Verifies that all applications for a given applicant are returned and belong to that applicant.
+     */
     // Verifies retrieval of all historical applications tied to a specific applicant account
     @Test
     public void testGetApplicationsByApplicant() {
@@ -120,6 +142,9 @@ public class ApplicationServiceTest {
         assertTrue(apps.stream().allMatch(a -> a.getApplicantId().equals(applicantId)));
     }
 
+    /**
+     * Verifies that {@code getAcceptedCountByApplicant} counts only accepted applications for an applicant.
+     */
     // Assures the counter properly returns the number of applications that successfully reached ACCEPTED status
     @Test
     public void testGetAcceptedCount() {
@@ -133,6 +158,9 @@ public class ApplicationServiceTest {
         assertEquals(1, applicationService.getAcceptedCountByApplicant(applicantId));
     }
 
+    /**
+     * Verifies that accepting an application increments filled positions and marks a single-position job as FILLED.
+     */
     // Assures that accepting an applicant increases filled counts and flips job status to FILLED when limits are met
     @Test
     public void testAcceptApplicationFillsPositionAndMarksJobFilled() {
@@ -149,6 +177,9 @@ public class ApplicationServiceTest {
         assertEquals(Job.Status.FILLED, updatedJob.getStatus());
     }
 
+    /**
+     * Verifies that accepting a second applicant fails when the job has only one position and the first remains pending.
+     */
     // Confirms that once a job is at maximum capacity, subsequent applications cannot be accepted
     @Test
     public void testAcceptApplicationFailsWhenJobIsFull() {
@@ -166,6 +197,9 @@ public class ApplicationServiceTest {
         assertEquals(Application.Status.PENDING, secondUpdated.getStatus());
     }
 
+    /**
+     * Verifies that rejecting an already accepted application fails and leaves status ACCEPTED.
+     */
     // Validates business workflow state invariants: an application already ACCEPTED cannot be changed to REJECTED
     @Test
     public void testRejectFailsAfterAccepted() {

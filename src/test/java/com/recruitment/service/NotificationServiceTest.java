@@ -12,6 +12,9 @@ import org.junit.Test;
 
 import com.recruitment.model.Notification;
 
+/**
+ * Unit tests for {@link NotificationService} creation, read state, unread counts, and bulk clear operations.
+ */
 public class NotificationServiceTest {
     private NotificationService notificationService;
 
@@ -22,6 +25,9 @@ public class NotificationServiceTest {
         notificationService = new NotificationService();
     }
 
+    /**
+     * Verifies that creating a notification sets fields correctly and increases the user's unread count.
+     */
     // Verifies that a notification can be successfully created with an unread status, increasing the unread count
     @Test
     public void testCreateNotificationAndUnreadCount() {
@@ -41,6 +47,9 @@ public class NotificationServiceTest {
         assertTrue(notificationService.getUnreadCount(userId) >= 1);
     }
 
+    /**
+     * Verifies that marking a notification as read updates its state and clears the unread count for that user.
+     */
     // Ensures that an individual notification can be flagged as read, which subsequently drops the user's unread counter
     @Test
     public void testMarkAsRead() {
@@ -59,6 +68,9 @@ public class NotificationServiceTest {
         assertEquals(0, notificationService.getUnreadCount(userId));
     }
 
+    /**
+     * Verifies that {@code clearReadNotifications} removes only read notifications for a user.
+     */
     // Validates that cleaning up history deletes only the read alerts while leaving all unread alerts completely untouched
     @Test
     public void testClearReadNotificationsOnlyRemovesReadOnes() {
@@ -83,6 +95,9 @@ public class NotificationServiceTest {
         assertFalse(remaining.get(0).isRead());
     }
 
+    /**
+     * Verifies that {@code markAllAsRead} sets all notifications read and zeroes the unread count.
+     */
     // Assures that a user can perform a bulk update action to instantly mark all of their incoming alerts as read
     @Test
     public void testMarkAllAsRead() {

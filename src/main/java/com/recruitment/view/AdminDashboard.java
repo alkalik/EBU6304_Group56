@@ -20,6 +20,26 @@ import com.recruitment.service.NotificationService;
 import com.recruitment.service.UserService;
 import com.recruitment.util.AppConfig;
 import com.recruitment.util.ShadowBorder;
+import com.recruitment.util.UiText;
+
+/**
+ * Main application window for Administrator ({@link User.Role#ADMIN}) users.
+ * <p>
+ * Provides four tabs:
+ * </p>
+ * <ul>
+ *   <li><b>AI Workload Balance</b> – analyse TA workload distribution and adopt rebalancing suggestions</li>
+ *   <li><b>All Users</b> – search and manage registered users</li>
+ *   <li><b>All Jobs</b> – view every job posting in the system</li>
+ *   <li><b>All Applications</b> – view every application across all jobs</li>
+ * </ul>
+ * <p>
+ * The menu bar supports data backup/restore and broadcasting notifications to all users
+ * or to a specific role. This class also exposes shared UI palette constants and static
+ * widget factory methods ({@link #pill}, {@link #ghost}, {@link #styledTable}, etc.)
+ * reused by {@link TADashboard} and {@link MODashboard}.
+ * </p>
+ */
 
 public class AdminDashboard extends JFrame {
 
@@ -50,6 +70,15 @@ public class AdminDashboard extends JFrame {
     static final Font  F_H1       = new Font("Segoe UI", Font.BOLD, 18);
     static final Font  F_H2       = new Font("Segoe UI", Font.BOLD, 15);
 
+    /**
+     * Creates the Administrator dashboard for the given authenticated user.
+     *
+     * @param currentUser           the logged-in administrator
+     * @param loginFrame            the login frame to return to on logout
+     * @param jobService            service for querying all jobs
+     * @param applicationService    service for querying all applications
+     * @param notificationService   service for broadcasting and managing notifications
+     */
     public AdminDashboard(User currentUser, LoginFrame loginFrame, JobService jobService,
                           ApplicationService applicationService, NotificationService notificationService) {
         this.currentUser = currentUser;
@@ -193,12 +222,18 @@ public class AdminDashboard extends JFrame {
         JPanel btns = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 10));
         btns.setBackground(C_BG);
 
+        JButton refreshBtn = ghost(UiText.symbolText("↻", "Refresh", false));
         JButton refreshBtn = ghost("↻  Refresh");
         refreshBtn.addActionListener(e -> {
             userService.reload(); applicationService.reload();
             loadWorkloadTable(workloadModel, null, statTotal, statOver, statBal, statAvail);
         });
 
+        final String aiBtnLabel = UiText.symbolText("✦", "Run AI Analysis", false, Color.WHITE);
+        JButton aiBtn = pill(aiBtnLabel, C_PRIMARY);
+        aiBtn.setPreferredSize(new Dimension(180, 36));
+        aiBtn.addActionListener(e -> {
+            aiBtn.setEnabled(false); aiBtn.setText("Analysing...");
         JButton aiBtn = pill("  ✦  Run AI Analysis  ", C_PRIMARY);
         aiBtn.setPreferredSize(new Dimension(180, 36));
         aiBtn.addActionListener(e -> {
@@ -213,6 +248,7 @@ public class AdminDashboard extends JFrame {
                     loadWorkloadTable(workloadModel, result.workloads, statTotal, statOver, statBal, statAvail);
                     loadSuggestions(suggestModel, result.suggestions);
                     summaryArea.setText(result.summary);
+                    aiBtn.setEnabled(true); aiBtn.setText(aiBtnLabel);
                     aiBtn.setEnabled(true); aiBtn.setText("  ✦  Run AI Analysis  ");
                 });
                 if (AppConfig.isDeepSeekEnabled()) {
@@ -241,6 +277,7 @@ public class AdminDashboard extends JFrame {
             }, "ds-workload").start();
         });
 
+        JButton detailBtn = ghost(UiText.symbolText("👤", "TA Details", true));
         JButton detailBtn = ghost("👤  TA Details");
         detailBtn.addActionListener(e -> {
             int r = workloadTable.getSelectedRow();
@@ -251,6 +288,7 @@ public class AdminDashboard extends JFrame {
                     .ifPresent(u -> showTADetails(u.getId()));
         });
 
+        JButton adoptBtn = pill(UiText.symbolText("✔", "Adopt Suggestion", false, Color.WHITE), C_ACCENT);
         JButton adoptBtn = pill("✔  Adopt Suggestion", C_ACCENT);
         adoptBtn.addActionListener(e -> {
             if (lastResult[0] == null) { warn("Please run AI analysis first."); return; }
@@ -271,6 +309,20 @@ public class AdminDashboard extends JFrame {
                     "Workload adjustment: admin suggests you take position '" + sug.jobTitle + "'.",
                     com.recruitment.model.Notification.Type.INFO);
             info("Suggestion adopted. TAs have been notified.");
+        });
+
+        JButton exportBtn = ghost(UiText.symbolText("⬇", "Export Report", false));
+        exportBtn.addActionListener(e -> {
+            if (lastResult[0] == null) { warn("Please run analysis first."); return; }
+            JFileChooser fc = new JFileChooser();
+            fc.setSelectedFile(new java.io.File("workload_report.txt"));
+            if (fc.showSaveDialog(this) == JFileChooser.APPROVE_OPTION)
+                try (java.io.FileWriter fw = new java.io.FileWriter(fc.getSelectedFile())) {
+                    fw.write(buildWorkloadReport(lastResult[0]));
+                    info("Exported: " + fc.getSelectedFile().getAbsolutePath());
+                } catch (java.io.IOException ex) { warn("Export failed: " + ex.getMessage()); }
+        });
+
         });
 
         JButton exportBtn = ghost("⬇  Export Report");
@@ -461,6 +513,7 @@ public class AdminDashboard extends JFrame {
         kwF.putClientProperty("JTextField.placeholderText", "Search by name, username or role...");
         JLabel resLbl = new JLabel(); resLbl.setFont(F_SMALL); resLbl.setForeground(C_TXT_SEC);
         JButton sb = pill("Search", C_PRIMARY); JButton cb = ghost("Clear");
+        searchBar.add(new JLabel(UiText.symbolText("🔍", "", true))); searchBar.add(kwF); searchBar.add(sb); searchBar.add(cb); searchBar.add(resLbl);
         searchBar.add(new JLabel("  🔍 ")); searchBar.add(kwF); searchBar.add(sb); searchBar.add(cb); searchBar.add(resLbl);
         panel.add(searchBar, BorderLayout.NORTH);
 
@@ -475,6 +528,7 @@ public class AdminDashboard extends JFrame {
         kwF.addActionListener(e -> doSearch.run());
 
         JPanel btns = btnRow();
+        JButton refresh = ghost(UiText.symbolText("↻", "Refresh", false)); refresh.addActionListener(e -> { userService.reload(); doSearch.run(); });
         JButton refresh = ghost("↻  Refresh"); refresh.addActionListener(e -> { userService.reload(); doSearch.run(); });
         JButton del = pill("Delete User", C_DANGER); del.addActionListener(e -> {
             int r = table.getSelectedRow(); if (r < 0) { warn("Please select a user."); return; }
@@ -506,6 +560,7 @@ public class AdminDashboard extends JFrame {
         JTable table = styledTable(model);
         panel.add(wrapInCard("All Jobs", wrapScroll(table)), BorderLayout.CENTER);
         JPanel btns = btnRow();
+        JButton refresh = ghost(UiText.symbolText("↻", "Refresh", false));
         JButton refresh = ghost("↻  Refresh");
         refresh.addActionListener(e -> { jobService.reload(); userService.reload(); loadAllJobs(model); });
         btns.add(refresh); panel.add(btns, BorderLayout.SOUTH);
@@ -531,6 +586,7 @@ public class AdminDashboard extends JFrame {
         table.getColumnModel().getColumn(4).setCellRenderer(statusBadgeRenderer());
         panel.add(wrapInCard("All Applications", wrapScroll(table)), BorderLayout.CENTER);
         JPanel btns = btnRow();
+        JButton refresh = ghost(UiText.symbolText("↻", "Refresh", false));
         JButton refresh = ghost("↻  Refresh");
         refresh.addActionListener(e -> { applicationService.reload(); jobService.reload(); userService.reload(); loadAllApps(model); });
         btns.add(refresh); panel.add(btns, BorderLayout.SOUTH);
@@ -580,6 +636,14 @@ public class AdminDashboard extends JFrame {
     private boolean confirm(String m) { return JOptionPane.showConfirmDialog(this, m, "Confirm", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION; }
 
     // ── Widget factory ─────────────────────────────────────────────────────
+
+    /**
+     * Creates a filled, rounded-style action button with white text on the given background colour.
+     *
+     * @param t   button label text
+     * @param bg  background colour for the button
+     * @return a styled {@link JButton} with a minimum preferred width
+     */
     static JButton pill(String t, Color bg) {
         JButton b = new JButton(t); b.setFont(F_BOLD); b.setBackground(bg); b.setForeground(Color.WHITE);
         b.setFocusPainted(false); b.setBorderPainted(false);
@@ -587,6 +651,12 @@ public class AdminDashboard extends JFrame {
         b.setPreferredSize(new Dimension(Math.max(120, b.getPreferredSize().width + 18), 34)); return b;
     }
 
+    /**
+     * Creates a borderless secondary (ghost) button with default body font styling.
+     *
+     * @param t  button label text
+     * @return a minimal {@link JButton} suitable for secondary actions
+     */
     static JButton ghost(String t) {
         JButton b = new JButton(t); b.setFont(F_BODY);
         b.setFocusPainted(false); b.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR)); return b;
@@ -596,6 +666,13 @@ public class AdminDashboard extends JFrame {
         JPanel p = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 8)); p.setBackground(C_BG); return p;
     }
 
+    /**
+     * Wraps a component in a titled card panel with a light border.
+     *
+     * @param title    section heading displayed above the content; may be {@code null} or empty to omit
+     * @param content  the component to display inside the card (typically a scroll pane or table)
+     * @return a {@link JPanel} containing the titled content area
+     */
     static JPanel wrapInCard(String title, Component content) {
         JPanel card = new JPanel(new BorderLayout(0, 8));
         card.setBackground(C_SURFACE);
@@ -610,6 +687,13 @@ public class AdminDashboard extends JFrame {
         card.add(content, BorderLayout.CENTER); return card;
     }
 
+    /**
+     * Wraps a component in a titled card panel with an elevated shadow border.
+     *
+     * @param title    section heading displayed above the content; may be {@code null} or empty to omit
+     * @param content  the component to display inside the card
+     * @return a {@link JPanel} with {@link ShadowBorder#card()} styling
+     */
     static JPanel wrapInShadowCard(String title, Component content) {
         JPanel card = new JPanel(new BorderLayout(0, 8));
         card.setBackground(C_SURFACE);
@@ -622,10 +706,23 @@ public class AdminDashboard extends JFrame {
         card.add(content, BorderLayout.CENTER); return card;
     }
 
+    /**
+     * Creates a read-only {@link DefaultTableModel} with the given column headers.
+     *
+     * @param c  column name array defining the table schema
+     * @return a non-editable table model with zero initial rows
+     */
     static DefaultTableModel noEdit(String[] c) {
         return new DefaultTableModel(c, 0) { @Override public boolean isCellEditable(int r, int col) { return false; } };
     }
 
+    /**
+     * Applies the shared application table styling: alternating row colours, styled header,
+     * single-row selection, and consistent fonts and spacing.
+     *
+     * @param m  the table model backing the new table
+     * @return a configured {@link JTable} ready to populate with data
+     */
     static JTable styledTable(DefaultTableModel m) {
         JTable t = new JTable(m); t.setFont(F_BODY); t.setRowHeight(32);
         t.setGridColor(new Color(0xEA, 0xED, 0xF5));
@@ -652,12 +749,25 @@ public class AdminDashboard extends JFrame {
         return t;
     }
 
+    /**
+     * Wraps a table in a scroll pane with a subtle border and white viewport background.
+     *
+     * @param t  the table to scroll
+     * @return a {@link JScrollPane} suitable for placement inside a card panel
+     */
     static JScrollPane wrapScroll(JTable t) {
         JScrollPane sp = new JScrollPane(t);
         sp.setBorder(BorderFactory.createLineBorder(new Color(0xE0, 0xE4, 0xF0)));
         sp.getViewport().setBackground(Color.WHITE); return sp;
     }
 
+    /**
+     * Returns a cell renderer that colour-codes status values such as application states
+     * ({@code PENDING}, {@code ACCEPTED}, etc.) and workload labels ({@code Overloaded},
+     * {@code Balanced}, {@code Available}).
+     *
+     * @return a {@link TableCellRenderer} for status badge columns
+     */
     static TableCellRenderer statusBadgeRenderer() {
         return new DefaultTableCellRenderer() {
             @Override public Component getTableCellRendererComponent(
@@ -710,5 +820,6 @@ public class AdminDashboard extends JFrame {
         };
     }
 
+    /** Returns the shared section-heading font ({@link #F_H2}). */
     static Font F_H2_static() { return F_H2; }
 }

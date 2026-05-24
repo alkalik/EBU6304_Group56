@@ -11,6 +11,7 @@ import com.recruitment.service.NotificationService;
 import com.recruitment.service.UserService;
 import com.recruitment.util.AppConfig;
 import com.recruitment.util.ShadowBorder;
+import com.recruitment.util.UiText;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -24,6 +25,22 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+/**
+ * Main application window for Module Organiser ({@link User.Role#MO}) users.
+ * <p>
+ * Provides four tabs:
+ * </p>
+ * <ul>
+ *   <li><b>Post Job</b> – create new TA job openings for modules</li>
+ *   <li><b>My Jobs</b> – manage posted jobs (close or delete)</li>
+ *   <li><b>Review Applicants</b> – view CVs and accept or reject applications</li>
+ *   <li><b>AI Skill Analysis</b> – run DeepSeek-powered skill-gap analysis on applicants</li>
+ * </ul>
+ * <p>
+ * The menu bar also exposes data backup and restore actions. UI styling reuses shared
+ * widget factories from {@link AdminDashboard}.
+ * </p>
+ */
 public class MODashboard extends JFrame {
 
     private final User currentUser;
@@ -51,6 +68,15 @@ public class MODashboard extends JFrame {
     private static final Font  F_H1      = AdminDashboard.F_H1;
     private static final Font  F_H2      = AdminDashboard.F_H2;
 
+    /**
+     * Creates the Module Organiser dashboard for the given authenticated user.
+     *
+     * @param currentUser           the logged-in module organiser
+     * @param loginFrame            the login frame to return to on logout
+     * @param jobService            service for posting and managing jobs
+     * @param applicationService    service for reviewing applicant submissions
+     * @param notificationService   service for reading and updating notifications
+     */
     public MODashboard(User currentUser, LoginFrame loginFrame, JobService jobService,
                        ApplicationService applicationService, NotificationService notificationService) {
         this.currentUser = currentUser;
@@ -185,6 +211,7 @@ public class MODashboard extends JFrame {
         JTable table = AdminDashboard.styledTable(model);
         panel.add(AdminDashboard.wrapInCard("My Posted Jobs", AdminDashboard.wrapScroll(table)), BorderLayout.CENTER);
         JPanel btns = btnRow();
+        JButton refresh = AdminDashboard.ghost(UiText.symbolText("↻", "Refresh", false));
         JButton refresh = AdminDashboard.ghost("↻  Refresh");
         refresh.addActionListener(e -> { jobService.reload(); loadMyJobs(model); });
         JButton closeJ = AdminDashboard.ghost("Close Job");
@@ -241,6 +268,7 @@ public class MODashboard extends JFrame {
         if (jobCombo.getItemCount() > 0) { loadApplicants(model, jobCombo.getItemAt(0).split(" – ")[0]); countLbl.setText("  " + model.getRowCount() + " applicants"); }
 
         JPanel btns = btnRow();
+        JButton refresh = AdminDashboard.ghost(UiText.symbolText("↻", "Refresh", false));
         JButton refresh = AdminDashboard.ghost("↻  Refresh");
         refresh.addActionListener(e -> {
             applicationService.reload(); userService.reload();
@@ -254,6 +282,7 @@ public class MODashboard extends JFrame {
             applicationService.findById((String) model.getValueAt(r, 0)).ifPresent(app ->
                     userService.findById(app.getApplicantId()).ifPresent(this::showCVDialog));
         });
+        JButton accept = AdminDashboard.pill(UiText.symbolText("✔", "Accept", false, Color.WHITE), C_ACCENT);
         JButton accept = AdminDashboard.pill("✔  Accept", C_ACCENT);
         accept.addActionListener(e -> {
             int r = table.getSelectedRow(); if (r < 0) { warn("Please select an applicant."); return; }
@@ -264,6 +293,7 @@ public class MODashboard extends JFrame {
             if (sel != null) { jobService.reload(); loadApplicants(model, sel.split(" – ")[0]); }
             info("Applicant accepted!");
         });
+        JButton reject = AdminDashboard.pill(UiText.symbolText("✘", "Reject", false, Color.WHITE), C_DANGER);
         JButton reject = AdminDashboard.pill("✘  Reject", C_DANGER);
         reject.addActionListener(e -> {
             int r = table.getSelectedRow(); if (r < 0) { warn("Please select an applicant."); return; }
@@ -361,6 +391,8 @@ public class MODashboard extends JFrame {
         JComboBox<String> jobCombo = new JComboBox<>(); jobCombo.setFont(F_BODY); jobCombo.setPreferredSize(new Dimension(360, 32));
         jobService.getJobsByMO(currentUser.getId()).forEach(j -> jobCombo.addItem(j.getId() + " – " + j.getTitle()));
         topBar.add(jobCombo);
+        final String analyseBtnLabel = UiText.symbolText("✦", "Analyse", false, Color.WHITE);
+        JButton analyseBtn = AdminDashboard.pill(analyseBtnLabel, C_PRIMARY);
         JButton analyseBtn = AdminDashboard.pill("  ✦  Analyse  ", C_PRIMARY);
         topBar.add(analyseBtn);
         panel.add(topBar, BorderLayout.NORTH);
@@ -388,6 +420,7 @@ public class MODashboard extends JFrame {
             List<Application> apps = applicationService.getApplicationsByJob(jobId);
             if (apps.isEmpty()) { info("No applicants for this job yet."); model.setRowCount(0); return; }
 
+            analyseBtn.setEnabled(false); analyseBtn.setText("Analysing…");
             analyseBtn.setEnabled(false); analyseBtn.setText("  Analysing…  ");
             Job jSnap = selJob[0]; List<Application> aSnap = apps;
             new Thread(() -> {
@@ -395,6 +428,7 @@ public class MODashboard extends JFrame {
                 SwingUtilities.invokeLater(() -> {
                     lastResult[0] = results;
                     fillTable(model, results);
+                    analyseBtn.setEnabled(true); analyseBtn.setText(analyseBtnLabel);
                     analyseBtn.setEnabled(true); analyseBtn.setText("  ✦  Analyse  ");
                     if (results.stream().anyMatch(r -> r.aiComment != null))
                         info("Analysis complete! DeepSeek AI comments added for top 3 candidates.");
@@ -403,6 +437,7 @@ public class MODashboard extends JFrame {
         });
 
         JPanel btns = btnRow();
+        JButton refreshJobs = AdminDashboard.ghost(UiText.symbolText("↻", "Refresh", false));
         JButton refreshJobs = AdminDashboard.ghost("↻  Refresh");
         refreshJobs.addActionListener(e -> {
             jobCombo.removeAllItems(); jobService.reload();
@@ -478,6 +513,11 @@ public class MODashboard extends JFrame {
 
         // Skills cards side by side
         JPanel skillsRow = new JPanel(new GridLayout(1, 2, 12, 0)); skillsRow.setBackground(C_BG);
+        skillsRow.add(skillListCard(UiText.symbolText("✔", "Matched Skills", false, AdminDashboard.C_BALANCED),
+                r.matchedSkills.isEmpty() ? List.of("(none)") : r.matchedSkills, AdminDashboard.C_BALANCED));
+        List<String> missingLines = r.missingSkills.isEmpty() ? List.of("(none)") :
+                r.missingSkills.stream().map(m -> m.skill + "  [" + m.importance.getLabel() + "]").collect(Collectors.toList());
+        skillsRow.add(skillListCard(UiText.symbolText("✘", "Missing Skills", false, C_DANGER), missingLines, C_DANGER));
         skillsRow.add(skillListCard("✔  Matched Skills", r.matchedSkills.isEmpty() ? List.of("(none)") : r.matchedSkills, AdminDashboard.C_BALANCED));
         List<String> missingLines = r.missingSkills.isEmpty() ? List.of("(none)") :
                 r.missingSkills.stream().map(m -> m.skill + "  [" + m.importance.getLabel() + "]").collect(Collectors.toList());
@@ -522,6 +562,9 @@ public class MODashboard extends JFrame {
     private JPanel skillListCard(String title, List<String> items, Color accent) {
         JPanel card = new JPanel(new BorderLayout(0, 6)); card.setBackground(C_SURFACE);
         card.setBorder(BorderFactory.createCompoundBorder(ShadowBorder.card(), new EmptyBorder(12, 14, 12, 14)));
+        JLabel tl = new JLabel(title); tl.setFont(F_BOLD);
+        if (!title.startsWith("<html>")) tl.setForeground(accent);
+        card.add(tl, BorderLayout.NORTH);
         JLabel tl = new JLabel(title); tl.setFont(F_BOLD); tl.setForeground(accent); card.add(tl, BorderLayout.NORTH);
         JPanel list = new JPanel(); list.setLayout(new BoxLayout(list, BoxLayout.Y_AXIS)); list.setBackground(C_SURFACE);
         items.forEach(it -> {

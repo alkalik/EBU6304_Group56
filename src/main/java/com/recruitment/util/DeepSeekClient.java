@@ -30,6 +30,9 @@ public class DeepSeekClient {
     private final String apiUrl;
     private final String model;
 
+    /**
+     * Creates a client using API settings from {@link AppConfig}.
+     */
     public DeepSeekClient() {
         this.apiKey = AppConfig.getDeepSeekApiKey();
         this.apiUrl  = AppConfig.getDeepSeekUrl();
@@ -43,6 +46,10 @@ public class DeepSeekClient {
     /**
      * Send a blocking chat request and return the full assistant reply.
      *
+     * @param systemPrompt system message defining assistant behaviour
+     * @param userMessage  end-user prompt content
+     * @param maxTokens    maximum tokens in the completion
+     * @return assistant reply text, or {@code null} on any error (including missing API key)
      * @return assistant reply text, or {@code null} on any error
      */
     public String chat(String systemPrompt, String userMessage, int maxTokens) {
@@ -77,6 +84,12 @@ public class DeepSeekClient {
      *
      * <p>Must NOT be called on the Swing EDT; run it in a separate thread.
      *
+     * @param systemPrompt system message defining assistant behaviour
+     * @param userMessage  end-user prompt content
+     * @param maxTokens    maximum tokens in the completion
+     * @param onToken      called with each incremental text fragment (never null)
+     * @param onDone       called once when the stream ends successfully
+     * @param onError      called with an error message if the request fails
      * @param onToken   called with each incremental text fragment (never null)
      * @param onDone    called once when the stream ends successfully
      * @param onError   called with an error message if the request fails
@@ -137,6 +150,16 @@ public class DeepSeekClient {
     /**
      * Stream a skill-gap analysis. Tokens are delivered to {@code onToken} as
      * they arrive; {@code onDone} is called when the stream completes.
+     *
+     * @param jobTitle         vacancy title
+     * @param requiredSkills   comma-separated or formatted required skills for the job
+     * @param candidateName    applicant display name
+     * @param candidateSkills  applicant's skill list
+     * @param matchPercent     precomputed match percentage (0–100)
+     * @param missingSkills    skills the candidate lacks
+     * @param onToken          incremental text callback
+     * @param onDone           completion callback
+     * @param onError          error callback with a human-readable message
      */
     public void streamSkillGapAnalysis(String jobTitle, String requiredSkills,
                                         String candidateName, String candidateSkills,
@@ -161,6 +184,11 @@ public class DeepSeekClient {
 
     /**
      * Stream a workload balance analysis. Tokens are delivered to {@code onToken}.
+     *
+     * @param workloadSummary formatted TA workload data for the model
+     * @param onToken         incremental text callback
+     * @param onDone          completion callback
+     * @param onError         error callback with a human-readable message
      */
     public void streamWorkloadBalance(String workloadSummary,
                                        Consumer<String> onToken, Runnable onDone,
@@ -176,6 +204,17 @@ public class DeepSeekClient {
         chatStreaming(system, user, 500, onToken, onDone, onError);
     }
 
+    /**
+     * Blocking skill-gap analysis suitable for export or non-streaming UI.
+     *
+     * @param jobTitle         vacancy title
+     * @param requiredSkills   required skills for the job
+     * @param candidateName    applicant display name
+     * @param candidateSkills  applicant's skills
+     * @param matchPercent     precomputed match percentage (0–100)
+     * @param missingSkills    skills the candidate lacks
+     * @return full analysis text, or {@code null} on failure
+     */
     // Non-streaming convenience (kept for export/text use)
     public String analyzeSkillGap(String jobTitle, String requiredSkills,
                                    String candidateName, String candidateSkills,
@@ -189,6 +228,12 @@ public class DeepSeekClient {
         return chat(system, user, 400);
     }
 
+    /**
+     * Blocking workload-balance analysis suitable for export or non-streaming UI.
+     *
+     * @param workloadSummary formatted TA workload data for the model
+     * @return recommendation text, or {@code null} on failure
+     */
     public String analyzeWorkloadBalance(String workloadSummary) {
         String system = "You are an academic department administrator assistant. "
                 + "Provide 3-5 specific workload rebalancing suggestions in bullet points.";

@@ -3,34 +3,56 @@ package com.recruitment.util;
 import javax.swing.border.Border;
 import java.awt.*;
 import java.awt.geom.RoundRectangle2D;
+import java.awt.geom.RoundRectangle2D;
 
 /**
- * A custom Border that paints a multi-layer soft drop shadow beneath a rounded card panel,
- * producing a Material Design / 2026 Spatial UI "elevation" effect without any
- * third-party library dependency.
+ * Custom {@link Border} that paints a multi-layer soft drop shadow beneath a rounded card panel,
+ * producing a Material Design / spatial UI elevation effect without third-party dependencies.
  *
- * Usage:
- *   panel.setOpaque(false);
- *   panel.setBorder(new ShadowBorder(12, 4));
+ * <p>The host component must call {@code setOpaque(false)} so the shadow painted in the
+ * border insets is visible around the card.
  *
- * The component must have setOpaque(false) so the shadow painted in the insets area shows through.
+ * <p>Usage example:
+ * <pre>{@code
+ * panel.setOpaque(false);
+ * panel.setBorder(new ShadowBorder(12, 4));
+ * }</pre>
+ *
+ * @see #card()
+ * @see #subtle()
  */
 public class ShadowBorder implements Border {
 
+    /** Corner arc radius of the card rectangle in pixels. */
     private final int cornerRadius;
+    /** Number of gradient shadow layers (controls softness; typically 6–12). */
     private final int shadowSize;
+    /** Vertical offset applied to shadow layers in pixels. */
     private final int shadowOffset;
+    /** Base tint colour for shadow layers. */
     private final Color shadowColor;
+    /** Fill colour of the card surface. */
     private final Color cardBackground;
 
     /**
-     * @param cornerRadius  arc radius for the rounded rectangle card
-     * @param shadowSize    number of shadow gradient layers (controls softness, typically 6-12)
+     * Creates a shadow border with default offset, shadow tint, and white card background.
+     *
+     * @param cornerRadius arc radius for the rounded rectangle card
+     * @param shadowSize   number of shadow gradient layers (controls softness, typically 6–12)
      */
     public ShadowBorder(int cornerRadius, int shadowSize) {
-        this(cornerRadius, shadowSize, 2, new Color(0x6C5CE7), Color.WHITE);
+        this(cornerRadius, shadowSize, 2, new Color(0x88, 0x88, 0xAA), Color.WHITE);
     }
 
+    /**
+     * Creates a fully customised shadow border.
+     *
+     * @param cornerRadius   arc radius for the rounded card
+     * @param shadowSize     number of shadow gradient layers
+     * @param shadowOffset   vertical offset of the shadow stack
+     * @param shadowColor    base colour for shadow layers
+     * @param cardBackground fill colour for the card interior
+     */
     public ShadowBorder(int cornerRadius, int shadowSize, int shadowOffset,
                         Color shadowColor, Color cardBackground) {
         this.cornerRadius  = cornerRadius;
@@ -40,17 +62,31 @@ public class ShadowBorder implements Border {
         this.cardBackground = cardBackground;
     }
 
+    /**
+     * {@inheritDoc}
+     * <p>Insets reserve space for the shadow on all sides; bottom inset is slightly larger
+     * to accommodate vertical shadow offset.
+     */
     @Override
     public Insets getBorderInsets(Component c) {
         int total = shadowSize + shadowOffset;
         return new Insets(shadowSize, shadowSize, total + 2, shadowSize + 2);
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * @return {@code false} so the component background may show through the shadow area
+     */
     @Override
     public boolean isBorderOpaque() {
         return false;
     }
 
+    /**
+     * {@inheritDoc}
+     * <p>Paints concentric semi-transparent shadow layers, then the rounded card fill.
+     */
     @Override
     public void paintBorder(Component c, Graphics g, int x, int y, int width, int height) {
         Graphics2D g2 = (Graphics2D) g.create();
@@ -89,16 +125,20 @@ public class ShadowBorder implements Border {
     }
 
     /**
-     * Convenience factory: standard card shadow matching the app's primary purple theme.
+     * Standard card shadow matching the application's primary purple theme.
+     *
+     * @return preconfigured {@link ShadowBorder} for primary content cards
      */
     public static ShadowBorder card() {
-        return new ShadowBorder(14, 10, 3, new Color(0x6C, 0x5C, 0xE7), Color.WHITE);
+        return new ShadowBorder(12, 8, 2, new Color(0x88, 0x88, 0xAA), Color.WHITE);
     }
 
     /**
-     * Convenience factory: lighter shadow for secondary / inline cards.
+     * Lighter shadow preset for secondary or inline cards.
+     *
+     * @return preconfigured {@link ShadowBorder} with reduced shadow depth
      */
     public static ShadowBorder subtle() {
-        return new ShadowBorder(10, 6, 2, new Color(0x6C, 0x5C, 0xE7), Color.WHITE);
+        return new ShadowBorder(10, 5, 1, new Color(0x88, 0x88, 0xAA), Color.WHITE);
     }
 }

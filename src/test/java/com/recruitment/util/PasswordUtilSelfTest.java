@@ -1,6 +1,14 @@
 package com.recruitment.util;
 
 /**
+ * Standalone self-test runner for {@link PasswordUtil} hashing and verification behaviour.
+ * Run via {@code main} rather than JUnit; exits with {@link AssertionError} on failure.
+ */
+public class PasswordUtilSelfTest {
+
+    /**
+     * Verifies PBKDF2 hashing (non-plaintext output, scheme prefix, per-hash salt),
+     * correct and incorrect password matching, and legacy plaintext compatibility.
  * PasswordUtilSelfTest - Self-contained test for password hashing utility
  * 
  * This test class validates the password hashing and verification functionality

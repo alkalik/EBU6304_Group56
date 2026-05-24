@@ -8,6 +8,7 @@ import com.recruitment.service.JobService;
 import com.recruitment.service.NotificationService;
 import com.recruitment.service.UserService;
 import com.recruitment.util.ShadowBorder;
+import com.recruitment.util.UiText;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -18,6 +19,21 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+/**
+ * Main application window for Teaching Assistant ({@link User.Role#TA}) users.
+ * <p>
+ * Provides three tabs:
+ * </p>
+ * <ul>
+ *   <li><b>My Profile</b> – edit personal details, skills, password, and upload a CV</li>
+ *   <li><b>Browse Jobs</b> – search and apply for open TA positions</li>
+ *   <li><b>My Applications</b> – view application status and withdraw pending applications</li>
+ * </ul>
+ * <p>
+ * The header includes a notifications panel and logout. UI styling reuses shared
+ * widget factories from {@link AdminDashboard}.
+ * </p>
+ */
 public class TADashboard extends JFrame {
 
     private final User currentUser;
@@ -41,6 +57,15 @@ public class TADashboard extends JFrame {
     private static final Font  F_SMALL   = AdminDashboard.F_SMALL;
     private static final Font  F_H2      = AdminDashboard.F_H2;
 
+    /**
+     * Creates the TA dashboard for the given authenticated user.
+     *
+     * @param currentUser           the logged-in teaching assistant
+     * @param loginFrame            the login frame to return to on logout
+     * @param jobService            service for browsing and querying job listings
+     * @param applicationService    service for submitting and managing applications
+     * @param notificationService   service for reading and updating notifications
+     */
     public TADashboard(User currentUser, LoginFrame loginFrame, JobService jobService,
                        ApplicationService applicationService, NotificationService notificationService) {
         this.currentUser = currentUser;
@@ -175,6 +200,7 @@ public class TADashboard extends JFrame {
         kwF.putClientProperty("JTextField.placeholderText", "Search by title, module or skill...");
         JLabel resLbl = new JLabel(); resLbl.setFont(F_SMALL); resLbl.setForeground(C_TXT_SEC);
         JButton sb = AdminDashboard.pill("Search", C_PRIMARY); JButton cb = AdminDashboard.ghost("Clear");
+        searchBar.add(new JLabel(UiText.symbolText("🔍", "", true))); searchBar.add(kwF); searchBar.add(sb); searchBar.add(cb); searchBar.add(resLbl);
         searchBar.add(new JLabel("  🔍 ")); searchBar.add(kwF); searchBar.add(sb); searchBar.add(cb); searchBar.add(resLbl);
         panel.add(searchBar, BorderLayout.NORTH);
 
@@ -188,6 +214,7 @@ public class TADashboard extends JFrame {
         sb.addActionListener(e -> load.run()); cb.addActionListener(e -> { kwF.setText(""); load.run(); }); kwF.addActionListener(e -> load.run());
 
         JPanel btns = btnRow();
+        JButton refresh = AdminDashboard.ghost(UiText.symbolText("↻", "Refresh", false)); refresh.addActionListener(e -> { jobService.reload(); load.run(); });
         JButton refresh = AdminDashboard.ghost("↻  Refresh"); refresh.addActionListener(e -> { jobService.reload(); load.run(); });
         JButton apply = AdminDashboard.pill("Apply for This Job", C_ACCENT);
         apply.addActionListener(e -> {
@@ -236,6 +263,7 @@ public class TADashboard extends JFrame {
         panel.add(AdminDashboard.wrapInCard("My Applications", AdminDashboard.wrapScroll(table)), BorderLayout.CENTER);
 
         JPanel btns = btnRow();
+        JButton refresh = AdminDashboard.ghost(UiText.symbolText("↻", "Refresh", false)); refresh.addActionListener(e -> { applicationService.reload(); loadMyApps(model); });
         JButton refresh = AdminDashboard.ghost("↻  Refresh"); refresh.addActionListener(e -> { applicationService.reload(); loadMyApps(model); });
         JButton withdraw = AdminDashboard.pill("Withdraw", C_DANGER);
         withdraw.addActionListener(e -> {

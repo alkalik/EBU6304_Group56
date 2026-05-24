@@ -10,6 +10,63 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 /**
+ * Stateless analysis service for skill matching and TA workload balancing.
+ * <p>
+ * Performs rule-based scoring over in-memory {@link User}, {@link Job}, and
+ * {@link Application} data supplied by callers. Optionally enriches top results with
+ * narrative comments from the DeepSeek API when enabled in {@link AppConfig}.
+ * </p>
+ * <p>
+ * This service does not persist data; it reads from other services and returns
+ * analysis DTOs ({@link CandidateAnalysis}, {@link WorkloadAnalysisResult}, etc.).
+ * </p>
+ */
+public class AIAnalysisService {
+
+    /**
+     * Relative priority assigned to a job-required skill that a TA lacks,
+     * based on position in the required-skills list.
+     */
+    public enum SkillImportance {
+        /** Listed in the first third of required skills. */
+        HIGH("High"),
+        /** Listed in the middle third of required skills. */
+        MEDIUM("Medium"),
+        /** Listed in the last third of required skills. */
+        LOW("Low");
+
+        private final String label;
+
+        SkillImportance(String label) { this.label = label; }
+
+        /**
+         * @return display label for UI and reports (e.g. {@code "High"})
+         */
+        public String getLabel() { return label; }
+    }
+
+    /**
+     * Skill match outcome for a single TA against a single job (legacy/simple report shape).
+     */
+    public static class SkillMatchResult {
+        /** The teaching assistant being evaluated. */
+        public final User ta;
+        /** The job posting being matched against. */
+        public final Job job;
+        /** Percentage of required skills present on the TA profile (0–100). */
+        public final double matchPercent;
+        /** Required skills the TA possesses (case-insensitive match). */
+        public final List<String> matchedSkills;
+        /** Required skills the TA lacks, each tagged with {@link SkillImportance}. */
+        public final List<MissingSkill> missingSkills;
+
+        /**
+         * @param ta            the TA user
+         * @param job           the target job
+         * @param matchPercent  match percentage
+         * @param matchedSkills skills satisfied
+         * @param missingSkills skills missing with importance
+         */
  * AI-assisted analysis service.
  * Provides skill matching analysis and workload balancing recommendations.
  */
@@ -39,6 +96,19 @@ public class AIAnalysisService {
         }
     }
 
+    /**
+     * A required skill that the TA does not have, with an assigned importance level.
+     */
+    public static class MissingSkill {
+        /** The skill name as listed on the job. */
+        public final String skill;
+        /** Importance derived from the skill's index in the required list. */
+        public final SkillImportance importance;
+
+        /**
+         * @param skill      the missing skill name
+         * @param importance how critical the skill is considered for this job
+         */
     public static class MissingSkill {
         public final String skill;
         public final SkillImportance importance;
@@ -49,6 +119,30 @@ public class AIAnalysisService {
         }
     }
 
+    /**
+     * Per-applicant skill analysis for a job, including optional DeepSeek commentary.
+     */
+    public static class CandidateAnalysis {
+        /** The applicant TA profile. */
+        public final User ta;
+        /** The pending or reviewed application. */
+        public final Application application;
+        /** Percentage of required skills matched (0–100; 100 if job has no required skills). */
+        public final double matchPercent;
+        /** Required skills the TA possesses. */
+        public final List<String> matchedSkills;
+        /** Required skills the TA lacks with importance tags. */
+        public final List<MissingSkill> missingSkills;
+        /** DeepSeek-generated narrative analysis; {@code null} if API disabled or call failed. */
+        public String aiComment;
+
+        /**
+         * @param ta             the applicant
+         * @param application    their application for the job
+         * @param matchPercent   skill match percentage
+         * @param matchedSkills  satisfied skills
+         * @param missingSkills  gaps with importance
+         */
     public static class CandidateAnalysis {
         public final User ta;
         public final Application application;
@@ -68,6 +162,27 @@ public class AIAnalysisService {
         }
     }
 
+    /**
+     * Aggregate workload analysis across multiple TAs, with balancing suggestions.
+     */
+    public static class WorkloadAnalysisResult {
+        /** Per-TA workload metrics and status labels. */
+        public final List<TAWorkload> workloads;
+        /** Rule-based reassignment suggestions (may be empty). */
+        public final List<WorkloadSuggestion> suggestions;
+        /** Mean workload score across all TAs in the analysis. */
+        public final double avgWorkload;
+        /** Human-readable summary of distribution and suggestion count. */
+        public final String summary;
+        /** DeepSeek-generated workload balance narrative; {@code null} if API disabled or failed. */
+        public String aiComment;
+
+        /**
+         * @param workloads   classified TA workloads
+         * @param suggestions generated balancing actions
+         * @param avgWorkload average workload score
+         * @param summary     text summary for display
+         */
     public static class WorkloadAnalysisResult {
         public final List<TAWorkload> workloads;
         public final List<WorkloadSuggestion> suggestions;
@@ -86,6 +201,28 @@ public class AIAnalysisService {
         }
     }
 
+    /**
+     * Workload metrics and classification for one TA.
+     */
+    public static class TAWorkload {
+        /** The TA user. */
+        public final User ta;
+        /** Count of {@link Application.Status#ACCEPTED} applications. */
+        public final int acceptedJobs;
+        /** Count of {@link Application.Status#PENDING} applications. */
+        public final int pendingApps;
+        /** Score: accepted × 3 + pending × 1. */
+        public final double workloadScore;
+        /** One of {@code "Overloaded"}, {@code "Balanced"}, or {@code "Available"}. */
+        public final String status;
+
+        /**
+         * @param ta            the TA
+         * @param acceptedJobs  accepted application count
+         * @param pendingApps   pending application count
+         * @param workloadScore computed score
+         * @param status        workload classification label
+         */
     public static class TAWorkload {
         public final User ta;
         public final int acceptedJobs;
@@ -102,6 +239,36 @@ public class AIAnalysisService {
         }
     }
 
+    /**
+     * A suggested workload rebalance (typically reassigning a pending application).
+     */
+    public static class WorkloadSuggestion {
+        /** Suggestion category, e.g. {@code "REASSIGN"} or {@code "BALANCE"}. */
+        public final String type;
+        /** Full description for MO review. */
+        public final String description;
+        /** Name of the overloaded TA (source). */
+        public final String fromTA;
+        /** Name of the underloaded TA (target). */
+        public final String toTA;
+        /** Application ID involved in the suggestion. */
+        public final String applicationId;
+        /** Job title for context. */
+        public final String jobTitle;
+        /** Skill match percentage between target TA and job (0–100). */
+        public final double matchScore;
+        /** Whether the MO has marked this suggestion as adopted in the UI. */
+        public boolean adopted;
+
+        /**
+         * @param type           suggestion type code
+         * @param description    human-readable explanation
+         * @param fromTA         overloaded TA display name
+         * @param toTA           available TA display name
+         * @param applicationId  related application ID
+         * @param jobTitle       job title
+         * @param matchScore     target TA skill match to the job
+         */
     public static class WorkloadSuggestion {
         public final String type;           // "REASSIGN" / "BALANCE"
         public final String description;
@@ -133,6 +300,16 @@ public class AIAnalysisService {
     }
 
     /**
+     * Analyses skill match between applicants and a job's required skills.
+     * <p>
+     * Results are sorted by match percentage descending. When DeepSeek is enabled,
+     * the top three candidates receive an {@link CandidateAnalysis#aiComment}.
+     * </p>
+     *
+     * @param job         the job posting (required skills taken from {@link Job#getRequiredSkills()})
+     * @param applications applications to evaluate (typically for this job)
+     * @param userService used to resolve applicant {@link User} profiles
+     * @return sorted list of {@link CandidateAnalysis}; skips applications whose applicant is unknown
      * Analyse skill match between a list of applicants and a job.
      * Results are sorted by match percentage (descending).
      * If DeepSeek is enabled, the top-3 candidates also receive an AI narrative comment.
@@ -199,6 +376,11 @@ public class AIAnalysisService {
 
     /**
      * Assigns importance to a missing skill based on its position in the required skills list.
+     * First third → HIGH, middle third → MEDIUM, last third → LOW.
+     *
+     * @param index zero-based index of the skill in the required list
+     * @param total number of required skills
+     * @return the assigned {@link SkillImportance}
      * First 1/3 → HIGH, middle 1/3 → MEDIUM, last 1/3 → LOW.
      */
     private SkillImportance assignImportance(int index, int total) {
@@ -210,6 +392,11 @@ public class AIAnalysisService {
     }
 
     /**
+     * Formats candidate analysis results as a plain-text report for export or display.
+     *
+     * @param job     the analysed job (title, module, skills included in header)
+     * @param results output from {@link #analyzeJobApplicants(Job, List, UserService)}
+     * @return multi-line report string including optional DeepSeek sections
      * Export candidate analysis results to a formatted text string.
      */
     public String exportAnalysisToText(Job job, List<CandidateAnalysis> results) {
@@ -270,6 +457,17 @@ public class AIAnalysisService {
     }
 
     /**
+     * Analyses TA workload distribution and generates rebalancing suggestions.
+     * <p>
+     * Workload score is {@code accepted × 3 + pending × 1}. TAs are classified as
+     * Overloaded, Balanced, or Available relative to the average ± 30%. When DeepSeek
+     * is enabled, {@link WorkloadAnalysisResult#aiComment} is populated.
+     * </p>
+     *
+     * @param tas        list of TA users to analyse
+     * @param appService source of application counts per TA
+     * @param jobService used to resolve job details for suggestions
+     * @return aggregate {@link WorkloadAnalysisResult} with metrics, suggestions, and summary
      * Analyse TA workload and produce balancing suggestions.
      */
     public WorkloadAnalysisResult analyzeWorkload(List<User> tas,

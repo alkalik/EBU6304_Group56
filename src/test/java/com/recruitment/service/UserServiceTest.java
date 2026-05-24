@@ -13,6 +13,9 @@ import org.junit.Test;
 
 import com.recruitment.model.User;
 
+/**
+ * Unit tests for {@link UserService} registration, authentication, lookup, update, delete, and search.
+ */
 public class UserServiceTest {
     private UserService userService;
 
@@ -24,6 +27,10 @@ public class UserServiceTest {
         userService = new UserService();
     }
 
+    /**
+     * Verifies successful registration assigns an ID, authentication succeeds with correct password,
+     * and fails with an incorrect password.
+     */
     // Verifies successful user registration and checks that authentication passes with valid credentials but fails with invalid ones
     @Test
     public void testRegisterAndAuthenticate() {
@@ -41,6 +48,9 @@ public class UserServiceTest {
         assertNull("Authentication should fail with wrong password", failAuth);
     }
 
+    /**
+     * Verifies that registering a second user with the same username fails.
+     */
     // Ensures that the system rejects new registrations that attempt to use an already taken username
     @Test
     public void testDuplicateRegistration() {
@@ -52,6 +62,9 @@ public class UserServiceTest {
         assertFalse("Duplicate username should fail", userService.register(user2));
     }
 
+    /**
+     * Verifies that {@code findByRole} returns only users with the requested role.
+     */
     // Verifies that users can be retrieved and filtered properly from the persistent store based on their functional role
     @Test
     public void testFindByRole() {
@@ -64,6 +77,9 @@ public class UserServiceTest {
         assertTrue(tas.stream().allMatch(u -> u.getRole() == User.Role.TA));
     }
 
+    /**
+     * Verifies that updating a user persists name and phone changes retrievable by ID.
+     */
     // Validates that an existing user's profile attributes can be successfully updated and saved in the repository
     @Test
     public void testUpdateUser() {
@@ -81,6 +97,9 @@ public class UserServiceTest {
         assertEquals("1234567890", found.getPhone());
     }
 
+    /**
+     * Verifies that deleting a user removes them from lookup by ID.
+     */
     // Assures that a user record can be deleted by its ID and will no longer be discoverable in subsequent lookups
     @Test
     public void testDeleteUser() {
@@ -92,6 +111,9 @@ public class UserServiceTest {
         assertFalse(userService.findById(user.getId()).isPresent());
     }
 
+    /**
+     * Verifies that search finds users by display name, department, and role-related terms.
+     */
     // Checks that the universal search functionality can locate users by matching strings against name, department, or role
     @Test
     public void testSearchUsers() {

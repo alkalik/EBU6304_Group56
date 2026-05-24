@@ -12,6 +12,19 @@ import java.awt.*;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
+/**
+ * Main entry window for the TA Recruitment System.
+ * <p>
+ * Presents the sign-in form for all user roles and routes authenticated users
+ * to the appropriate role-specific dashboard ({@link TADashboard}, {@link MODashboard},
+ * or {@link AdminDashboard}). Also provides a link to open {@link RegisterDialog}
+ * for new account creation.
+ * </p>
+ * <p>
+ * Implements client-side login attempt tracking: after three failed attempts within
+ * one minute, the account is temporarily locked for one minute.
+ * </p>
+ */
 public class LoginFrame extends JFrame {
     private final UserService userService;
     private final JobService jobService;
@@ -48,6 +61,14 @@ public class LoginFrame extends JFrame {
     private static final Color BORDER         = new Color(0xDF, 0xE6, 0xE9);
     private static final Color ACCENT         = new Color(0x43, 0xC6, 0xAC);
 
+    /**
+     * Creates the login window and wires it to the application services.
+     *
+     * @param userService           service for authentication and user data
+     * @param jobService            service for job listings (passed to dashboards)
+     * @param applicationService    service for job applications (passed to dashboards)
+     * @param notificationService   service for user notifications (passed to dashboards)
+     */
     public LoginFrame(UserService userService, JobService jobService, ApplicationService applicationService, NotificationService notificationService) {
         this.userService = userService;
         this.jobService = jobService;
@@ -255,6 +276,11 @@ public class LoginFrame extends JFrame {
         openDashboard(user);
     }
 
+    /**
+     * Hides the login frame and opens the dashboard matching the user's role.
+     *
+     * @param user the authenticated user whose {@link User#getRole()} determines the target dashboard
+     */
     public void openDashboard(User user) {
         this.setVisible(false);
         switch (user.getRole()) {
@@ -274,6 +300,10 @@ public class LoginFrame extends JFrame {
         new RegisterDialog(this, userService).setVisible(true);
     }
 
+    /**
+     * Clears the login form, reloads user data from storage, and makes this frame visible again.
+     * Called when a user logs out from a role-specific dashboard.
+     */
     public void showAgain() {
         usernameField.setText("");
         passwordField.setText("");

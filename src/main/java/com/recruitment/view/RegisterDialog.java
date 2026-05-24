@@ -8,6 +8,15 @@ import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
 
+/**
+ * Modal dialog for self-service account registration.
+ * <p>
+ * Allows prospective Teaching Assistants ({@link User.Role#TA}) and Module Organisers
+ * ({@link User.Role#MO}) to create an account. Administrator accounts cannot be
+ * registered through this dialog. Validates input locally before delegating
+ * persistence to {@link UserService#register(User)}.
+ * </p>
+ */
 public class RegisterDialog extends JDialog {
 
     private final UserService userService;
@@ -28,6 +37,12 @@ public class RegisterDialog extends JDialog {
     private static final Font  F_BOLD    = new Font("Segoe UI", Font.BOLD, 13);
     private static final Font  F_BODY    = new Font("Segoe UI", Font.PLAIN, 13);
 
+    /**
+     * Creates a modal registration dialog centred on the given parent frame.
+     *
+     * @param parent       the owning frame (typically {@link LoginFrame})
+     * @param userService  service used to persist the new user account
+     */
     public RegisterDialog(JFrame parent, UserService userService) {
         super(parent, "Create New Account", true);
         this.userService = userService;
