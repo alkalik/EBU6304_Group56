@@ -77,7 +77,8 @@ public class TADashboard extends JFrame {
         h.setBackground(C_HDR); h.setBorder(new EmptyBorder(16, 28, 16, 28));
 
         JPanel left = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0)); left.setOpaque(false);
-        JLabel icon = new JLabel("🎓  "); icon.setFont(new Font("Segoe UI Emoji", Font.PLAIN, 18)); icon.setForeground(new Color(0xCB, 0xC5, 0xFF));
+        // Use plain text markers so header labels render consistently without emoji font support.
+        JLabel icon = new JLabel("[TA]  "); icon.setFont(F_BOLD); icon.setForeground(new Color(0xCB, 0xC5, 0xFF));
         JLabel title = new JLabel("Teaching Assistant"); title.setFont(new Font("Segoe UI", Font.BOLD, 18)); title.setForeground(new Color(0xCB, 0xC5, 0xFF));
         JLabel sep = new JLabel("  |  "); sep.setForeground(new Color(0x55, 0x55, 0x88));
         JLabel name = new JLabel(currentUser.getName()); name.setFont(new Font("Segoe UI", Font.PLAIN, 14)); name.setForeground(new Color(0xA0, 0xA8, 0xCC));
@@ -175,7 +176,7 @@ public class TADashboard extends JFrame {
         kwF.putClientProperty("JTextField.placeholderText", "Search by title, module or skill...");
         JLabel resLbl = new JLabel(); resLbl.setFont(F_SMALL); resLbl.setForeground(C_TXT_SEC);
         JButton sb = AdminDashboard.pill("Search", C_PRIMARY); JButton cb = AdminDashboard.ghost("Clear");
-        searchBar.add(new JLabel("  🔍 ")); searchBar.add(kwF); searchBar.add(sb); searchBar.add(cb); searchBar.add(resLbl);
+        searchBar.add(lbl("Search:")); searchBar.add(kwF); searchBar.add(sb); searchBar.add(cb); searchBar.add(resLbl);
         panel.add(searchBar, BorderLayout.NORTH);
 
         String[] cols = {"ID", "Title", "Module", "Type", "Required Skills", "Open Positions", "Deadline"};
@@ -188,7 +189,7 @@ public class TADashboard extends JFrame {
         sb.addActionListener(e -> load.run()); cb.addActionListener(e -> { kwF.setText(""); load.run(); }); kwF.addActionListener(e -> load.run());
 
         JPanel btns = btnRow();
-        JButton refresh = AdminDashboard.ghost("↻  Refresh"); refresh.addActionListener(e -> { jobService.reload(); load.run(); });
+        JButton refresh = AdminDashboard.ghost("Refresh"); refresh.addActionListener(e -> { jobService.reload(); load.run(); });
         JButton apply = AdminDashboard.pill("Apply for This Job", C_ACCENT);
         apply.addActionListener(e -> {
             int r = table.getSelectedRow(); if (r < 0) { warn("Please select a job."); return; }
@@ -236,7 +237,7 @@ public class TADashboard extends JFrame {
         panel.add(AdminDashboard.wrapInCard("My Applications", AdminDashboard.wrapScroll(table)), BorderLayout.CENTER);
 
         JPanel btns = btnRow();
-        JButton refresh = AdminDashboard.ghost("↻  Refresh"); refresh.addActionListener(e -> { applicationService.reload(); loadMyApps(model); });
+        JButton refresh = AdminDashboard.ghost("Refresh"); refresh.addActionListener(e -> { applicationService.reload(); loadMyApps(model); });
         JButton withdraw = AdminDashboard.pill("Withdraw", C_DANGER);
         withdraw.addActionListener(e -> {
             int r = table.getSelectedRow(); if (r < 0) { warn("Please select an application."); return; }
@@ -314,6 +315,7 @@ public class TADashboard extends JFrame {
 
     // ── Widget helpers ─────────────────────────────────────────────────────
     private JPanel btnRow() { JPanel p = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 8)); p.setBackground(C_BG); return p; }
+    private JLabel lbl(String t) { JLabel l = new JLabel(t); l.setFont(F_BODY); l.setForeground(C_TXT_SEC); return l; }
     private JTextField tf(String d, int c) { JTextField f = new JTextField(d, c); f.setFont(F_BODY); return f; }
     private GridBagConstraints gbcBase() {
         GridBagConstraints g = new GridBagConstraints();

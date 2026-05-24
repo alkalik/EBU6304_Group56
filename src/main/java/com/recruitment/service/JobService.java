@@ -67,6 +67,8 @@ public class JobService {
      * and marks the status as OPEN.
      */
     public Job createJob(Job job) {
+        // Reload before writes so separate open dashboards do not overwrite each other's latest job data.
+        reload();
         job.setId(IDGenerator.generate("JOB"));
         job.setPostDate(LocalDate.now().toString());
         job.setStatus(Job.Status.OPEN);
@@ -80,6 +82,8 @@ public class JobService {
      * @return true if the job was found and updated, false otherwise.
      */
     public boolean updateJob(Job job) {
+        // Work from the newest persisted list before replacing a single job record.
+        reload();
         for (int i = 0; i < jobs.size(); i++) {
             if (jobs.get(i).getId().equals(job.getId())) {
                 jobs.set(i, job);
@@ -116,6 +120,8 @@ public class JobService {
      * @return true if a job was removed, false if the ID was not found.
      */
     public boolean deleteJob(String id) {
+        // Reload first so deletion also reflects jobs closed or edited from another dashboard.
+        reload();
         boolean removed = jobs.removeIf(j -> j.getId().equals(id));
         if (removed) save();
         return removed;
@@ -127,6 +133,8 @@ public class JobService {
      * @return true if successful, false if the job ID was not found.
      */
     public boolean closeJob(String id) {
+        // Reload before closing to avoid saving over newer admin-side edits.
+        reload();
         Optional<Job> job = findById(id);
         if (job.isPresent()) {
             job.get().setStatus(Job.Status.CLOSED);
