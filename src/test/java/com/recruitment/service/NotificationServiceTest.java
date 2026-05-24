@@ -1,6 +1,5 @@
 package com.recruitment.service;
 
-import java.io.File;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
@@ -12,14 +11,13 @@ import org.junit.Test;
 
 import com.recruitment.model.Notification;
 
-public class NotificationServiceTest {
+public class NotificationServiceTest extends ServiceTestBase {
     private NotificationService notificationService;
 
     // Initializes the NotificationService and ensures the dynamic storage directory exists before every test run
     @Before
     public void setUp() {
-        new File("data").mkdirs();
-        notificationService = new NotificationService();
+        notificationService = newServiceGraph().notificationService;
     }
 
     // Verifies that a notification can be successfully created with an unread status, increasing the unread count

@@ -1,6 +1,5 @@
 package com.recruitment.service;
 
-import java.io.File;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
@@ -14,17 +13,16 @@ import org.junit.Test;
 import com.recruitment.model.Application;
 import com.recruitment.model.Job;
 
-public class ApplicationServiceTest {
+public class ApplicationServiceTest extends ServiceTestBase {
     private ApplicationService applicationService;
     private JobService jobService;
 
     // Initializes services and ensures the local data directory exists before each test execution
     @Before
     public void setUp() {
-        new File("data").mkdirs();
-        jobService = new JobService();
-        applicationService = new ApplicationService();
-        applicationService.setJobService(jobService);
+        ServiceGraph services = newServiceGraph();
+        jobService = services.jobService;
+        applicationService = services.applicationService;
     }
 
     // Helper method to create and persist a new job with specific capacity for testing

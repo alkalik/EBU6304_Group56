@@ -1,9 +1,9 @@
 package com.recruitment.service;
 
-import java.io.File;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.time.LocalDate;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -13,15 +13,21 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.recruitment.model.Job;
+import com.recruitment.model.Application;
+import com.recruitment.model.Notification;
 
-public class JobServiceTest {
+public class JobServiceTest extends ServiceTestBase {
     private JobService jobService;
+    private ApplicationService applicationService;
+    private NotificationService notificationService;
 
     // Initializes the JobService instance and ensures the storage directory exists before each test running
     @Before
     public void setUp() {
-        new File("data").mkdirs();
-        jobService = new JobService();
+        ServiceGraph services = newServiceGraph();
+        jobService = services.jobService;
+        applicationService = services.applicationService;
+        notificationService = services.notificationService;
     }
 
     // Verifies that a new job posting can be successfully created with default OPEN status and a post date
@@ -181,5 +187,29 @@ public class JobServiceTest {
     public void testGetTotalAvailablePositions() {
         int available = jobService.getTotalAvailablePositions();
         assertTrue(available >= 0);
+    }
+
+    @Test
+    public void testExpiredJobClosesAndNotifiesPendingApplicants() {
+        Job job = new Job();
+        job.setTitle("Expired Job " + System.currentTimeMillis());
+        job.setPostedBy("MO-EXP");
+        job.setJobType(Job.JobType.MODULE_TA);
+        job.setMaxPositions(1);
+        job.setDeadline(LocalDate.now().minusDays(1).toString());
+        Job created = jobService.createJob(job);
+
+        Application application = applicationService.apply(created.getId(), "USR-expired-applicant", "");
+        assertNotNull(application);
+
+        jobService.checkExpiredJobs();
+
+        Job updated = jobService.findById(created.getId()).orElse(null);
+        assertNotNull(updated);
+        assertEquals(Job.Status.CLOSED, updated.getStatus());
+
+        List<Notification> notifications = notificationService.getNotificationsByUser("USR-expired-applicant");
+        assertEquals(1, notifications.size());
+        assertEquals(Notification.Type.POSITION_EXPIRATION, notifications.get(0).getType());
     }
 }
