@@ -11,6 +11,9 @@ import java.util.Map;
 
 import static org.junit.Assert.*;
 
+/**
+ * Unit tests for {@link JobService} CRUD, search, filter, sort, and statistics operations.
+ */
 public class JobServiceTest {
     private JobService jobService;
 
@@ -20,6 +23,9 @@ public class JobServiceTest {
         jobService = new JobService();
     }
 
+    /**
+     * Verifies that creating a job assigns an ID, OPEN status, and a post date.
+     */
     @Test
     public void testCreateJob() {
         Job job = new Job();
@@ -37,6 +43,9 @@ public class JobServiceTest {
         assertNotNull(created.getPostDate());
     }
 
+    /**
+     * Verifies that {@code getOpenJobs} returns only jobs with OPEN status.
+     */
     @Test
     public void testGetOpenJobs() {
         Job job = new Job();
@@ -51,6 +60,9 @@ public class JobServiceTest {
         assertTrue(openJobs.stream().allMatch(j -> j.getStatus() == Job.Status.OPEN));
     }
 
+    /**
+     * Verifies that closing a job by ID updates its status to CLOSED.
+     */
     @Test
     public void testCloseJob() {
         Job job = new Job();
@@ -64,6 +76,9 @@ public class JobServiceTest {
         assertEquals(Job.Status.CLOSED, jobService.findById(job.getId()).get().getStatus());
     }
 
+    /**
+     * Verifies that jobs posted by a specific module officer are returned for that MO ID.
+     */
     @Test
     public void testGetJobsByMO() {
         String moId = "MO-" + System.currentTimeMillis();
@@ -79,6 +94,9 @@ public class JobServiceTest {
         assertTrue(jobs.stream().allMatch(j -> j.getPostedBy().equals(moId)));
     }
 
+    /**
+     * Verifies that deleting a job removes it from lookup by ID.
+     */
     @Test
     public void testDeleteJob() {
         Job job = new Job();
@@ -92,6 +110,9 @@ public class JobServiceTest {
         assertFalse(jobService.findById(job.getId()).isPresent());
     }
 
+    /**
+     * Verifies that filtering by status and job type returns only matching jobs.
+     */
     @Test
     public void testFilterJobs() {
         Job job1 = new Job();
@@ -105,6 +126,9 @@ public class JobServiceTest {
         assertTrue(filtered.stream().allMatch(j -> j.getStatus() == Job.Status.OPEN && j.getJobType() == Job.JobType.MODULE_TA));
     }
 
+    /**
+     * Verifies that keyword search finds jobs whose title contains the search term.
+     */
     @Test
     public void testSearchJobs() {
         Job job = new Job();
@@ -120,6 +144,9 @@ public class JobServiceTest {
         assertTrue(results.stream().anyMatch(j -> j.getTitle().contains("Java")));
     }
 
+    /**
+     * Verifies that skill-based search returns jobs listing the given required skill.
+     */
     @Test
     public void testSearchJobsBySkill() {
         Job job = new Job();
@@ -135,6 +162,9 @@ public class JobServiceTest {
         assertTrue(results.stream().anyMatch(j -> j.getRequiredSkills().contains("Python")));
     }
 
+    /**
+     * Verifies that jobs sorted by title ascending are in non-decreasing title order.
+     */
     @Test
     public void testSortJobsByTitle() {
         List<Job> sorted = jobService.sortJobsByTitle(true);
@@ -143,6 +173,9 @@ public class JobServiceTest {
         }
     }
 
+    /**
+     * Verifies that job statistics include total and open job counts with non-negative values.
+     */
     @Test
     public void testJobStatistics() {
         Map<String, Integer> stats = jobService.getJobStatistics();
@@ -152,6 +185,9 @@ public class JobServiceTest {
         assertTrue(stats.get("totalJobs") >= 0);
     }
 
+    /**
+     * Verifies that job counts by type include all defined {@link Job.JobType} values.
+     */
     @Test
     public void testGetJobCountByType() {
         Map<Job.JobType, Integer> counts = jobService.getJobCountByType();
@@ -161,10 +197,12 @@ public class JobServiceTest {
         assertTrue(counts.containsKey(Job.JobType.OTHER));
     }
 
+    /**
+     * Verifies that total available positions across open jobs is non-negative.
+     */
     @Test
     public void testGetTotalAvailablePositions() {
         int available = jobService.getTotalAvailablePositions();
         assertTrue(available >= 0);
     }
 }
-

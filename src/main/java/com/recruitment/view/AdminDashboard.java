@@ -22,6 +22,24 @@ import com.recruitment.util.AppConfig;
 import com.recruitment.util.ShadowBorder;
 import com.recruitment.util.UiText;
 
+/**
+ * Main application window for Administrator ({@link User.Role#ADMIN}) users.
+ * <p>
+ * Provides four tabs:
+ * </p>
+ * <ul>
+ *   <li><b>AI Workload Balance</b> – analyse TA workload distribution and adopt rebalancing suggestions</li>
+ *   <li><b>All Users</b> – search and manage registered users</li>
+ *   <li><b>All Jobs</b> – view every job posting in the system</li>
+ *   <li><b>All Applications</b> – view every application across all jobs</li>
+ * </ul>
+ * <p>
+ * The menu bar supports data backup/restore and broadcasting notifications to all users
+ * or to a specific role. This class also exposes shared UI palette constants and static
+ * widget factory methods ({@link #pill}, {@link #ghost}, {@link #styledTable}, etc.)
+ * reused by {@link TADashboard} and {@link MODashboard}.
+ * </p>
+ */
 public class AdminDashboard extends JFrame {
 
     private final User currentUser;
@@ -51,6 +69,15 @@ public class AdminDashboard extends JFrame {
     static final Font  F_H1       = new Font("Segoe UI", Font.BOLD, 18);
     static final Font  F_H2       = new Font("Segoe UI", Font.BOLD, 15);
 
+    /**
+     * Creates the Administrator dashboard for the given authenticated user.
+     *
+     * @param currentUser           the logged-in administrator
+     * @param loginFrame            the login frame to return to on logout
+     * @param jobService            service for querying all jobs
+     * @param applicationService    service for querying all applications
+     * @param notificationService   service for broadcasting and managing notifications
+     */
     public AdminDashboard(User currentUser, LoginFrame loginFrame, JobService jobService,
                           ApplicationService applicationService, NotificationService notificationService) {
         this.currentUser = currentUser;
@@ -582,6 +609,14 @@ public class AdminDashboard extends JFrame {
     private boolean confirm(String m) { return JOptionPane.showConfirmDialog(this, m, "Confirm", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION; }
 
     // ── Widget factory ─────────────────────────────────────────────────────
+
+    /**
+     * Creates a filled, rounded-style action button with white text on the given background colour.
+     *
+     * @param t   button label text
+     * @param bg  background colour for the button
+     * @return a styled {@link JButton} with a minimum preferred width
+     */
     static JButton pill(String t, Color bg) {
         JButton b = new JButton(t); b.setFont(F_BOLD); b.setBackground(bg); b.setForeground(Color.WHITE);
         b.setFocusPainted(false); b.setBorderPainted(false);
@@ -589,6 +624,12 @@ public class AdminDashboard extends JFrame {
         b.setPreferredSize(new Dimension(Math.max(120, b.getPreferredSize().width + 18), 34)); return b;
     }
 
+    /**
+     * Creates a borderless secondary (ghost) button with default body font styling.
+     *
+     * @param t  button label text
+     * @return a minimal {@link JButton} suitable for secondary actions
+     */
     static JButton ghost(String t) {
         JButton b = new JButton(t); b.setFont(F_BODY);
         b.setFocusPainted(false); b.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR)); return b;
@@ -598,6 +639,13 @@ public class AdminDashboard extends JFrame {
         JPanel p = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 8)); p.setBackground(C_BG); return p;
     }
 
+    /**
+     * Wraps a component in a titled card panel with a light border.
+     *
+     * @param title    section heading displayed above the content; may be {@code null} or empty to omit
+     * @param content  the component to display inside the card (typically a scroll pane or table)
+     * @return a {@link JPanel} containing the titled content area
+     */
     static JPanel wrapInCard(String title, Component content) {
         JPanel card = new JPanel(new BorderLayout(0, 8));
         card.setBackground(C_SURFACE);
@@ -612,6 +660,13 @@ public class AdminDashboard extends JFrame {
         card.add(content, BorderLayout.CENTER); return card;
     }
 
+    /**
+     * Wraps a component in a titled card panel with an elevated shadow border.
+     *
+     * @param title    section heading displayed above the content; may be {@code null} or empty to omit
+     * @param content  the component to display inside the card
+     * @return a {@link JPanel} with {@link ShadowBorder#card()} styling
+     */
     static JPanel wrapInShadowCard(String title, Component content) {
         JPanel card = new JPanel(new BorderLayout(0, 8));
         card.setBackground(C_SURFACE);
@@ -624,10 +679,23 @@ public class AdminDashboard extends JFrame {
         card.add(content, BorderLayout.CENTER); return card;
     }
 
+    /**
+     * Creates a read-only {@link DefaultTableModel} with the given column headers.
+     *
+     * @param c  column name array defining the table schema
+     * @return a non-editable table model with zero initial rows
+     */
     static DefaultTableModel noEdit(String[] c) {
         return new DefaultTableModel(c, 0) { @Override public boolean isCellEditable(int r, int col) { return false; } };
     }
 
+    /**
+     * Applies the shared application table styling: alternating row colours, styled header,
+     * single-row selection, and consistent fonts and spacing.
+     *
+     * @param m  the table model backing the new table
+     * @return a configured {@link JTable} ready to populate with data
+     */
     static JTable styledTable(DefaultTableModel m) {
         JTable t = new JTable(m); t.setFont(F_BODY); t.setRowHeight(32);
         t.setGridColor(new Color(0xEA, 0xED, 0xF5));
@@ -654,12 +722,25 @@ public class AdminDashboard extends JFrame {
         return t;
     }
 
+    /**
+     * Wraps a table in a scroll pane with a subtle border and white viewport background.
+     *
+     * @param t  the table to scroll
+     * @return a {@link JScrollPane} suitable for placement inside a card panel
+     */
     static JScrollPane wrapScroll(JTable t) {
         JScrollPane sp = new JScrollPane(t);
         sp.setBorder(BorderFactory.createLineBorder(new Color(0xE0, 0xE4, 0xF0)));
         sp.getViewport().setBackground(Color.WHITE); return sp;
     }
 
+    /**
+     * Returns a cell renderer that colour-codes status values such as application states
+     * ({@code PENDING}, {@code ACCEPTED}, etc.) and workload labels ({@code Overloaded},
+     * {@code Balanced}, {@code Available}).
+     *
+     * @return a {@link TableCellRenderer} for status badge columns
+     */
     static TableCellRenderer statusBadgeRenderer() {
         return new DefaultTableCellRenderer() {
             @Override public Component getTableCellRendererComponent(
@@ -712,5 +793,6 @@ public class AdminDashboard extends JFrame {
         };
     }
 
+    /** Returns the shared section-heading font ({@link #F_H2}). */
     static Font F_H2_static() { return F_H2; }
 }

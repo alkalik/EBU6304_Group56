@@ -10,6 +10,10 @@ import java.util.List;
 
 import static org.junit.Assert.*;
 
+/**
+ * Integration-style unit tests for {@link ApplicationService} application lifecycle,
+ * listing, acceptance limits, and interaction with {@link JobService}.
+ */
 public class ApplicationServiceTest {
     private ApplicationService applicationService;
     private JobService jobService;
@@ -31,6 +35,9 @@ public class ApplicationServiceTest {
         return jobService.createJob(job);
     }
 
+    /**
+     * Verifies that applying to a job creates a pending application with correct job and applicant IDs.
+     */
     @Test
     public void testApply() {
         String jobId = createOpenJob(2).getId();
@@ -44,6 +51,9 @@ public class ApplicationServiceTest {
         assertEquals(applicantId, app.getApplicantId());
     }
 
+    /**
+     * Verifies that a second application by the same applicant to the same job returns null.
+     */
     @Test
     public void testDuplicateApplication() {
         String jobId = createOpenJob(2).getId();
@@ -56,6 +66,9 @@ public class ApplicationServiceTest {
         assertNull("Duplicate application should return null", duplicate);
     }
 
+    /**
+     * Verifies that accepting an application sets status to ACCEPTED and records the reviewer.
+     */
     @Test
     public void testAcceptApplication() {
         String jobId = createOpenJob(2).getId();
@@ -70,6 +83,9 @@ public class ApplicationServiceTest {
         assertEquals("REVIEWER-001", updated.getReviewedBy());
     }
 
+    /**
+     * Verifies that rejecting an application sets status to REJECTED and stores the review note.
+     */
     @Test
     public void testRejectApplication() {
         String jobId = createOpenJob(2).getId();
@@ -84,6 +100,9 @@ public class ApplicationServiceTest {
         assertEquals("Not qualified", updated.getReviewNote());
     }
 
+    /**
+     * Verifies that withdrawing an application sets status to WITHDRAWN.
+     */
     @Test
     public void testWithdrawApplication() {
         String jobId = createOpenJob(2).getId();
@@ -97,6 +116,9 @@ public class ApplicationServiceTest {
         assertEquals(Application.Status.WITHDRAWN, updated.getStatus());
     }
 
+    /**
+     * Verifies that all applications for a given applicant are returned and belong to that applicant.
+     */
     @Test
     public void testGetApplicationsByApplicant() {
         String applicantId = "USR-list-" + System.currentTimeMillis();
@@ -108,6 +130,9 @@ public class ApplicationServiceTest {
         assertTrue(apps.stream().allMatch(a -> a.getApplicantId().equals(applicantId)));
     }
 
+    /**
+     * Verifies that {@code getAcceptedCountByApplicant} counts only accepted applications for an applicant.
+     */
     @Test
     public void testGetAcceptedCount() {
         String applicantId = "USR-cnt-" + System.currentTimeMillis();
@@ -120,6 +145,9 @@ public class ApplicationServiceTest {
         assertEquals(1, applicationService.getAcceptedCountByApplicant(applicantId));
     }
 
+    /**
+     * Verifies that accepting an application increments filled positions and marks a single-position job as FILLED.
+     */
     @Test
     public void testAcceptApplicationFillsPositionAndMarksJobFilled() {
         Job job = createOpenJob(1);
@@ -135,6 +163,9 @@ public class ApplicationServiceTest {
         assertEquals(Job.Status.FILLED, updatedJob.getStatus());
     }
 
+    /**
+     * Verifies that accepting a second applicant fails when the job has only one position and the first remains pending.
+     */
     @Test
     public void testAcceptApplicationFailsWhenJobIsFull() {
         Job job = createOpenJob(1);
@@ -151,6 +182,9 @@ public class ApplicationServiceTest {
         assertEquals(Application.Status.PENDING, secondUpdated.getStatus());
     }
 
+    /**
+     * Verifies that rejecting an already accepted application fails and leaves status ACCEPTED.
+     */
     @Test
     public void testRejectFailsAfterAccepted() {
         Job job = createOpenJob(2);

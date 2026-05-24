@@ -13,7 +13,20 @@ import java.util.Locale;
 import java.util.Timer;
 import java.util.TimerTask;
 
+/**
+ * Application entry point for the TA recruitment desktop client.
+ * <p>
+ * Configures FlatLaf look-and-feel, English locale, and a custom purple-themed
+ * UI palette, then launches {@link LoginFrame} on the Swing EDT. Wires service
+ * dependencies and schedules a daily timer to close expired job postings.
+ */
 public class Main {
+
+    /**
+     * Starts the Swing application.
+     *
+     * @param args command-line arguments (unused)
+     */
     public static void main(String[] args) {
         try {
             Locale.setDefault(Locale.ENGLISH);

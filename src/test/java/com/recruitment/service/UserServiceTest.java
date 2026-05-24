@@ -9,6 +9,9 @@ import java.util.List;
 
 import static org.junit.Assert.*;
 
+/**
+ * Unit tests for {@link UserService} registration, authentication, lookup, update, delete, and search.
+ */
 public class UserServiceTest {
     private UserService userService;
 
@@ -19,6 +22,10 @@ public class UserServiceTest {
         userService = new UserService();
     }
 
+    /**
+     * Verifies successful registration assigns an ID, authentication succeeds with correct password,
+     * and fails with an incorrect password.
+     */
     @Test
     public void testRegisterAndAuthenticate() {
         User user = new User(null, "testuser_" + System.currentTimeMillis(), "pass123",
@@ -35,6 +42,9 @@ public class UserServiceTest {
         assertNull("Authentication should fail with wrong password", failAuth);
     }
 
+    /**
+     * Verifies that registering a second user with the same username fails.
+     */
     @Test
     public void testDuplicateRegistration() {
         String username = "dupuser_" + System.currentTimeMillis();
@@ -45,6 +55,9 @@ public class UserServiceTest {
         assertFalse("Duplicate username should fail", userService.register(user2));
     }
 
+    /**
+     * Verifies that {@code findByRole} returns only users with the requested role.
+     */
     @Test
     public void testFindByRole() {
         String suffix = "_" + System.currentTimeMillis();
@@ -56,6 +69,9 @@ public class UserServiceTest {
         assertTrue(tas.stream().allMatch(u -> u.getRole() == User.Role.TA));
     }
 
+    /**
+     * Verifies that updating a user persists name and phone changes retrievable by ID.
+     */
     @Test
     public void testUpdateUser() {
         User user = new User(null, "upd_" + System.currentTimeMillis(), "pass",
@@ -72,6 +88,9 @@ public class UserServiceTest {
         assertEquals("1234567890", found.getPhone());
     }
 
+    /**
+     * Verifies that deleting a user removes them from lookup by ID.
+     */
     @Test
     public void testDeleteUser() {
         User user = new User(null, "del_" + System.currentTimeMillis(), "pass",
@@ -82,6 +101,9 @@ public class UserServiceTest {
         assertFalse(userService.findById(user.getId()).isPresent());
     }
 
+    /**
+     * Verifies that search finds users by display name, department, and role-related terms.
+     */
     @Test
     public void testSearchUsers() {
         String suffix = "_" + System.currentTimeMillis();

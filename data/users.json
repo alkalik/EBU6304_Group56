@@ -2,7 +2,7 @@
   {
     "id": "USR-admin001",
     "username": "admin",
-    "password": "pbkdf2$120000$vcpHsmYnNWIdldlLz7siFQ\u003d\u003d$GY9Zfy/HhFN4M5CPUNxNyCrBuJeGYplR+wxMR76+caU\u003d",
+    "password": "pbkdf2$120000$yRa2D0grLF4knguyMXSYVw\u003d\u003d$9zjESyzyKQEmm/NQr6zLB0EPRr6X9pPAbjWlge8YT3A\u003d",
     "role": "ADMIN",
     "name": "System Admin",
     "email": "admin@bupt.edu.cn",
@@ -13,7 +13,7 @@
   {
     "id": "USR-mo001",
     "username": "mo1",
-    "password": "pbkdf2$120000$ksla/yp1mcUBOPFqUpWUOA\u003d\u003d$1grkykY3g9hBg65H3hRo0EEwmGrUU1K08g/BGf82H5Y\u003d",
+    "password": "pbkdf2$120000$Ql+Jo05yy4qVOtUvwCrguQ\u003d\u003d$Z1fcQlNIID/18eXTMFybZW4Gn8hKVboyrTk7/akhrOQ\u003d",
     "role": "MO",
     "name": "Dr. Zhang Wei",
     "email": "zhangwei@bupt.edu.cn",
@@ -35,7 +35,7 @@
   {
     "id": "USR-ta001",
     "username": "ta1",
-    "password": "pbkdf2$120000$f7Ua3Qxpzok8nV+2Ra6XuQ\u003d\u003d$7+vDODyxryHs0REwQzbQkH/3OaDrxUdIH3OrfXuHntM\u003d",
+    "password": "pbkdf2$120000$+47xIt+GLukOYrGU6tj71g\u003d\u003d$nS0BLbps5MPZgXk4RTvec2+ZwEKwgOceuJCcjqzW1kg\u003d",
     "role": "TA",
     "name": "Wang Xiaoming",
     "email": "wxm@bupt.edu.cn",
@@ -91,6 +91,222 @@
     "role": "MO",
     "name": "Zeyue Zhang",
     "email": "fff",
+    "skills": []
+  },
+  {
+    "id": "USR-ta003",
+    "username": "ta3",
+    "password": "pbkdf2$120000$VrlRWMbBZKXxE//dOBAuww\u003d\u003d$M4LW1yu1cRpbOOzFU3cCRLwcpuUKpclYfis4SqS6/H4\u003d",
+    "role": "TA",
+    "name": "Liu Yang",
+    "email": "liuyang@bupt.edu.cn",
+    "phone": "13800138003",
+    "skills": [
+      "Java",
+      "JavaScript",
+      "React",
+      "HTML",
+      "CSS",
+      "Git"
+    ],
+    "department": "Computer Science"
+  },
+  {
+    "id": "USR-ta004",
+    "username": "ta4",
+    "password": "pbkdf2$120000$W65TFQyVsd21A3G1bqw1EA\u003d\u003d$7jUgnawG1Eqcsj+d9Y/vy+z1EidqvMfMnbH5SNoQ3yU\u003d",
+    "role": "TA",
+    "name": "Zhao Mei",
+    "email": "zhaomei@bupt.edu.cn",
+    "phone": "13800138004",
+    "skills": [
+      "Python",
+      "Machine Learning",
+      "SQL",
+      "MySQL",
+      "NumPy",
+      "Pandas"
+    ],
+    "department": "Computer Science"
+  },
+  {
+    "id": "USR-ta005",
+    "username": "ta5",
+    "password": "pbkdf2$120000$62MzOXa3+ryUqsSb3mqQxA\u003d\u003d$+V8bTWi0p8mXgQ1q3pE4OeNzch4ST//ajebeCWac/Iw\u003d",
+    "role": "TA",
+    "name": "Sun Hao",
+    "email": "sunhao@bupt.edu.cn",
+    "phone": "13800138005",
+    "skills": [
+      "C++",
+      "Data Structures",
+      "Algorithms",
+      "Networking",
+      "TCP/IP"
+    ],
+    "department": "Computer Science"
+  },
+  {
+    "id": "USR-ta006",
+    "username": "ta6",
+    "password": "pbkdf2$120000$SzxLdye3+G2lg2w5yBGPSg\u003d\u003d$6GSoxCjIyC/+KIDHufx62vDAW+yjW+E6r/1TikQMnQI\u003d",
+    "role": "TA",
+    "name": "Wu Jing",
+    "email": "wujing@bupt.edu.cn",
+    "phone": "13800138006",
+    "skills": [
+      "MATLAB",
+      "Signal Processing",
+      "Communication Systems",
+      "Statistics"
+    ],
+    "department": "Electronic Engineering"
+  },
+  {
+    "id": "USR-ta007",
+    "username": "ta7",
+    "password": "pbkdf2$120000$npzcN5ikBHFkAEo1yICEiA\u003d\u003d$svr/0f0LeLIIG8EE8uhDLqIUAPzP/reOEbI1hoMTTJg\u003d",
+    "role": "TA",
+    "name": "Huang Bo",
+    "email": "huangbo@bupt.edu.cn",
+    "phone": "13800138007",
+    "skills": [
+      "Docker",
+      "Linux",
+      "Cloud Computing",
+      "Python",
+      "IoT",
+      "RFID"
+    ],
+    "department": "Computer Science"
+  },
+  {
+    "id": "USR-ta008",
+    "username": "ta8",
+    "password": "pbkdf2$120000$I52GEWeewPwzJ71ZQdsNyA\u003d\u003d$NQNOMo46FSuVPr9zjBq3LM2e6dJBPLCUDAbphLQImIo\u003d",
+    "role": "TA",
+    "name": "Lin Fei",
+    "email": "linfei@bupt.edu.cn",
+    "phone": "13800138008",
+    "skills": [
+      "Android",
+      "Kotlin",
+      "Mobile Development",
+      "Java",
+      "OOP",
+      "C",
+      "Embedded Systems"
+    ],
+    "department": "Electronic Engineering"
+  },
+  {
+    "id": "USR-mo003",
+    "username": "mo3",
+    "password": "pbkdf2$120000$59OdhQ/xt5oZhRdSI3efFg\u003d\u003d$C0/Hm5CWy5XbuPJYU0zgkMeEyqQPKBPIZYAlNoVentI\u003d",
+    "role": "MO",
+    "name": "Dr. Wang Fang",
+    "email": "wangfang@bupt.edu.cn",
+    "phone": "010-22334455",
+    "skills": [],
+    "department": "Mathematics"
+  },
+  {
+    "id": "USR-mo004",
+    "username": "mo4",
+    "password": "pbkdf2$120000$Tm+nn3gMRa7hOghhSxpKMA\u003d\u003d$DK113YRqBk8UVUu+Pshc9O5LMRMVJIotHo7OqHNbJr8\u003d",
+    "role": "MO",
+    "name": "Dr. Liu Qiang",
+    "email": "liuqiang@bupt.edu.cn",
+    "phone": "010-33445566",
+    "skills": [],
+    "department": "Physics"
+  },
+  {
+    "id": "USR-mo005",
+    "username": "mo5",
+    "password": "pbkdf2$120000$ySF/pBRyaaOiESWB2DvOZg\u003d\u003d$CVK/ps5G3ydG1XzO6lnXpDKYuFn9tqDsczkJxtjdiv8\u003d",
+    "role": "MO",
+    "name": "Dr. Chen Yuxi",
+    "email": "chenyuxi@bupt.edu.cn",
+    "phone": "010-44556677",
+    "skills": [],
+    "department": "Business School"
+  },
+  {
+    "id": "USR-mo006",
+    "username": "mo6",
+    "password": "pbkdf2$120000$M5BMG+XetX7/cQo6FCGpuQ\u003d\u003d$wzuDm7rc7Rel2RYdzJS+ZZc6ZlaHUsxX5SHR0MhZgRA\u003d",
+    "role": "MO",
+    "name": "Dr. Yang Kai",
+    "email": "yangkai@bupt.edu.cn",
+    "phone": "010-55667788",
+    "skills": [],
+    "department": "Artificial Intelligence"
+  },
+  {
+    "id": "USR-c9f20b36",
+    "username": "search_ta_1779582083997",
+    "password": "pbkdf2$120000$/cjQXIYmrKmeNsi46psvbA\u003d\u003d$INCat0+hLqeiMpmj15zYmpWeG+JhUS+4WB603Q9vDps\u003d",
+    "role": "TA",
+    "name": "Alice Search",
+    "email": "alice_1779582083997@test.com",
+    "skills": [],
+    "department": "Computer Science"
+  },
+  {
+    "id": "USR-5d249b00",
+    "username": "search_mo_1779582083997",
+    "password": "pbkdf2$120000$qa05nJLU2FIe9q/Wux1tSQ\u003d\u003d$upj8aPhF4gGm3AYhJGdzQvn8QvpNu5IEu6jTTUOuXKY\u003d",
+    "role": "MO",
+    "name": "Bob Review",
+    "email": "bob_1779582083997@test.com",
+    "skills": [],
+    "department": "Mathematics"
+  },
+  {
+    "id": "USR-79e27e36",
+    "username": "ta_1779582084334",
+    "password": "pbkdf2$120000$u44d3IONzdIuedLd2YT2dA\u003d\u003d$ck9LPKagVkpNPiGL2hMaq2vYb0IMXBIoeB3WHE/PTtQ\u003d",
+    "role": "TA",
+    "name": "TA",
+    "email": "ta@test.com",
+    "skills": []
+  },
+  {
+    "id": "USR-0a06328b",
+    "username": "mo_1779582084334",
+    "password": "pbkdf2$120000$kERF+q00x6MQ5PSFiAZ9QA\u003d\u003d$G5zb+46KAgukhwgyQjKeE1O/EMVg1rMVQeCqkpP3XDg\u003d",
+    "role": "MO",
+    "name": "MO",
+    "email": "mo@test.com",
+    "skills": []
+  },
+  {
+    "id": "USR-e7311423",
+    "username": "upd_1779582084443",
+    "password": "pbkdf2$120000$5XXBbUUP7IpDlZDipzA+OQ\u003d\u003d$V0NOPUcsT7Y02wVPZujeJH/HaqFtddxnAbporeinWIc\u003d",
+    "role": "TA",
+    "name": "Updated Name",
+    "email": "orig@test.com",
+    "phone": "1234567890",
+    "skills": []
+  },
+  {
+    "id": "USR-f388fcc4",
+    "username": "dupuser_1779582084677",
+    "password": "pbkdf2$120000$g6oEHAl7Yp3IZhn3LgiKlg\u003d\u003d$GLkQwvAbK++4cagC9rPbWyKrJ09vp9KfrxJg7IRkxZs\u003d",
+    "role": "TA",
+    "name": "User1",
+    "email": "u1@test.com",
+    "skills": []
+  },
+  {
+    "id": "USR-57a6580e",
+    "username": "testuser_1779582084841",
+    "password": "pbkdf2$120000$EtAAFcYoRQw0VyKpXsrB2g\u003d\u003d$vlCFryA0BvbQPhAgmUqBWuGJoGvO10ch9TOx0J9yOLk\u003d",
+    "role": "TA",
+    "name": "Test User",
+    "email": "test@example.com",
     "skills": []
   }
 ]

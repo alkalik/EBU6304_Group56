@@ -11,18 +11,38 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+/**
+ * Service layer for user account management.
+ * <p>
+ * Handles authentication, registration, profile updates, role-based lookup,
+ * keyword search, and deletion. Passwords are stored using {@link PasswordUtil}
+ * hashing; legacy plaintext passwords are migrated automatically on load and login.
+ * </p>
+ * <p>
+ * Data is persisted in {@code data/users.json} via {@link JsonUtil}. An in-memory
+ * list is loaded at construction and written back on each mutating operation.
+ * When the store is empty, default demo users (admin, MOs, TAs) are seeded.
+ * </p>
+ */
 public class UserService {
     private static final String FILE_NAME = "users.json";
     private static final Type LIST_TYPE = new TypeToken<List<User>>() {}.getType();
 
     private List<User> users;
 
+    /**
+     * Loads users from JSON, migrates legacy plaintext passwords, and seeds defaults if empty.
+     */
     public UserService() {
         this.users = JsonUtil.loadList(FILE_NAME, LIST_TYPE);
         migrateLegacyPlaintextPasswordsIfNeeded();
         seedDefaultUsersIfEmpty();
     }
 
+    /**
+     * Reloads user data from the JSON file, discarding unsaved in-memory changes.
+     * Re-runs password migration and default-user seeding when applicable.
+     */
     public void reload() {
         this.users = JsonUtil.loadList(FILE_NAME, LIST_TYPE);
         migrateLegacyPlaintextPasswordsIfNeeded();
@@ -33,6 +53,16 @@ public class UserService {
         JsonUtil.saveList(FILE_NAME, users);
     }
 
+    /**
+     * Authenticates a user by username and password.
+     * <p>
+     * On successful login, legacy plaintext passwords are upgraded to a hash and saved.
+     * </p>
+     *
+     * @param username the login username (case-sensitive match)
+     * @param password the plain-text password to verify
+     * @return the matching {@link User} if credentials are valid; {@code null} if not found or password mismatch
+     */
     public User authenticate(String username, String password) {
         Optional<User> userOpt = users.stream()
                 .filter(u -> u.getUsername().equals(username))
@@ -52,6 +82,15 @@ public class UserService {
         return null;
     }
 
+    /**
+     * Registers a new user if the username is not already taken.
+     * <p>
+     * Assigns a new {@code USR-} prefixed ID and hashes the password before persistence.
+     * </p>
+     *
+     * @param user the user to register; must have a unique {@link User#getUsername()}
+     * @return {@code true} if registration succeeded; {@code false} if the username already exists
+     */
     public boolean register(User user) {
         if (users.stream().anyMatch(u -> u.getUsername().equals(user.getUsername()))) {
             return false;
@@ -63,6 +102,12 @@ public class UserService {
         return true;
     }
 
+    /**
+     * Updates an existing user by matching on {@link User#getId()}.
+     *
+     * @param user the user record with updated fields; ID must match an existing entry
+     * @return {@code true} if the user was found and updated; {@code false} if no matching ID exists
+     */
     public boolean updateUser(User user) {
         for (int i = 0; i < users.size(); i++) {
             if (users.get(i).getId().equals(user.getId())) {
@@ -74,18 +119,46 @@ public class UserService {
         return false;
     }
 
+    /**
+     * Finds a user by unique identifier.
+     *
+     * @param id the user ID (e.g. {@code USR-...})
+     * @return an {@link Optional} containing the user if found, or empty otherwise
+     */
     public Optional<User> findById(String id) {
         return users.stream().filter(u -> u.getId().equals(id)).findFirst();
     }
 
+    /**
+     * Finds a user by login username.
+     *
+     * @param username the username to look up
+     * @return an {@link Optional} containing the user if found, or empty otherwise
+     */
     public Optional<User> findByUsername(String username) {
         return users.stream().filter(u -> u.getUsername().equals(username)).findFirst();
     }
 
+    /**
+     * Returns all users with the given role.
+     *
+     * @param role the {@link User.Role} to filter by
+     * @return a new list of users with that role (may be empty)
+     */
     public List<User> findByRole(User.Role role) {
         return users.stream().filter(u -> u.getRole() == role).collect(Collectors.toList());
     }
 
+    /**
+     * Searches users by keyword across username, name, email, department, and role name.
+     * <p>
+     * Matching is case-insensitive and uses substring containment. A {@code null} or
+     * blank keyword returns all users.
+     * </p>
+     *
+     * @param keyword the search term; may be {@code null}
+     * @return a filtered list of matching users (never {@code null})
+     */
     public List<User> searchUsers(String keyword) {
         String normalizedKeyword = keyword == null ? "" : keyword.trim().toLowerCase();
         return users.stream()
@@ -98,10 +171,25 @@ public class UserService {
                 .collect(Collectors.toList());
     }
 
+    /**
+     * Returns the live in-memory list of all users.
+     * <p>
+     * Callers should treat the returned list as the service's working copy; mutating it
+     * without going through service methods may bypass persistence.
+     * </p>
+     *
+     * @return the internal list of all users (never {@code null})
+     */
     public List<User> getAllUsers() {
         return users;
     }
 
+    /**
+     * Permanently removes a user by ID.
+     *
+     * @param id the user ID to delete
+     * @return {@code true} if a user was removed; {@code false} if the ID was not found
+     */
     public boolean deleteUser(String id) {
         boolean removed = users.removeIf(u -> u.getId().equals(id));
         if (removed) save();

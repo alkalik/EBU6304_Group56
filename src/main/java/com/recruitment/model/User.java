@@ -3,9 +3,26 @@ package com.recruitment.model;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Domain model representing a registered user in the recruitment system.
+ * <p>
+ * Users may be teaching assistants ({@link Role#TA}), module organisers ({@link Role#MO}),
+ * or administrators ({@link Role#ADMIN}). TA-specific profile data includes skills,
+ * CV file path, and contact details; MO users may have an associated department.
+ * Credentials and identifiers are persisted via {@code users.json}.
+ */
 public class User {
+
+    /**
+     * System role that determines which features and views a user may access.
+     */
     public enum Role {
-        TA, MO, ADMIN
+        /** Teaching assistant who browses jobs and submits applications. */
+        TA,
+        /** Module organiser who posts jobs and reviews applications. */
+        MO,
+        /** System administrator with elevated management capabilities. */
+        ADMIN
     }
 
     private String id;
@@ -19,10 +36,21 @@ public class User {
     private String cvPath;
     private String department;
 
+    /** Creates an empty user with an empty skills list. */
     public User() {
         this.skills = new ArrayList<>();
     }
 
+    /**
+     * Creates a user with core identity and contact fields.
+     *
+     * @param id       unique user identifier
+     * @param username login name
+     * @param password stored password (plain or hashed, depending on persistence layer)
+     * @param role     account role
+     * @param name     display name
+     * @param email    contact email
+     */
     public User(String id, String username, String password, Role role, String name, String email) {
         this.id = id;
         this.username = username;
@@ -63,6 +91,11 @@ public class User {
     public String getDepartment() { return department; }
     public void setDepartment(String department) { this.department = department; }
 
+    /**
+     * Returns a short display label combining name and role.
+     *
+     * @return formatted string such as {@code "Jane Doe (TA)"}
+     */
     @Override
     public String toString() {
         return name + " (" + role + ")";

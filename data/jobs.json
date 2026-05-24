@@ -86,5 +86,755 @@
     "semester": "2025-2026 Spring",
     "postDate": "2026-04-30",
     "deadline": "2026-05-30"
+  },
+  {
+    "id": "JOB-a1b2c3d4",
+    "title": "TA for Software Engineering (EBU6304)",
+    "description": "Assist weekly labs, support Agile group projects, mark coursework and provide student feedback.",
+    "moduleName": "EBU6304",
+    "postedBy": "USR-mo001",
+    "jobType": "MODULE_TA",
+    "status": "OPEN",
+    "requiredSkills": [
+      "Java",
+      "Agile",
+      "Software Testing",
+      "Git"
+    ],
+    "maxPositions": 2,
+    "filledPositions": 0,
+    "semester": "2025-2026 Spring",
+    "postDate": "2026-05-23",
+    "deadline": "2026-06-20"
+  },
+  {
+    "id": "JOB-e5f6a7b8",
+    "title": "TA for Database Systems (EBU5204)",
+    "description": "Help students with SQL exercises, database design assignments, and lab demonstrations.",
+    "moduleName": "EBU5204",
+    "postedBy": "USR-mo001",
+    "jobType": "MODULE_TA",
+    "status": "OPEN",
+    "requiredSkills": [
+      "SQL",
+      "MySQL",
+      "Database Design"
+    ],
+    "maxPositions": 2,
+    "filledPositions": 0,
+    "semester": "2025-2026 Spring",
+    "postDate": "2026-05-23",
+    "deadline": "2026-06-25"
+  },
+  {
+    "id": "JOB-c9d0e1f2",
+    "title": "TA for Machine Learning Lab (EBU6106)",
+    "description": "Supervise Python lab sessions, assist with scikit-learn and TensorFlow practicals.",
+    "moduleName": "EBU6106",
+    "postedBy": "USR-mo001",
+    "jobType": "MODULE_TA",
+    "status": "OPEN",
+    "requiredSkills": [
+      "Python",
+      "Machine Learning",
+      "NumPy",
+      "Pandas"
+    ],
+    "maxPositions": 1,
+    "filledPositions": 0,
+    "semester": "2025-2026 Spring",
+    "postDate": "2026-05-23",
+    "deadline": "2026-06-18"
+  },
+  {
+    "id": "JOB-f3a4b5c6",
+    "title": "TA for Data Structures (EBU5302)",
+    "description": "Support algorithm tutorials, mark programming assignments, and run weekly problem-solving clinics.",
+    "moduleName": "EBU5302",
+    "postedBy": "USR-mo002",
+    "jobType": "MODULE_TA",
+    "status": "OPEN",
+    "requiredSkills": [
+      "C++",
+      "Data Structures",
+      "Algorithms"
+    ],
+    "maxPositions": 2,
+    "filledPositions": 0,
+    "semester": "2025-2026 Spring",
+    "postDate": "2026-05-23",
+    "deadline": "2026-06-22"
+  },
+  {
+    "id": "JOB-d7e8f9a0",
+    "title": "TA for Digital Signal Processing (EBU4303)",
+    "description": "Assist in MATLAB-based labs and help students with FFT and filter design exercises.",
+    "moduleName": "EBU4303",
+    "postedBy": "USR-mo002",
+    "jobType": "MODULE_TA",
+    "status": "OPEN",
+    "requiredSkills": [
+      "MATLAB",
+      "Signal Processing",
+      "Mathematics"
+    ],
+    "maxPositions": 1,
+    "filledPositions": 0,
+    "semester": "2025-2026 Spring",
+    "postDate": "2026-05-23",
+    "deadline": "2026-06-15"
+  },
+  {
+    "id": "JOB-b1c2d3e4",
+    "title": "Invigilation - Final Exams (June 2026)",
+    "description": "Invigilate final examinations for Electronic Engineering modules during the June exam period.",
+    "moduleName": "",
+    "postedBy": "USR-mo002",
+    "jobType": "INVIGILATION",
+    "status": "OPEN",
+    "requiredSkills": [],
+    "maxPositions": 4,
+    "filledPositions": 0,
+    "semester": "2025-2026 Spring",
+    "postDate": "2026-05-23",
+    "deadline": "2026-06-10"
+  },
+  {
+    "id": "JOB-1a2b3c4d",
+    "title": "TA for RFID \u0026 IoT Systems (EBU6501)",
+    "description": "Support RFID hardware labs, IoT prototyping sessions, and sensor integration coursework.",
+    "moduleName": "EBU6501",
+    "postedBy": "USR-9ca64c9c",
+    "jobType": "MODULE_TA",
+    "status": "OPEN",
+    "requiredSkills": [
+      "Python",
+      "C++",
+      "IoT",
+      "RFID"
+    ],
+    "maxPositions": 2,
+    "filledPositions": 0,
+    "semester": "2025-2026 Spring",
+    "postDate": "2026-05-23",
+    "deadline": "2026-06-28"
+  },
+  {
+    "id": "JOB-5e6f7a8b",
+    "title": "TA for Embedded Systems (EBU5405)",
+    "description": "Help students with microcontroller programming, debugging embedded C projects, and lab demonstrations.",
+    "moduleName": "EBU5405",
+    "postedBy": "USR-9ca64c9c",
+    "jobType": "MODULE_TA",
+    "status": "OPEN",
+    "requiredSkills": [
+      "C",
+      "Embedded Systems",
+      "Arduino"
+    ],
+    "maxPositions": 2,
+    "filledPositions": 0,
+    "semester": "2025-2026 Spring",
+    "postDate": "2026-05-23",
+    "deadline": "2026-06-24"
+  },
+  {
+    "id": "JOB-9c0d1e2f",
+    "title": "TA for Object-Oriented Programming (EBU4202)",
+    "description": "Assist in Java programming labs, code review sessions, and assignment marking.",
+    "moduleName": "EBU4202",
+    "postedBy": "USR-9ca64c9c",
+    "jobType": "MODULE_TA",
+    "status": "OPEN",
+    "requiredSkills": [
+      "Java",
+      "OOP",
+      "Design Patterns"
+    ],
+    "maxPositions": 3,
+    "filledPositions": 0,
+    "semester": "2025-2026 Spring",
+    "postDate": "2026-05-23",
+    "deadline": "2026-06-30"
+  },
+  {
+    "id": "JOB-2f4a6b8c",
+    "title": "TA for Web Development (EBU5601)",
+    "description": "Guide students through HTML, CSS, JavaScript and React projects; assist with full-stack coursework.",
+    "moduleName": "EBU5601",
+    "postedBy": "USR-mo001",
+    "jobType": "MODULE_TA",
+    "status": "OPEN",
+    "requiredSkills": [
+      "JavaScript",
+      "React",
+      "HTML",
+      "CSS"
+    ],
+    "maxPositions": 2,
+    "filledPositions": 0,
+    "semester": "2025-2026 Spring",
+    "postDate": "2026-05-23",
+    "deadline": "2026-07-05"
+  },
+  {
+    "id": "JOB-7d9e1f3a",
+    "title": "TA for Computer Networks (EBU5702)",
+    "description": "Support network simulation labs using Wireshark and packet tracer; help with protocol analysis assignments.",
+    "moduleName": "EBU5702",
+    "postedBy": "USR-mo001",
+    "jobType": "MODULE_TA",
+    "status": "OPEN",
+    "requiredSkills": [
+      "Networking",
+      "TCP/IP",
+      "Linux"
+    ],
+    "maxPositions": 1,
+    "filledPositions": 0,
+    "semester": "2025-2026 Spring",
+    "postDate": "2026-05-23",
+    "deadline": "2026-06-27"
+  },
+  {
+    "id": "JOB-4b6c8d0e",
+    "title": "Coursework Marking Assistant (EBU6304)",
+    "description": "Mark weekly programming exercises and provide written feedback for Software Engineering module.",
+    "moduleName": "EBU6304",
+    "postedBy": "USR-mo001",
+    "jobType": "OTHER",
+    "status": "OPEN",
+    "requiredSkills": [
+      "Java",
+      "Technical Writing"
+    ],
+    "maxPositions": 1,
+    "filledPositions": 0,
+    "semester": "2025-2026 Spring",
+    "postDate": "2026-05-23",
+    "deadline": "2026-06-19"
+  },
+  {
+    "id": "JOB-8a0c2e4f",
+    "title": "TA for Analog Electronics (EBU4401)",
+    "description": "Assist in circuit building labs, oscilloscope measurements, and amplifier design coursework.",
+    "moduleName": "EBU4401",
+    "postedBy": "USR-mo002",
+    "jobType": "MODULE_TA",
+    "status": "OPEN",
+    "requiredSkills": [
+      "Electronics",
+      "Circuit Analysis",
+      "Lab Safety"
+    ],
+    "maxPositions": 2,
+    "filledPositions": 0,
+    "semester": "2025-2026 Spring",
+    "postDate": "2026-05-23",
+    "deadline": "2026-06-26"
+  },
+  {
+    "id": "JOB-3e5g7h9i",
+    "title": "TA for Communication Systems (EBU4502)",
+    "description": "Support modulation/demodulation labs and help students with MATLAB simulation assignments.",
+    "moduleName": "EBU4502",
+    "postedBy": "USR-mo002",
+    "jobType": "MODULE_TA",
+    "status": "OPEN",
+    "requiredSkills": [
+      "MATLAB",
+      "Communication Systems",
+      "Statistics"
+    ],
+    "maxPositions": 1,
+    "filledPositions": 0,
+    "semester": "2025-2026 Spring",
+    "postDate": "2026-05-23",
+    "deadline": "2026-07-01"
+  },
+  {
+    "id": "JOB-6j8k0l2m",
+    "title": "Lab Setup Assistant - EE Department",
+    "description": "Prepare lab equipment and test benches before weekly sessions for multiple EE modules.",
+    "moduleName": "",
+    "postedBy": "USR-mo002",
+    "jobType": "OTHER",
+    "status": "OPEN",
+    "requiredSkills": [
+      "Electronics",
+      "Organisation"
+    ],
+    "maxPositions": 2,
+    "filledPositions": 0,
+    "semester": "2025-2026 Spring",
+    "postDate": "2026-05-23",
+    "deadline": "2026-06-12"
+  },
+  {
+    "id": "JOB-n4p6q8r0",
+    "title": "TA for Cloud Computing (EBU6203)",
+    "description": "Help students deploy applications on AWS/Azure, assist with Docker and Kubernetes practicals.",
+    "moduleName": "EBU6203",
+    "postedBy": "USR-9ca64c9c",
+    "jobType": "MODULE_TA",
+    "status": "OPEN",
+    "requiredSkills": [
+      "Cloud Computing",
+      "Docker",
+      "Linux",
+      "Python"
+    ],
+    "maxPositions": 2,
+    "filledPositions": 0,
+    "semester": "2025-2026 Spring",
+    "postDate": "2026-05-23",
+    "deadline": "2026-07-08"
+  },
+  {
+    "id": "JOB-s2t4u6v8",
+    "title": "TA for Mobile App Development (EBU5804)",
+    "description": "Support Android/iOS development labs, debug student apps, and review UI design coursework.",
+    "moduleName": "EBU5804",
+    "postedBy": "USR-9ca64c9c",
+    "jobType": "MODULE_TA",
+    "status": "OPEN",
+    "requiredSkills": [
+      "Android",
+      "Kotlin",
+      "Mobile Development"
+    ],
+    "maxPositions": 2,
+    "filledPositions": 0,
+    "semester": "2025-2026 Spring",
+    "postDate": "2026-05-23",
+    "deadline": "2026-06-29"
+  },
+  {
+    "id": "JOB-w0x2y4z6",
+    "title": "Invigilation - Resit Exams (July 2026)",
+    "description": "Invigilate resit examinations for computing and engineering modules in early July.",
+    "moduleName": "",
+    "postedBy": "USR-9ca64c9c",
+    "jobType": "INVIGILATION",
+    "status": "OPEN",
+    "requiredSkills": [],
+    "maxPositions": 3,
+    "filledPositions": 0,
+    "semester": "2025-2026 Spring",
+    "postDate": "2026-05-23",
+    "deadline": "2026-07-03"
+  },
+  {
+    "id": "JOB-mo00301",
+    "title": "TA for Calculus (EBU3101)",
+    "description": "Lead tutorial sessions, mark problem sets, and hold weekly office hours for first-year students.",
+    "moduleName": "EBU3101",
+    "postedBy": "USR-mo003",
+    "jobType": "MODULE_TA",
+    "status": "OPEN",
+    "requiredSkills": [
+      "Mathematics",
+      "Calculus",
+      "Teaching"
+    ],
+    "maxPositions": 2,
+    "filledPositions": 0,
+    "semester": "2025-2026 Spring",
+    "postDate": "2026-05-23",
+    "deadline": "2026-06-21"
+  },
+  {
+    "id": "JOB-mo00302",
+    "title": "TA for Linear Algebra (EBU3202)",
+    "description": "Assist with matrix computation labs using MATLAB and help students with proof-based assignments.",
+    "moduleName": "EBU3202",
+    "postedBy": "USR-mo003",
+    "jobType": "MODULE_TA",
+    "status": "OPEN",
+    "requiredSkills": [
+      "Linear Algebra",
+      "MATLAB",
+      "Mathematics"
+    ],
+    "maxPositions": 1,
+    "filledPositions": 0,
+    "semester": "2025-2026 Spring",
+    "postDate": "2026-05-23",
+    "deadline": "2026-06-23"
+  },
+  {
+    "id": "JOB-mo00303",
+    "title": "TA for Probability \u0026 Statistics (EBU3303)",
+    "description": "Support statistical modelling coursework and help students with R programming exercises.",
+    "moduleName": "EBU3303",
+    "postedBy": "USR-mo003",
+    "jobType": "MODULE_TA",
+    "status": "OPEN",
+    "requiredSkills": [
+      "Statistics",
+      "Probability",
+      "R"
+    ],
+    "maxPositions": 2,
+    "filledPositions": 0,
+    "semester": "2025-2026 Spring",
+    "postDate": "2026-05-23",
+    "deadline": "2026-06-28"
+  },
+  {
+    "id": "JOB-mo00401",
+    "title": "TA for Physics Laboratory (EBU4102)",
+    "description": "Supervise mechanics and optics experiments, calibrate equipment, and assist with lab reports.",
+    "moduleName": "EBU4102",
+    "postedBy": "USR-mo004",
+    "jobType": "MODULE_TA",
+    "status": "OPEN",
+    "requiredSkills": [
+      "Physics",
+      "Lab Safety",
+      "Technical Writing"
+    ],
+    "maxPositions": 2,
+    "filledPositions": 0,
+    "semester": "2025-2026 Spring",
+    "postDate": "2026-05-23",
+    "deadline": "2026-06-17"
+  },
+  {
+    "id": "JOB-mo00402",
+    "title": "TA for Electromagnetism (EBU4105)",
+    "description": "Help students with Maxwell equation problem sets and simulation-based coursework.",
+    "moduleName": "EBU4105",
+    "postedBy": "USR-mo004",
+    "jobType": "MODULE_TA",
+    "status": "OPEN",
+    "requiredSkills": [
+      "Physics",
+      "Electromagnetism",
+      "Mathematics"
+    ],
+    "maxPositions": 1,
+    "filledPositions": 0,
+    "semester": "2025-2026 Spring",
+    "postDate": "2026-05-23",
+    "deadline": "2026-06-25"
+  },
+  {
+    "id": "JOB-mo00403",
+    "title": "Invigilation - Physics Final Exams",
+    "description": "Invigilate final examinations for Physics department modules in June 2026.",
+    "moduleName": "",
+    "postedBy": "USR-mo004",
+    "jobType": "INVIGILATION",
+    "status": "OPEN",
+    "requiredSkills": [],
+    "maxPositions": 3,
+    "filledPositions": 0,
+    "semester": "2025-2026 Spring",
+    "postDate": "2026-05-23",
+    "deadline": "2026-06-14"
+  },
+  {
+    "id": "JOB-mo00501",
+    "title": "TA for Business Analytics (EBU7101)",
+    "description": "Guide students through Excel and Python data analysis projects for business case studies.",
+    "moduleName": "EBU7101",
+    "postedBy": "USR-mo005",
+    "jobType": "MODULE_TA",
+    "status": "OPEN",
+    "requiredSkills": [
+      "Python",
+      "Excel",
+      "Data Analysis",
+      "Statistics"
+    ],
+    "maxPositions": 2,
+    "filledPositions": 0,
+    "semester": "2025-2026 Spring",
+    "postDate": "2026-05-23",
+    "deadline": "2026-06-26"
+  },
+  {
+    "id": "JOB-mo00502",
+    "title": "TA for Project Management (EBU7202)",
+    "description": "Assist Agile/Scrum workshops, review Gantt charts, and mark group project deliverables.",
+    "moduleName": "EBU7202",
+    "postedBy": "USR-mo005",
+    "jobType": "MODULE_TA",
+    "status": "OPEN",
+    "requiredSkills": [
+      "Agile",
+      "Project Management",
+      "Communication"
+    ],
+    "maxPositions": 2,
+    "filledPositions": 0,
+    "semester": "2025-2026 Spring",
+    "postDate": "2026-05-23",
+    "deadline": "2026-07-02"
+  },
+  {
+    "id": "JOB-mo00503",
+    "title": "Coursework Support - Digital Marketing (EBU7303)",
+    "description": "Help students with social media analytics assignments and presentation preparation.",
+    "moduleName": "EBU7303",
+    "postedBy": "USR-mo005",
+    "jobType": "OTHER",
+    "status": "OPEN",
+    "requiredSkills": [
+      "Marketing",
+      "Data Analysis",
+      "Presentation"
+    ],
+    "maxPositions": 1,
+    "filledPositions": 0,
+    "semester": "2025-2026 Spring",
+    "postDate": "2026-05-23",
+    "deadline": "2026-06-30"
+  },
+  {
+    "id": "JOB-mo00601",
+    "title": "TA for Deep Learning (EBU6305)",
+    "description": "Supervise PyTorch labs, assist with neural network coursework, and debug student models.",
+    "moduleName": "EBU6305",
+    "postedBy": "USR-mo006",
+    "jobType": "MODULE_TA",
+    "status": "OPEN",
+    "requiredSkills": [
+      "Python",
+      "Deep Learning",
+      "PyTorch",
+      "Machine Learning"
+    ],
+    "maxPositions": 2,
+    "filledPositions": 0,
+    "semester": "2025-2026 Spring",
+    "postDate": "2026-05-23",
+    "deadline": "2026-07-06"
+  },
+  {
+    "id": "JOB-mo00602",
+    "title": "TA for Computer Vision (EBU6306)",
+    "description": "Support OpenCV practicals, image classification projects, and object detection assignments.",
+    "moduleName": "EBU6306",
+    "postedBy": "USR-mo006",
+    "jobType": "MODULE_TA",
+    "status": "OPEN",
+    "requiredSkills": [
+      "Python",
+      "Computer Vision",
+      "OpenCV",
+      "Machine Learning"
+    ],
+    "maxPositions": 2,
+    "filledPositions": 0,
+    "semester": "2025-2026 Spring",
+    "postDate": "2026-05-23",
+    "deadline": "2026-07-04"
+  },
+  {
+    "id": "JOB-mo00603",
+    "title": "TA for Natural Language Processing (EBU6307)",
+    "description": "Help students build text classification and sentiment analysis models using Python NLP libraries.",
+    "moduleName": "EBU6307",
+    "postedBy": "USR-mo006",
+    "jobType": "MODULE_TA",
+    "status": "OPEN",
+    "requiredSkills": [
+      "Python",
+      "NLP",
+      "Machine Learning",
+      "Statistics"
+    ],
+    "maxPositions": 1,
+    "filledPositions": 0,
+    "semester": "2025-2026 Spring",
+    "postDate": "2026-05-23",
+    "deadline": "2026-07-07"
+  },
+  {
+    "id": "JOB-8f88463a",
+    "title": "Job-1779582082160",
+    "postedBy": "MO-1779582082174",
+    "jobType": "MODULE_TA",
+    "status": "OPEN",
+    "requiredSkills": [],
+    "maxPositions": 2,
+    "filledPositions": 0,
+    "postDate": "2026-05-24"
+  },
+  {
+    "id": "JOB-f06e41ad",
+    "title": "Job-1779582082389",
+    "postedBy": "MO-1779582082389",
+    "jobType": "MODULE_TA",
+    "status": "OPEN",
+    "requiredSkills": [],
+    "maxPositions": 2,
+    "filledPositions": 0,
+    "postDate": "2026-05-24"
+  },
+  {
+    "id": "JOB-be533fb6",
+    "title": "Job-1779582082521",
+    "postedBy": "MO-1779582082521",
+    "jobType": "MODULE_TA",
+    "status": "OPEN",
+    "requiredSkills": [],
+    "maxPositions": 1,
+    "filledPositions": 0,
+    "postDate": "2026-05-24"
+  },
+  {
+    "id": "JOB-7bacf229",
+    "title": "Job-1779582082616",
+    "postedBy": "MO-1779582082616",
+    "jobType": "MODULE_TA",
+    "status": "OPEN",
+    "requiredSkills": [],
+    "maxPositions": 2,
+    "filledPositions": 0,
+    "postDate": "2026-05-24"
+  },
+  {
+    "id": "JOB-260e543b",
+    "title": "Job-1779582082684",
+    "postedBy": "MO-1779582082684",
+    "jobType": "MODULE_TA",
+    "status": "OPEN",
+    "requiredSkills": [],
+    "maxPositions": 1,
+    "filledPositions": 0,
+    "postDate": "2026-05-24"
+  },
+  {
+    "id": "JOB-c2a292d6",
+    "title": "Job-1779582082781",
+    "postedBy": "MO-1779582082781",
+    "jobType": "MODULE_TA",
+    "status": "OPEN",
+    "requiredSkills": [],
+    "maxPositions": 2,
+    "filledPositions": 0,
+    "postDate": "2026-05-24"
+  },
+  {
+    "id": "JOB-e3fcfc94",
+    "title": "Job-1779582082856",
+    "postedBy": "MO-1779582082856",
+    "jobType": "MODULE_TA",
+    "status": "OPEN",
+    "requiredSkills": [],
+    "maxPositions": 2,
+    "filledPositions": 0,
+    "postDate": "2026-05-24"
+  },
+  {
+    "id": "JOB-e496d607",
+    "title": "Job-1779582083036",
+    "postedBy": "MO-1779582083036",
+    "jobType": "MODULE_TA",
+    "status": "OPEN",
+    "requiredSkills": [],
+    "maxPositions": 1,
+    "filledPositions": 0,
+    "postDate": "2026-05-24"
+  },
+  {
+    "id": "JOB-42792d61",
+    "title": "Job-1779582083098",
+    "postedBy": "MO-1779582083098",
+    "jobType": "MODULE_TA",
+    "status": "OPEN",
+    "requiredSkills": [],
+    "maxPositions": 2,
+    "filledPositions": 0,
+    "postDate": "2026-05-24"
+  },
+  {
+    "id": "JOB-5b9a3f13",
+    "title": "Skill Test 1779582083157",
+    "postedBy": "MO-001",
+    "jobType": "MODULE_TA",
+    "status": "OPEN",
+    "requiredSkills": [
+      "Python",
+      "Django"
+    ],
+    "maxPositions": 1,
+    "filledPositions": 0,
+    "postDate": "2026-05-24"
+  },
+  {
+    "id": "JOB-ec6e109f",
+    "title": "Java Developer 1779582083234",
+    "description": "Develop Java applications",
+    "postedBy": "MO-001",
+    "jobType": "MODULE_TA",
+    "status": "OPEN",
+    "requiredSkills": [],
+    "maxPositions": 1,
+    "filledPositions": 0,
+    "postDate": "2026-05-24"
+  },
+  {
+    "id": "JOB-5bac0e82",
+    "title": "MO Job",
+    "postedBy": "MO-1779582083307",
+    "jobType": "OTHER",
+    "status": "OPEN",
+    "requiredSkills": [],
+    "maxPositions": 1,
+    "filledPositions": 0,
+    "postDate": "2026-05-24"
+  },
+  {
+    "id": "JOB-9ee1c47c",
+    "title": "Open Job 1779582083441",
+    "postedBy": "MO-001",
+    "jobType": "MODULE_TA",
+    "status": "OPEN",
+    "requiredSkills": [],
+    "maxPositions": 1,
+    "filledPositions": 0,
+    "postDate": "2026-05-24"
+  },
+  {
+    "id": "JOB-6e19b968",
+    "title": "TA for Software Engineering",
+    "description": "Assist in lab sessions",
+    "moduleName": "EBU6304",
+    "postedBy": "MO-001",
+    "jobType": "MODULE_TA",
+    "status": "OPEN",
+    "requiredSkills": [
+      "Java",
+      "Agile"
+    ],
+    "maxPositions": 3,
+    "filledPositions": 0,
+    "postDate": "2026-05-24"
+  },
+  {
+    "id": "JOB-e992f489",
+    "title": "ToClose 1779582083595",
+    "postedBy": "MO-001",
+    "jobType": "INVIGILATION",
+    "status": "CLOSED",
+    "requiredSkills": [],
+    "maxPositions": 2,
+    "filledPositions": 0,
+    "postDate": "2026-05-24"
+  },
+  {
+    "id": "JOB-5d6b56b5",
+    "title": "Filter Test 1 1779582083679",
+    "postedBy": "MO-001",
+    "jobType": "MODULE_TA",
+    "status": "OPEN",
+    "requiredSkills": [],
+    "maxPositions": 1,
+    "filledPositions": 0,
+    "postDate": "2026-05-24"
   }
 ]

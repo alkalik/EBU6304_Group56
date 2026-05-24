@@ -25,6 +25,22 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+/**
+ * Main application window for Module Organiser ({@link User.Role#MO}) users.
+ * <p>
+ * Provides four tabs:
+ * </p>
+ * <ul>
+ *   <li><b>Post Job</b> – create new TA job openings for modules</li>
+ *   <li><b>My Jobs</b> – manage posted jobs (close or delete)</li>
+ *   <li><b>Review Applicants</b> – view CVs and accept or reject applications</li>
+ *   <li><b>AI Skill Analysis</b> – run DeepSeek-powered skill-gap analysis on applicants</li>
+ * </ul>
+ * <p>
+ * The menu bar also exposes data backup and restore actions. UI styling reuses shared
+ * widget factories from {@link AdminDashboard}.
+ * </p>
+ */
 public class MODashboard extends JFrame {
 
     private final User currentUser;
@@ -52,6 +68,15 @@ public class MODashboard extends JFrame {
     private static final Font  F_H1      = AdminDashboard.F_H1;
     private static final Font  F_H2      = AdminDashboard.F_H2;
 
+    /**
+     * Creates the Module Organiser dashboard for the given authenticated user.
+     *
+     * @param currentUser           the logged-in module organiser
+     * @param loginFrame            the login frame to return to on logout
+     * @param jobService            service for posting and managing jobs
+     * @param applicationService    service for reviewing applicant submissions
+     * @param notificationService   service for reading and updating notifications
+     */
     public MODashboard(User currentUser, LoginFrame loginFrame, JobService jobService,
                        ApplicationService applicationService, NotificationService notificationService) {
         this.currentUser = currentUser;

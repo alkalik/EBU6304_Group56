@@ -9,6 +9,9 @@ import java.util.List;
 
 import static org.junit.Assert.*;
 
+/**
+ * Unit tests for {@link NotificationService} creation, read state, unread counts, and bulk clear operations.
+ */
 public class NotificationServiceTest {
     private NotificationService notificationService;
 
@@ -18,6 +21,9 @@ public class NotificationServiceTest {
         notificationService = new NotificationService();
     }
 
+    /**
+     * Verifies that creating a notification sets fields correctly and increases the user's unread count.
+     */
     @Test
     public void testCreateNotificationAndUnreadCount() {
         String userId = "USR-notify-" + System.currentTimeMillis();
@@ -36,6 +42,9 @@ public class NotificationServiceTest {
         assertTrue(notificationService.getUnreadCount(userId) >= 1);
     }
 
+    /**
+     * Verifies that marking a notification as read updates its state and clears the unread count for that user.
+     */
     @Test
     public void testMarkAsRead() {
         String userId = "USR-read-" + System.currentTimeMillis();
@@ -53,6 +62,9 @@ public class NotificationServiceTest {
         assertEquals(0, notificationService.getUnreadCount(userId));
     }
 
+    /**
+     * Verifies that {@code clearReadNotifications} removes only read notifications for a user.
+     */
     @Test
     public void testClearReadNotificationsOnlyRemovesReadOnes() {
         String userId = "USR-clear-" + System.currentTimeMillis();
@@ -76,6 +88,9 @@ public class NotificationServiceTest {
         assertFalse(remaining.get(0).isRead());
     }
 
+    /**
+     * Verifies that {@code markAllAsRead} sets all notifications read and zeroes the unread count.
+     */
     @Test
     public void testMarkAllAsRead() {
         String userId = "USR-all-read-" + System.currentTimeMillis();

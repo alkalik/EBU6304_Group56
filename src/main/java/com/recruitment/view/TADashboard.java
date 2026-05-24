@@ -19,6 +19,21 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+/**
+ * Main application window for Teaching Assistant ({@link User.Role#TA}) users.
+ * <p>
+ * Provides three tabs:
+ * </p>
+ * <ul>
+ *   <li><b>My Profile</b> – edit personal details, skills, password, and upload a CV</li>
+ *   <li><b>Browse Jobs</b> – search and apply for open TA positions</li>
+ *   <li><b>My Applications</b> – view application status and withdraw pending applications</li>
+ * </ul>
+ * <p>
+ * The header includes a notifications panel and logout. UI styling reuses shared
+ * widget factories from {@link AdminDashboard}.
+ * </p>
+ */
 public class TADashboard extends JFrame {
 
     private final User currentUser;
@@ -42,6 +57,15 @@ public class TADashboard extends JFrame {
     private static final Font  F_SMALL   = AdminDashboard.F_SMALL;
     private static final Font  F_H2      = AdminDashboard.F_H2;
 
+    /**
+     * Creates the TA dashboard for the given authenticated user.
+     *
+     * @param currentUser           the logged-in teaching assistant
+     * @param loginFrame            the login frame to return to on logout
+     * @param jobService            service for browsing and querying job listings
+     * @param applicationService    service for submitting and managing applications
+     * @param notificationService   service for reading and updating notifications
+     */
     public TADashboard(User currentUser, LoginFrame loginFrame, JobService jobService,
                        ApplicationService applicationService, NotificationService notificationService) {
         this.currentUser = currentUser;
