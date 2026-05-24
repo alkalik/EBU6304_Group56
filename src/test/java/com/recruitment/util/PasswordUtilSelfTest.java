@@ -1,5 +1,7 @@
 package com.recruitment.util;
 
+import org.junit.Test;
+
 /**
  * PasswordUtilSelfTest - Self-contained test for password hashing utility
  * 
@@ -22,6 +24,11 @@ package com.recruitment.util;
  * @since 2026-05-24
  */
 public class PasswordUtilSelfTest {
+
+    @Test
+    public void passwordHashingAndLegacyMatchingWork() {
+        runPasswordChecks(false);
+    }
     
     /**
      * Main test method that executes all password utility tests
@@ -34,6 +41,10 @@ public class PasswordUtilSelfTest {
      * @throws AssertionError if any test case fails
      */
     public static void main(String[] args) {
+        runPasswordChecks(true);
+    }
+
+    private static void runPasswordChecks(boolean printSummary) {
         // Test password - using a simple password for testing purposes
         String password = "pass123";
 
@@ -99,13 +110,15 @@ public class PasswordUtilSelfTest {
         // ============================================================
         // All tests passed successfully
         // ============================================================
-        System.out.println("PasswordUtilSelfTest OK");
-        System.out.println("All 8 password utility tests passed successfully!");
-        System.out.println("- Hash generation: PASS");
-        System.out.println("- Salt randomization: PASS");
-        System.out.println("- Password verification: PASS");
-        System.out.println("- Security validation: PASS");
-        System.out.println("- Legacy compatibility: PASS");
+        if (printSummary) {
+            System.out.println("PasswordUtilSelfTest OK");
+            System.out.println("All 8 password utility tests passed successfully!");
+            System.out.println("- Hash generation: PASS");
+            System.out.println("- Salt randomization: PASS");
+            System.out.println("- Password verification: PASS");
+            System.out.println("- Security validation: PASS");
+            System.out.println("- Legacy compatibility: PASS");
+        }
     }
 }
 
@@ -129,4 +142,3 @@ public class PasswordUtilSelfTest {
 // - Validate hash storage format consistency
 // - Add concurrent hashing stress tests
 // ================================================================
-

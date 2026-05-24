@@ -1,6 +1,5 @@
 package com.recruitment.service;
 
-import java.io.File;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
@@ -13,15 +12,13 @@ import org.junit.Test;
 
 import com.recruitment.model.User;
 
-public class UserServiceTest {
+public class UserServiceTest extends ServiceTestBase {
     private UserService userService;
 
     // Initializes the UserService instance and ensures the test data storage directory exists before every test run
     @Before
     public void setUp() {
-        // Ensure clean data directory for tests
-        new File("data").mkdirs();
-        userService = new UserService();
+        userService = newServiceGraph().userService;
     }
 
     // Verifies successful user registration and checks that authentication passes with valid credentials but fails with invalid ones
